@@ -4,4 +4,10 @@ function  getCategories(form) {
   return axios.get('/category/getcategory')
 }
 
-export { getCategories };
+function addCategory(model) {
+  return axios.post('/category/create', {
+    ...model
+})
+}
+
+export { getCategories, addCategory };
