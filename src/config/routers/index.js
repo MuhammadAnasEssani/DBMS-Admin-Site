@@ -12,6 +12,7 @@ import AcademicLevel from "../../views/list/AcademicLevel";
 import CategoryList from "../../views/list/CategoryList";
 import MyPapers from "../../views/list/MyPapers";
 import Orders from "../../views/list/Orders";
+import MyProducts from "../../views/list/Products";
 import RequestedPapers from "../../views/list/RequestedPapers";
 import StaffList from "../../views/list/StaffList";
 import StudentList from "../../views/list/StudentList";
@@ -123,6 +124,12 @@ const routes = [
     title: "Add staff",
     // isLoginRequired: true,
     component: () => <AddStaff />,
+  },
+  {
+    path: "/my-products",
+    title: "Add staff",
+    // isLoginRequired: true,
+    component: () => <MyProducts />,
   },
   {
     path: "/add-product",

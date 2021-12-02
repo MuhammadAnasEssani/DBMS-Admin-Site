@@ -21,6 +21,7 @@ export default function AddProduct() {
   const [productImage, setProductImage] = useState([]);
   const [change, setChange] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [field, setField] = useState("");
   //   const [previewTitle, setPreviewTitle] = useState("");
   //   const [previewImage, setPreviewImage] = useState("");
   //   const [previewVisible, setPreviewVisible] = useState(false);
@@ -75,6 +76,8 @@ export default function AddProduct() {
     if (res.status === 201) {
       // e.preventDefault();
       Notification("Product Department", "Product Added Sucessfully", "Success")
+      // values = {name: "", price: "",quantity: "",description: ""}
+      setProductImage([])
       return
     }
     if (res.status === 400) {
@@ -269,7 +272,7 @@ export default function AddProduct() {
                               onClick={() => {
                                 // console.log(index)
                                 // console.log(pic)
-                                productImage.splice(index);
+                                productImage.splice(index,1);
                                 {
                                   change ? setChange(false) : setChange(true);
                                 }
