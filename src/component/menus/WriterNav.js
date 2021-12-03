@@ -96,10 +96,22 @@ export default function WriterNav() {
           {" "}
           <Link to="/add-category">Add Category</Link>
         </Menu.Item>
+        <Menu.Item
+          key="5"
+          icon={
+            <span
+              className="bi bi-save"
+              style={{ fontSize: subMenuIconSize }}
+            ></span>
+          }
+        >
+          {" "}
+          <Link to="/categories">Categories</Link>
+        </Menu.Item>
       </SubMenu>
 
       <Menu.Item
-        key="5"
+        key="6"
         icon={
           <span
             className="bi bi-journal-text"

@@ -11,7 +11,7 @@ import { deleteProductById, editProduct, getProductsByVendor } from "../../confi
 import { getCategories } from "../../config/api/Categories";
 import Notification from "../../component/notification/Notification";
 
-export default function CategoryList() {
+export default function MyProducts() {
   const [state, setState] = useState({});
   const [searchInput, setSearchInput] = useState();
   const [viewVisible, setViewVisible] = useState(false);

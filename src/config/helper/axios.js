@@ -9,14 +9,14 @@ import BaseUrl from '../api/_Domain';
 const axiosInstanse = axios.create({
     baseURL: BaseUrl,
     headers: {
-        'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTY2ZTE3MzlmMTk1YjIzZWQxMjE5N2IiLCJyb2xlIjoidmVuZG9yIiwiaWF0IjoxNjM4NDUxNDgwLCJleHAiOjE2Mzg1Mzc4ODB9.yusubu9SvZJ3he97h53ID1LdNUVZiw25fleJlQlq3lk`
+        'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTY2ZTE3MzlmMTk1YjIzZWQxMjE5N2IiLCJyb2xlIjoidmVuZG9yIiwiaWF0IjoxNjM4NTM3NDYyLCJleHAiOjE2Mzg2MjM4NjJ9.mmZY3Q-ZwSczyhj72T8Whe84vFgXNGZCTXn-YzoY0g8`
     }
 });
 
 axiosInstanse.interceptors.request.use((req) => {
     // const { auth } = store.getState();
     // if(auth.token){
-        req.headers.Authorization = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTY2ZTE3MzlmMTk1YjIzZWQxMjE5N2IiLCJyb2xlIjoidmVuZG9yIiwiaWF0IjoxNjM4NDUxNDgwLCJleHAiOjE2Mzg1Mzc4ODB9.yusubu9SvZJ3he97h53ID1LdNUVZiw25fleJlQlq3lk`;
+        req.headers.Authorization = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTY2ZTE3MzlmMTk1YjIzZWQxMjE5N2IiLCJyb2xlIjoidmVuZG9yIiwiaWF0IjoxNjM4NTM3NDYyLCJleHAiOjE2Mzg2MjM4NjJ9.mmZY3Q-ZwSczyhj72T8Whe84vFgXNGZCTXn-YzoY0g8`;
     // }
     return req;
 })

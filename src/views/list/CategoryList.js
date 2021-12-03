@@ -11,57 +11,32 @@ import { deleteProductById, editProduct, getProductsByVendor } from "../../confi
 import { getCategories } from "../../config/api/Categories";
 import Notification from "../../component/notification/Notification";
 
-export default function MyProducts() {
+export default function CategoryList() {
   const [state, setState] = useState({});
   const [searchInput, setSearchInput] = useState();
   const [viewVisible, setViewVisible] = useState(false);
-  const [editProductVisible, setEditProductVisible] = useState(false);
-  const [productEdit, setProductEdit] = useState(null);
+  const [editCategoryVisible, setEditCategoryVisible] = useState(false);
+  const [categoryEdit, setCategoryEdit] = useState(null);
   const [productImage, setProductImage] = useState([]);
   const [change, setChange] = useState(false);
   const [changeAgain, setChangeAgain] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
   const states = useSelector((state) => state);
   const authState = states.AuthReducer.user;
   const drawerState = states.DrawerReducer.State;
 
-  const showProductEditModal = (product) => {
-    setProductEdit(product);
-    setEditProductVisible(true);
+  const showCategoryEditModal = (category) => {
+    // console.log(category)
+    setCategoryEdit(category)
+    setEditCategoryVisible(true)
   };
 
-  const handleEditProduct = async (values) => {
-    // console.log(values)
-    var form = new FormData();
-    form.append("_id", productEdit._id);
-    form.append("name", values.name);
-    form.append("price", values.price);
-    form.append("description", values.description);
-    form.append("quantity", values.quantity);
-    form.append("category", values.category);
-    if (productImage.length > 0) {
-      for (let pic of productImage) {
-        form.append("productPicture", pic);
-      }
-    }
-    // for (var key of form.entries()) {
-    //   console.log(key[0] + ", " + key[1]);
-    // }
-    const res = await editProduct(form);
-    if (res.status === 201) {
-      Notification(
-        "Product Department",
-        "Product Added Sucessfully",
-        "Success"
-      );
-      setProductImage([]);
-      {changeAgain ? setChangeAgain(false) : setChangeAgain(true)}
-      setEditProductVisible(false)
-      return;
-    }
-    if (res.status === 400) {
-      Notification("Product Department", res.data.message, "Error");
-      return;
+  const handleEditCategory = async (values) => {
+    console.log(values)
+    console.log(values.parent.split("+")[0])
+    const data = {
+      // _id: 
     }
   };
   const handleProductImage = (e) => {
@@ -177,38 +152,32 @@ export default function MyProducts() {
     }
   };
   const data = [];
-  // {
-  //   product.length > 0 &&
-  //     product.map((product, index) =>
-  //       data.push({
-  //         key: index + 1,
-  //         no: index + 1,
-  //         name: product.name,
-  //         price: product.price,
-  //         quantity: product.quantity,
-  //         category: product.category.name,
-  //         action: (
-  //           <div className="d-sm-inline-flex gap-2 actionDiv">
-  //             <span
-  //               className="bi bi-eye actionBtn"
-  //               onClick={() => showProductDetailModal(product)}
-  //             ></span>
-  //             <span
-  //               className="bi bi-pencil actionBtn"
-  //               onClick={() => showProductEditModal(product)}
-  //             ></span>
-  //             <Popconfirm
-  //               title="Are you sure？"
-  //               icon={<CloseCircleTwoTone twoToneColor="Red" />}
-  //               onConfirm={()=> handleDelete(product._id)}
-  //             >
-  //               <Link className="bi bi-trash actionBtn"></Link>
-  //             </Popconfirm>
-  //           </div>
-  //         ),
-  //       })
-  //     );
-  // }
+  {
+    categories.length > 0 &&
+      categories.map((category, index) =>
+        data.push({
+          key: index + 1,
+          no: index + 1,
+          name: category.name,
+          parent: category.parentName,
+          action: (
+            <div className="d-sm-inline-flex gap-2 actionDiv">
+              <span
+                className="bi bi-pencil actionBtn"
+                onClick={() => showCategoryEditModal(category)}
+              ></span>
+              <Popconfirm
+                title="Are you sure？"
+                icon={<CloseCircleTwoTone twoToneColor="Red" />}
+                onConfirm={()=> handleDelete(category._id)}
+              >
+                <Link className="bi bi-trash actionBtn"></Link>
+              </Popconfirm>
+            </div>
+          ),
+        })
+      );
+  }
 
   const columns = [
     {
@@ -238,6 +207,7 @@ export default function MyProducts() {
   const fetchCategories = async () => {
     const res = await getCategories();
     if (res.status === 200) {
+      setCategoryList(res.data.categoryList)
       setCategories(createCategoryList(res.data.categoryList));
       return
     }
@@ -248,12 +218,9 @@ export default function MyProducts() {
   };
 
   const createCategoryList = (categories, options = []) => {
-    options.push({
-      value: productEdit.category._id,
-      name: productEdit.category.name,
-    });
     for (let category of categories) {
-      options.push({ value: category._id, name: category.name });
+      // console.log(category)
+      options.push({ _id: category._id, name: category.name, parentName: category.parentName, parentId: category.parentId  });
       if (category.children.length > 0) {
         createCategoryList(category.children, options);
       }
@@ -262,192 +229,64 @@ export default function MyProducts() {
   };
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [change]);
+  // console.log(categories)
+  console.log(categoryEdit)
   return (
     <>
       <Modal
         title="Edit Product"
         centered
-        visible={editProductVisible}
-        onOk={() => setEditProductVisible(false)}
-        onCancel={() => setEditProductVisible(false)}
+        visible={editCategoryVisible}
+        onOk={() => 
+          {setEditCategoryVisible(false)
+          setCategoryEdit(null)
+          {change ? setChange(false) : setChange(true)}
+        }
+        }
+        onCancel={() => 
+          {setEditCategoryVisible(false)
+          setCategoryEdit(null)
+          {change ? setChange(false) : setChange(true)}
+        }
+        }
         width={1000}
       >
-        {productEdit != null && (
+        {categoryEdit != null && (
           <>
-            <Form
-              onFinish={handleEditProduct}
-              initialValues={{
-                name: productEdit.name,
-                price: productEdit.price,
-                quantity: productEdit.quantity,
-                description: productEdit.description,
-                category: productEdit.category._id,
-              }}
-            >
-              <div className="row">
-                <div className="col-lg-5">
-                  <label className="labeltext">Product Name: (*)</label>
-                  <Form.Item name="name">
-                    <input type="text" required className="FormInput" />
-                  </Form.Item>
-                </div>
-                <div className="col-lg-5 offset-xl-1">
-                  <label className="labeltext">Product Price: (*)</label>
-                  <Form.Item name="price">
-                    <input type="number" required className="FormInput" />
-                  </Form.Item>
-                </div>
-                <div className="col-lg-5">
-                  <label className="labeltext">Product Quantity: (*)</label>
-                  <Form.Item name="quantity">
-                    <input type="number" required className="FormInput" />
-                  </Form.Item>
-                </div>
-
-                {/* <div className="col-lg-5 offset-xl-1">
-                    <label className="labeltext">Academic Level: (*)</label>
-                    <Form.Item name="academic-level">
-                      <input type="text" className="FormInput" />
+          <Form onFinish={handleEditCategory} initialValues={{name: categoryEdit.name,parent: `${categoryEdit.parentId}+${categoryEdit.parentName}` }}>
+                <div className="row">
+                  <div className="col-lg-5">
+                    <label className="labeltext">Category Name: (*)</label>
+                    <Form.Item name="name">
+                      <input type="text" required className="FormInput" />
                     </Form.Item>
-                  </div> */}
+                  </div>
 
-                <div className="col-lg-5 offset-xl-1">
-                  <label className="labeltext">Category : (*)</label>
-                  <Form.Item name="category">
-                    <select
-                      className="FormInput"
-                      name="cars"
-                      id="cars"
-                      required
-                    >
-                      {/* console.log(productEdit.category._id) */}
-                      {/* <option key={productEdit.category._id} value={productEdit.category._id}>
-                            {productEdit.category.name}
-                          </option> */}
-                      {createCategoryList(categories).map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.name}
-                        </option>
-                      ))}
-                    </select>
-                    {/* <Select
-                        size={"large"}
-                        mode="multiple"
-                        showSearch
+                  <div className="col-lg-5 offset-xl-1">
+                    <label className="labeltext">Parent: (*)</label>
+                    <Form.Item name="parent">
+                      <select
                         className="FormInput"
-                        placeholder="Select a categories"
-                        optionFilterProp="children"
-                        filterOption={(input, option) =>
-                          option.children
-                            .toLowerCase()
-                            .indexOf(input.toLowerCase()) >= 0
-                        }
-                        required
+                        name="cars"
+                        id="cars"
                       >
-                        <Option value="Essay">Essay</Option>
-                        <Option value="Critical Thinking">
-                          Critical Thinking
-                        </Option>
-                        <Option value="Creative Writing">
-                          Creative Writing
-                        </Option>
-                      </Select> */}
-                  </Form.Item>
+                        <option value="">{categoryEdit.parentName != undefined ? categoryEdit.parentName : "None"}</option>
+                        {createCategoryList(categoryList).map((option) => (
+                          <option key={option._id} value={`${option._id}+${option.parentName}`}>
+                            {option.name}
+                          </option>
+                        ))}
+                      </select>
+                    </Form.Item>
+                  </div>
+                  <div className="col-lg-12">
+                    <Form.Item>
+                      <button className="btn btn-get-started">Submit</button>
+                    </Form.Item>
+                  </div>
                 </div>
-                <div className="col-lg-11">
-                  <label className="labeltext">Product Description: (*)</label>
-                  <Form.Item name="description">
-                    <textarea type="text" required className="FormInput" />
-                  </Form.Item>
-                </div>
-                <div className="col-lg-5">
-                  <label className="labeltext">Upload Images: (*)</label>
-                  {/* <Upload
-                      action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                      listType="picture-card"
-                      fileList={fileList}
-                      onPreview={handlePreview}
-                      onChange={handleChange}
-                    >
-                      {fileList.length >= 8 ? null : uploadButton}
-                    </Upload>
-                    <Modal
-                      visible={previewVisible}
-                      title={previewTitle}
-                      footer={null}
-                      onCancel={handleCancel}
-                    >
-                      <img
-                        alt="example"
-                        style={{ width: "100%" }}
-                        src={previewImage}
-                      />
-                    </Modal> */}
-                  {/* <Upload
-                      action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                      listType="picture"
-                      defaultFileList={[...fileList]}
-                    >
-                      <Button icon={<UploadOutlined />}>Upload</Button>
-                    </Upload>
-                    <br />
-                    <br /> */}
-                  {/* <Form.Item>
-                    <Upload
-                      listType="picture"
-                      defaultFileList={[...fileList]}
-                      className="upload-list-inline"
-                    >
-                      <Button icon={<UploadOutlined />} onClick={() => setFileList(fileList)}>Upload</Button>
-                    </Upload>
-                    </Form.Item> */}
-                  {productImage.length > 0
-                    ? productImage.map((pic, index) => (
-                        <div
-                          key={index}
-                          style={{
-                            height: "35px",
-                            margin: "1px",
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            border: "1px solid red",
-                          }}
-                        >
-                          <div>{JSON.stringify(pic.name)}</div>
-                          <ImBin
-                            id={pic}
-                            style={{ cursor: "pointer" }}
-                            onClick={() => {
-                              // console.log(index)
-                              // console.log(pic)
-                              productImage.splice(index, 1);
-                              {
-                                change ? setChange(false) : setChange(true);
-                              }
-                              // console.log(productImage);
-                            }}
-                          />
-                        </div>
-                      ))
-                    : null}
-                  <Form.Item>
-                    <input
-                      type="file"
-                      name="productImage"
-                      onChange={handleProductImage}
-                    />
-                  </Form.Item>
-                </div>
-                <div className="col-lg-12">
-                  <Form.Item>
-                    <button className="btn btn-get-started">Submit</button>
-                  </Form.Item>
-                </div>
-              </div>
-            </Form>
+              </Form>
           </>
         )}
       </Modal>
