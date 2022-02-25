@@ -67,6 +67,7 @@ export default function AddProduct() {
     form.append("quantity", values.quantity);
     form.append("category", values.category);
     for (let pic of productImage) {
+      console.log(pic)
       form.append("productPicture", pic);
     }
   //   for (var key of form.entries()) {

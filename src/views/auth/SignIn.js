@@ -96,7 +96,7 @@ export default function SignIn() {
             <img src="assets/img/login.png" className="img-fluid" />
           </div>
           <div className="col-lg-4 formSection">
-            <h1 style={{ fontSize: 28 }}>Welcome Back!</h1>
+            <h1 style={{ fontSize: 28 }}>Forgot Password!</h1>
             <p className="mb-4 mt-2" style={{ fontSize: 16 }}>
               Log in to continue
             </p>

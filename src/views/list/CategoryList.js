@@ -36,7 +36,8 @@ export default function CategoryList() {
     console.log(values)
     console.log(values.parent.split("+")[0])
     const data = {
-      // _id: 
+      _id: categoryEdit._id,
+       
     }
   };
   const handleProductImage = (e) => {
