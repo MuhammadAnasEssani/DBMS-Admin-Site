@@ -1,88 +1,66 @@
-import React, { useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import { Form } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../../store/actions/AuthAction";
+import { userSignin } from "../../config/api/UserAuthAPI";
 
 import Notification from "../../component/notification/Notification";
-import { userSigIn } from "../../config/api/UserAuthAPI";
+import { authConstants } from "../../store/actions/contants";
+import { Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 export default function SignIn() {
   const history = useHistory();
   const dispatch = useDispatch();
-  const state = useSelector((state) => state);
-  const authState = state.AuthReducer.user;
+  const auth = useSelector((state) => state.auth);
+  const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSignin = async (values) => {
+  const handleSignin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
     try {
-      var res = await userSigIn(values);
-      if (res.Message != "Success") {
-        console.log(res.Message);
-        Notification("Alert", res.Message, "Error");
-        var userdetails = {
-          token: "smkkldaj",
-         
-          role: "Administration",
-          
-        };
-        dispatch(setUser(userdetails));
+      const users = {
+        email,
+        password,
+      };
+      const res = await userSignin(users);
+      // console.log(res)
+      if (res.status === 200) {
+        const { token, user } = res.data;
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(user));
+        dispatch({
+          type: authConstants.LOGIN_SUCESS,
+          payload: {
+            token,
+            user,
+          },
+        });
+        Notification("Login", res.data.message, "Success");
+        setLoading(false);
+        setEmail("");
+        setPassword("");
+        history.push("/dashboard");
+        return;
+      } else {
+        Notification("Login", res.data.message, "Error");
+        setLoading(false);
         return;
       }
-      var resModel = res.Data.User;
-      console.log(resModel);
-      var userdetails = {
-        token: res.Data.Token,
-        userid: resModel.UserId,
-        name: resModel.username,
-        role: "Administration",
-        email: resModel.userEmail,
-        phone: resModel.UserPhone,
-        academiclevel: resModel.AcademicLevel,
-        image: `${resModel.UserImage}`,
-      };
-      dispatch(setUser(userdetails));
-      history.push("/dashboard");
-      Notification("Success", "Successfully Login", "Success");
-    } catch (error) {
-      console.log(error);
+    } catch {
+      setLoading(false);
+      Notification("Login", "Something went wrong", "Error");
     }
-    // if (values.email.toLowerCase() === "admin@app.com") {
-    //   const userDetail = {
-    //     name: "Admin",
-    //     role: "Administration",
-    //     email: values.email,
-    //     token: values.password,
-    //   };
-    //   dispatch(setUser(userDetail));
-    // } else if (values.email.toLowerCase() === "staff@app.com") {
-    //   const userDetail = {
-    //     name: "Staff",
-    //     role: "Staff",
-    //     email: values.email,
-    //     token: values.password,
-    //   };
-    //   dispatch(setUser(userDetail));
-    // } else if (values.email.toLowerCase() === "writer@app.com") {
-    //   const userDetail = {
-    //     name: "Writer",
-    //     role: "Writer",
-    //     email: values.email,
-    //     token: values.password,
-    //   };
-    //   dispatch(setUser(userDetail));
-    // } else {
-    //   const userDetail = {
-    //     name: "Student",
-    //     role: "Student",
-    //     email: values.email,
-    //     token: values.password,
-    //   };
-    //   dispatch(setUser(userDetail));
-    // }
   };
 
   useEffect(() => {
-    if (authState.token != null) {
+    // if (auth.authenticate) {
+    //   return <Redirect to={"/"} />;
+    // }
+    if (auth.authenticate) {
       history.push("/dashboard");
       return;
     }
@@ -96,32 +74,35 @@ export default function SignIn() {
             <img src="assets/img/login.png" className="img-fluid" />
           </div>
           <div className="col-lg-4 formSection">
-            <h1 style={{ fontSize: 28 }}>Forgot Password!</h1>
+            <h1 style={{ fontSize: 28 }}>Login!</h1>
             <p className="mb-4 mt-2" style={{ fontSize: 16 }}>
               Log in to continue
             </p>
             <div className="col-lg-12">
-              <Form onFinish={handleSignin} initialValues={""}>
+              <form onSubmit={handleSignin}>
                 <div className="col-lg-12">
                   <div className="col-lg-12">
                     <label className="labeltext">Email (*)</label>
-                    <Form.Item
+                    {/* <Form.Item
                       name="email"
                       rules={[
                         { required: true, message: "Please input your Email!" },
                       ]}
-                    >
-                      <input
-                        type="text"
-                        placeholder="john@yahoo.com"
-                        className="FormInput"
-                      />
-                    </Form.Item>
+                    > */}
+                    <input
+                    required
+                      placeholder="john@yahoo.com"
+                      className="FormInput"
+                      value={email}
+                      type="email"
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                    {/* </Form.Item> */}
                   </div>
                   <div className="col-lg-12">
                     <label className="labeltext">Password (*)</label>
 
-                    <Form.Item
+                    {/* <Form.Item
                       name="password"
                       rules={[
                         {
@@ -129,17 +110,20 @@ export default function SignIn() {
                           message: "Please input your password!",
                         },
                       ]}
-                    >
-                      <input
-                        type="password"
-                        placeholder="*********"
-                        className="FormInput"
-                      />
-                    </Form.Item>
+                    > */}
+                    <input
+                    required
+                      placeholder="*********"
+                      className="FormInput"
+                      value={password}
+                      type="password"
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                    {/* </Form.Item> */}
                   </div>
                   <div className="col-lg-12 text-end">
                     <Link
-                      to="/forgot-password"
+                      // to="/forgot-password"
                       className=""
                       style={{
                         textDecoration: "underline",
@@ -152,22 +136,29 @@ export default function SignIn() {
                     </Link>
                   </div>
                   <div className="col-lg-12 text-center">
-                    <Form.Item>
-                      <button
-                        style={{ border: "none" }}
-                        type="submit"
-                        className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
-                      >
-                        <span>Sign in</span>
-                        <i className="bi bi-arrow-right"></i>
-                      </button>
-                    </Form.Item>
+                    {/* <Form.Item> */}
+                    {loading ? <button
+                      style={{ border: "none" }}
+                      type="submit"
+                      className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
+                    >
+                      <>
+                      <Spin indicator={antIcon} />
+                    </>
+                    </button> : <button
+                      style={{ border: "none" }}
+                      type="submit"
+                      className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
+                    >
+                      <span>Sign in</span>
+                      <i className="bi bi-arrow-right"></i>
+                    </button>}
                   </div>
                   <div className="col-lg-12">
                     <p className="mt-5 text-center">
-                      New to Papersmates?{" "}
+                      New to website?{" "}
                       <Link
-                        to="/sign-up"
+                        // to="/sign-up"
                         className=""
                         style={{
                           color: "#333",
@@ -180,7 +171,7 @@ export default function SignIn() {
                     </p>
                   </div>
                 </div>
-              </Form>
+              </form>
             </div>
           </div>
         </div>

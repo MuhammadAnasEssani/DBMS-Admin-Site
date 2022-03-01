@@ -1,17 +1,10 @@
 import BaseUrl from "./_Domain";
+import axios from "../helper/axios";
 
-function userSigIn(model) {
-  const url = `${BaseUrl}User/login`;
-  return fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      userEmail: model.email,
-      userpassword: model.password,
-    }),
-  }).then((res) => res.json());
+function userSignin(user) {
+  return axios.post("/vendor/signin", {
+      ...user,
+    }).then((res) => res)
 }
 
 function userSignUp(model) {
@@ -68,4 +61,4 @@ function updateProfile(token, model) {
 }
 
 
-export { userSigIn, userSignUp,changePassword,updateProfile };
+export { userSignin, userSignUp,changePassword,updateProfile };

@@ -1,6 +1,7 @@
 import React from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import { useSelector } from "react-redux";
 
 import 'antd/dist/antd.css';
 import "./App.css";
@@ -9,14 +10,13 @@ import { persistor, store } from "../src/store/index";
 import Header from "../src/component/header/Header";
 import Footer from "../src/component/footer/Footer";
 function App() {
+  const auth = useSelector((state) => state.auth);
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <Header />
+    <>
+        {auth.authenticate && <Header />}
         <Routers />
-        <Footer />
-      </PersistGate>
-    </Provider>
+        {auth.authenticate && <Footer />}
+        </>
   );
 }
 

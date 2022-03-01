@@ -3,7 +3,7 @@ import { Table, Button, Space, Input, Popconfirm, Modal } from "antd";
 import { CloseCircleTwoTone } from "@ant-design/icons";
 import { SearchOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Form, Select } from "antd";
 import { ImBin } from "react-icons/im";
 import BreadCrumbs from "../../component/breadcrumbs/BreadCrumbs";
@@ -23,7 +23,8 @@ export default function CategoryList() {
   const [categories, setCategories] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const states = useSelector((state) => state);
-  const authState = states.AuthReducer.user;
+  const auth = useSelector((state) => state.auth);
+  const history = useHistory();
   const drawerState = states.DrawerReducer.State;
 
   const showCategoryEditModal = (category) => {
@@ -33,7 +34,6 @@ export default function CategoryList() {
   };
 
   const handleEditCategory = async (values) => {
-    console.log(values)
     console.log(values.parent.split("+")[0])
     const data = {
       _id: categoryEdit._id,
@@ -229,10 +229,14 @@ export default function CategoryList() {
     return options;
   };
   useEffect(() => {
+    if (!auth.authenticate) {
+      history.push("/");
+      return;
+    }
+  }, []);
+  useEffect(() => {
     fetchCategories();
   }, [change]);
-  // console.log(categories)
-  console.log(categoryEdit)
   return (
     <>
       <Modal

@@ -5,61 +5,30 @@ import { Form, Select } from "antd";
 // import { PlusOutlined } from "@ant-design/icons";
 import { Upload, Button } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-
+import { Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import Notification from "../../component/notification/Notification";
 
 import BreadCrumbs from "../../component/breadcrumbs/BreadCrumbs";
 import { ImBin } from "react-icons/im";
 import { addProduct } from "../../config/api/Product";
 import { getCategories } from "../../config/api/Categories";
+import { useHistory } from "react-router-dom";
 
 export default function AddProduct() {
   const { Option } = Select;
-
+  const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
   const states = useSelector((state) => state);
   const drawerState = states.DrawerReducer.State;
   const [productImage, setProductImage] = useState([]);
   const [change, setChange] = useState(false);
   const [categories, setCategories] = useState([]);
   const [field, setField] = useState("");
-  //   const [previewTitle, setPreviewTitle] = useState("");
-  //   const [previewImage, setPreviewImage] = useState("");
-  //   const [previewVisible, setPreviewVisible] = useState(false);
-  // console.log(fileList)
-
-  //   function getBase64(file) {
-  //     return new Promise((resolve, reject) => {
-  //       const reader = new FileReader();
-  //       reader.readAsDataURL(file);
-  //       reader.onload = () => resolve(reader.result);
-  //       reader.onerror = (error) => reject(error);
-  //     });
-  //   }
-  //   const handleCancel = () => setPreviewVisible(false);
-
-  //   const handlePreview = async (file) => {
-  //     if (!file.url && !file.preview) {
-  //       file.preview = await getBase64(file.originFileObj);
-  //     }
-  //     setPreviewTitle(file.url.substring(file.url.lastIndexOf('/') + 1));
-  //     setPreviewImage(file.preview);
-  //     setPreviewVisible(true);
-  //   };
-  //   const handleChange = ({ filelist }) => {
-  //     console.log({ filelist });
-  //     setFileList([{ filelist }]);
-  //     console.log(fileList);
-  //   };
-
-  //   const uploadButton = (
-  //     <div>
-  //       <PlusOutlined />
-  //       <div style={{ marginTop: 8 }}>Upload</div>
-  //     </div>
-  //   );
-
-  const handleAddProduct = async (values, e) => {
-    // console.log(values.name)
+  const [loading, setLoading] = useState(false);
+  const auth = useSelector((state) => state.auth);
+  const history = useHistory();
+  const handleAddProduct = async (e) => {
+    e.preventDefault();
     var form = new FormData();
     form.append("name", values.name);
     form.append("price", values.price);
@@ -70,29 +39,19 @@ export default function AddProduct() {
       console.log(pic)
       form.append("productPicture", pic);
     }
-  //   for (var key of form.entries()) {
-  //     console.log(key[0] + ', ' + key[1]);
-  // }
     const res = await addProduct(form);
     if (res.status === 201) {
-      // e.preventDefault();
       Notification("Product Department", "Product Added Sucessfully", "Success")
-      // values = {name: "", price: "",quantity: "",description: ""}
       setProductImage([])
       return
     }
     if (res.status === 400) {
-      // console.log(res.data.message)
       Notification("Product Department", res.data.message, "Error" )
       return
     }
   };
-  //   const handleRemoveImage = (e) => {
-  //     console.log(e.target.id)
-  //   }
   const handleProductImage = (e) => {
     setProductImage([...productImage, e.target.files[0]]);
-    // console.log(productImage);
   };
   const fetchCategories = async () => {
     const res = await getCategories();
@@ -110,15 +69,17 @@ export default function AddProduct() {
     }
     return options;
   };
-  //   console.log(productImage)
-  // console.log(fileList)
-  //   console.log(productImage)
   useEffect(() => {
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    if (!auth.authenticate) {
+      history.push("/");
+      return;
+    }
+  }, []);
   useEffect(() => {}, [change]);
-  // console.log(categories)
-  // console.log(productImage);
   return (
     <section id="Crud" className="hero d-flex align-items-center">
       <div className="container ">
@@ -135,7 +96,7 @@ export default function AddProduct() {
             <div className=" col-lg-11 dashboardSections itempadding">
               <h1 className="mb-4">Enter Writer Information</h1>
 
-              <Form onFinish={handleAddProduct} initialValues={""}>
+              <form onSubmit={handleAddProduct}>
                 <div className="row">
                   <div className="col-lg-5">
                     <label className="labeltext">Product Name: (*)</label>
@@ -293,12 +254,25 @@ export default function AddProduct() {
                     </Form.Item>
                   </div>
                   <div className="col-lg-12">
-                    <Form.Item>
-                      <button className="btn btn-get-started">Submit</button>
-                    </Form.Item>
+                  {loading ? <button
+                      style={{ border: "none" }}
+                      type="submit"
+                      className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
+                    >
+                      <>
+                      <Spin indicator={antIcon} />
+                    </>
+                    </button> : <button
+                      style={{ border: "none" }}
+                      type="submit"
+                      className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
+                    >
+                      <span>Sign in</span>
+                      <i className="bi bi-arrow-right"></i>
+                    </button>}
                   </div>
                 </div>
-              </Form>
+              </form>
             </div>
           </div>
         </div>

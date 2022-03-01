@@ -3,11 +3,9 @@ import { useSelector } from "react-redux";
 import {Link} from 'react-router-dom';
 
 export default function Footer() {
-  const state = useSelector((state) => state);
-  const authState = state.AuthReducer.user;
+  const auth = useSelector((state) => state.auth);
   return (
     <>
-      {authState.token != null ? (
          <footer id="footer" className="footer">
          <div className="container">
            <div className="copyright">
@@ -20,9 +18,6 @@ export default function Footer() {
            {/* <div className="credits"></div> */}
          </div>
        </footer>
-      
-    
-      ) : null}
     </>
   );
 }

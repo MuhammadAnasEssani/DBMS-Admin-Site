@@ -12,6 +12,7 @@ import BreadCrumbs from "../../component/breadcrumbs/BreadCrumbs";
 import { ImBin } from "react-icons/im";
 import { addProduct } from "../../config/api/Product";
 import { addCategory, getCategories } from "../../config/api/Categories";
+import { useHistory } from "react-router-dom";
 
 export default function AddProduct() {
   const { Option } = Select;
@@ -21,6 +22,8 @@ export default function AddProduct() {
   const [productImage, setProductImage] = useState([]);
   const [change, setChange] = useState(false);
   const [categories, setCategories] = useState([]);
+  const auth = useSelector((state) => state.auth);
+  const history = useHistory();
 
   const handleAddCategory = async (values) => {
     const res = await addCategory(values);
@@ -49,6 +52,12 @@ export default function AddProduct() {
     }
     return options;
   };
+  useEffect(() => {
+    if (!auth.authenticate) {
+      history.push("/");
+      return;
+    }
+  }, []);
   useEffect(() => {
     fetchCategories();
   }, []);

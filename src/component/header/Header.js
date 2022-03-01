@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Drawer } from "antd";
-import { unSetUser } from "../../store/actions/AuthAction";
-import { setDrawerState, unSetDrawerState  } from "../../store/actions/DrawerState";
+
 
 import $ from "jquery";
 
@@ -12,11 +11,11 @@ import AdminNav from "../menus/AdminNav";
 import StaffNav from "../menus/StaffNav";
 import WriterNav from "../menus/WriterNav";
 import StudentNav from "../menus/StudentNav";
+import { setDrawerState, unSetDrawerState } from "../../store/actions/DrawerState";
 
 export default function Header() {
   var title = "Admin";
-  const state = useSelector((state) => state);
-  const authState = state.AuthReducer.user;
+  const auth = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const history = useHistory();
   const [visible, setVisible] = useState(true);
@@ -37,8 +36,8 @@ export default function Header() {
     removeStyle();
   };
   const handleLogout = () => {
-    dispatch(unSetUser());
-    history.push("/");
+    // dispatch(unSetUser());
+    // history.push("/");
   };
 
   useEffect(() => {
@@ -59,7 +58,7 @@ export default function Header() {
             </div>
 
             <Drawer
-              title={`Welcome ${authState.name}`}
+              title={`Welcome ${auth.user.fullName}`}
               placement="left"
               closable={true}
               onClose={onClose}

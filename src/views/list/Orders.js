@@ -3,7 +3,7 @@ import { Table, Button, Space, Input, Popconfirm } from "antd";
 import { CloseCircleTwoTone } from "@ant-design/icons";
 import { SearchOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 import BreadCrumbs from "../../component/breadcrumbs/BreadCrumbs";
 import { OrderList } from "../../config/api/OrdersAPI";
@@ -12,7 +12,8 @@ export default function Orders() {
   const [state, setState] = useState({});
   const [searchInput, setSearchInput] = useState();
   const states = useSelector((state) => state);
-  const authState = states.AuthReducer.user;
+  const auth = useSelector((state) => state.auth);
+  const history = useHistory();
   const drawerState = states.DrawerReducer.State;
 
   const [Isloading, setIsloading] = useState(true);
@@ -20,7 +21,7 @@ export default function Orders() {
 
   const HandleorderList = async () => {
     try {
-      var res = await OrderList(authState.token);
+      var res = await OrderList(auth.token);
       if (res.Message != "Success") {
         console.log(res.Message);
         setIsloading(false);
@@ -285,13 +286,13 @@ export default function Orders() {
       key: "action",
       render: (text, record, index) => (
         <div className="d-sm-inline-flex gap-2 actionDiv">
-          {authState.role.toLowerCase() === "student" ? (
+          {auth.user.role.toLowerCase() === "student" ? (
             <Link
               className="bi bi-eye actionBtn"
               to={`/order-details/${record.key}`}
               onClick={() => console.log(record.key)}
             ></Link>
-          ) : authState.role.toLowerCase() === "writer" ? (
+          ) : auth.user.role.toLowerCase() === "writer" ? (
             <>
               <Link
                 className="bi bi-eye actionBtn"
@@ -329,7 +330,12 @@ export default function Orders() {
       ),
     },
   ];
-
+  useEffect(() => {
+    if (!auth.authenticate) {
+      history.push("/");
+      return;
+    }
+  }, []);
   useEffect(() => {
     HandleorderList();
   }, []);

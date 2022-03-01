@@ -10,7 +10,7 @@ import ChangePassword from "../../component/changePassword/ChangePassword";
 
 export default function WriterDashboard() {
   const state = useSelector((state) => state);
-  const authState = state.AuthReducer.user;
+  // const authState = state.AuthReducer.user;
   const drawerState = state.DrawerReducer.State;
 
 

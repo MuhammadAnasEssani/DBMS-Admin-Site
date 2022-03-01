@@ -4,8 +4,7 @@ import { useSelector } from "react-redux";
 
 export default function IntroCard(props) {
   const { model, editURl, changeURL, onclick } = props;
-  const state = useSelector((state) => state);
-  const authState = state.AuthReducer.user;
+  const auth = useSelector((state) => state.auth);
   return (
     <div className="col-lg-12 dashboardSections itempadding">
       <div
@@ -14,8 +13,8 @@ export default function IntroCard(props) {
       >
         <img src="assets/img/user.jpg" className="DashboardImage" />
         <div className="justify-content-center align-content-center align-self-center">
-          <h1 style={{ fontSize: 24, marginTop: 10 }}>Mr. {authState.name}</h1>{" "}
-          <p>{authState.role}</p>
+          <h1 style={{ fontSize: 24, marginTop: 10 }}>Mr. {auth.user.fullName}</h1>{" "}
+          <p>{auth.user.role}</p>
         </div>
       </div>
       <div className="col-lg-12 mt-4 " style={{ padding: 10 }}>
@@ -23,13 +22,13 @@ export default function IntroCard(props) {
           <tbody>
             <tr>
               <th>Email:</th>
-              <td>{authState.email}</td>
+              <td>{auth.user.email}</td>
             </tr>
             <tr>
               <th>Phone:</th>
-              <td>{authState.phone}</td>
+              <td>03353507699</td>
             </tr>
-            {authState.academiclevel != null ? (
+            {/* {authState.academiclevel != null ? (
               <>
                 <tr>
                   <th>Academic level :</th>
@@ -40,7 +39,7 @@ export default function IntroCard(props) {
                   <td>{authState.academiclevel}</td>
                 </tr>
               </>
-            ) : null}
+            ) : null} */}
           </tbody>
         </table>
       </div>
