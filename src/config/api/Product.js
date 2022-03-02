@@ -13,7 +13,7 @@ function  addProduct(form) {
 }
 
 function getProductsByVendor(model) {
-  return axios.post(`/product/getProducts`);
+  return axios.post(`/product/getProductsByVendor`);
 }
 
 function  editProduct(form) {

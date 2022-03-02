@@ -20,6 +20,13 @@ export default function AddProduct() {
   const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
   const states = useSelector((state) => state);
   const drawerState = states.DrawerReducer.State;
+  const [productName, setProductName] = useState('');
+  const [productPrice, setProductPrice] = useState('');
+  const [productDesc, setProductDesc] = useState('');
+  const [productCategory, setProductCategory] = useState('');
+  const [productQuantity, setProductQuantity] = useState('');
+  const [productDiscount, setProductDiscount] = useState(0)
+  const [productType, setProductType] = useState('normal')
   const [productImage, setProductImage] = useState([]);
   const [change, setChange] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -30,24 +37,36 @@ export default function AddProduct() {
   const handleAddProduct = async (e) => {
     e.preventDefault();
     var form = new FormData();
-    form.append("name", values.name);
-    form.append("price", values.price);
-    form.append("description", values.description);
-    form.append("quantity", values.quantity);
-    form.append("category", values.category);
+    form.append("name", productName);
+    form.append("price", productPrice);
+    form.append("description", productDesc);
+    form.append("quantity", productQuantity);
+    form.append("category", productCategory);
+    form.append("discount", productDiscount);
+    form.append("type", productType);
     for (let pic of productImage) {
-      console.log(pic)
       form.append("productPicture", pic);
     }
-    const res = await addProduct(form);
-    if (res.status === 201) {
-      Notification("Product Department", "Product Added Sucessfully", "Success")
-      setProductImage([])
-      return
-    }
-    if (res.status === 400) {
-      Notification("Product Department", res.data.message, "Error" )
-      return
+    try {
+      const res = await addProduct(form);
+      if (res.status === 201) {
+        Notification("Product Department", res.data.message, "Success")
+        setProductName("")
+        setProductDesc("")
+        setProductCategory("")
+        setProductDiscount(0)
+        setProductPrice("")
+        setProductQuantity("")
+        setProductType("normal")
+        setProductImage([])
+        return
+      } else {
+        Notification("Product Department", res.data.message, "Error")
+        return
+      }
+    } catch (err) {
+      console.log(err)
+      Notification("Product Department", "Something went wrong", "Error")
     }
   };
   const handleProductImage = (e) => {
@@ -70,16 +89,14 @@ export default function AddProduct() {
     return options;
   };
   useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  useEffect(() => {
     if (!auth.authenticate) {
       history.push("/");
       return;
     }
+    fetchCategories();
   }, []);
-  useEffect(() => {}, [change]);
+
+  useEffect(() => { }, [change]);
   return (
     <section id="Crud" className="hero d-flex align-items-center">
       <div className="container ">
@@ -98,23 +115,29 @@ export default function AddProduct() {
 
               <form onSubmit={handleAddProduct}>
                 <div className="row">
-                  <div className="col-lg-5">
+                  <div className="col-lg-6">
                     <label className="labeltext">Product Name: (*)</label>
-                    <Form.Item name="name">
-                      <input type="text" required className="FormInput" />
-                    </Form.Item>
+                    {/* <Form.Item name="name"> */}
+                    <input type="text" required className="FormInput" value={productName}
+                      placeholder='Product Name'
+                      onChange={(e) => setProductName(e.target.value)} />
+                    {/* </Form.Item> */}
                   </div>
-                  <div className="col-lg-5 offset-xl-1">
+                  <div className="col-lg-6">
                     <label className="labeltext">Product Price: (*)</label>
-                    <Form.Item name="price">
-                      <input type="number" required className="FormInput" />
-                    </Form.Item>
+                    {/* <Form.Item name="price"> */}
+                    <input type="number" required className="FormInput" value={productPrice}
+                      placeholder='Product Price'
+                      onChange={(e) => setProductPrice(e.target.value)} />
+                    {/* </Form.Item> */}
                   </div>
-                  <div className="col-lg-5">
+                  <div className="col-lg-6">
                     <label className="labeltext">Product Quantity: (*)</label>
-                    <Form.Item name="quantity">
-                      <input type="number" required className="FormInput" />
-                    </Form.Item>
+                    {/* <Form.Item name="quantity"> */}
+                    <input type="number" required className="FormInput" value={productQuantity}
+                      placeholder='Product Quantity'
+                      onChange={(e) => setProductQuantity(e.target.value)} />
+                    {/* </Form.Item> */}
                   </div>
 
                   {/* <div className="col-lg-5 offset-xl-1">
@@ -124,23 +147,25 @@ export default function AddProduct() {
                     </Form.Item>
                   </div> */}
 
-                  <div className="col-lg-5 offset-xl-1">
+                  <div className="col-lg-6">
                     <label className="labeltext">Category : (*)</label>
-                    <Form.Item name="category">
-                      <select
-                        className="FormInput"
-                        name="cars"
-                        id="cars"
-                        required
-                      >
-                        <option value="">None</option>
-                        {createCategoryList(categories).map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.name}
-                          </option>
-                        ))}
-                      </select>
-                      {/* <Select
+                    {/* <Form.Item name="category"> */}
+                    <select
+                      className="FormInput"
+                      name="cars"
+                      id="cars"
+                      required
+                      value={productCategory}
+                      onChange={(e) => setProductCategory(e.target.value)}
+                    >
+                      <option value="">None</option>
+                      {createCategoryList(categories).map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.name}
+                        </option>
+                      ))}
+                    </select>
+                    {/* <Select
                         size={"large"}
                         mode="multiple"
                         showSearch
@@ -162,17 +187,27 @@ export default function AddProduct() {
                           Creative Writing
                         </Option>
                       </Select> */}
-                    </Form.Item>
+                    {/* </Form.Item> */}
                   </div>
-                  <div className="col-lg-11">
+                  <div className="col-lg-6">
+                    <label className="labeltext">Product Discount</label>
+                    {/* <Form.Item name="quantity"> */}
+                    <input type="number" className="FormInput" value={productDiscount}
+                      placeholder='Product Discount'
+                      onChange={(e) => setProductDiscount(e.target.value)} />
+                    {/* </Form.Item> */}
+                  </div>
+                  <div className="col-lg-12">
                     <label className="labeltext">
                       Product Description: (*)
                     </label>
-                    <Form.Item name="description">
-                      <textarea type="text" required className="FormInput" />
-                    </Form.Item>
+                    {/* <Form.Item name="description"> */}
+                    <textarea type="text" required className="FormInput" value={productDesc}
+                      placeholder='Product Description'
+                      onChange={(e) => setProductDesc(e.target.value)} style={{ height: "110px" }} />
+                    {/* </Form.Item> */}
                   </div>
-                  <div className="col-lg-5">
+                  <div className="col-lg-6">
                     <label className="labeltext">Upload Images: (*)</label>
                     {/* <Upload
                       action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
@@ -215,59 +250,80 @@ export default function AddProduct() {
                     </Form.Item> */}
                     {productImage.length > 0
                       ? productImage.map((pic, index) => (
-                          <div
-                            key={index}
-                            style={{
-                              height: "35px",
-                              margin: "1px",
-                              width: "100%",
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "center",
-                              border: "1px solid red",
+                        <div
+                          key={index}
+                          style={{
+                            height: "35px",
+                            margin: "1px",
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            border: "1px solid red",
+                          }}
+                        >
+                          <div>{JSON.stringify(pic.name)}</div>
+                          <ImBin
+                            id={pic}
+                            style={{ cursor: "pointer" }}
+                            onClick={() => {
+                              // console.log(index)
+                              // console.log(pic)
+                              productImage.splice(index, 1);
+                              {
+                                change ? setChange(false) : setChange(true);
+                              }
+                              // console.log(productImage);
                             }}
-                          >
-                            <div>{JSON.stringify(pic.name)}</div>
-                            <ImBin
-                              id={pic}
-                              style={{ cursor: "pointer" }}
-                              onClick={() => {
-                                // console.log(index)
-                                // console.log(pic)
-                                productImage.splice(index,1);
-                                {
-                                  change ? setChange(false) : setChange(true);
-                                }
-                                // console.log(productImage);
-                              }}
-                            />
-                          </div>
-                        ))
+                          />
+                        </div>
+                      ))
                       : null}
-                    <Form.Item>
-                      <input
-                        required
-                        type="file"
-                        name="productImage"
-                        onChange={handleProductImage}
-                      />
-                    </Form.Item>
+                    <input
+                      required
+                      type="file"
+                      name="productImage"
+                      onChange={handleProductImage}
+                    />
+                  </div>
+                  <div className="col-lg-6">
+                    <input
+                      type="checkbox"
+                      name="Maccs"
+                      color="secondary"
+                      size="18"
+                      class="CheckBox__SyledCheckBox-sc-1go6jlo-0 gOojgn"
+                      value="Maccs"
+                      id="0.8918393257508421"
+                      onChange={() => {
+                        productType == "normal" ? setProductType("featured") : setProductType("normal")
+                      }}
+                    />
+                    <label for="0.8918393257508421">
+                      <span
+                        font-size="14px"
+                        color="inherit"
+                        class="Typography-sc-1nbqu5-0 grIwdh"
+                      >
+                        Featured Product
+                      </span>
+                    </label>
                   </div>
                   <div className="col-lg-12">
-                  {loading ? <button
+                    {loading ? <button
                       style={{ border: "none" }}
                       type="submit"
                       className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
                     >
                       <>
-                      <Spin indicator={antIcon} />
-                    </>
+                        <Spin indicator={antIcon} />
+                      </>
                     </button> : <button
                       style={{ border: "none" }}
                       type="submit"
                       className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
                     >
-                      <span>Sign in</span>
+                      <span>Add Product</span>
                       <i className="bi bi-arrow-right"></i>
                     </button>}
                   </div>

@@ -191,7 +191,10 @@ export default function MyProducts() {
           no: index + 1,
           name: product.name,
           price: product.price,
+          discount: product.discount,
           quantity: product.quantity,
+          type: product.type,
+          status: product.status,
           category: product.category.name,
           action: (
             <div className="d-sm-inline-flex gap-2 actionDiv">
@@ -224,7 +227,7 @@ export default function MyProducts() {
       responsive: ["md"],
     },
     {
-      title: "Student Name",
+      title: "Product Name",
       dataIndex: "name",
       key: "name",
       ...getColumnSearchProps("name"),
@@ -233,13 +236,28 @@ export default function MyProducts() {
       title: "Price",
       dataIndex: "price",
       key: "price",
-      ...getColumnSearchProps("type"),
+      ...getColumnSearchProps("price"),
+    },
+    {
+      title: "Discount",
+      dataIndex: "discount",
+      key: "discount",
     },
     {
       title: "Quantity",
       dataIndex: "quantity",
       key: "quantity",
-      ...getColumnSearchProps("type"),
+      ...getColumnSearchProps("quantity"),
+    },
+    {
+      title: "Product Type",
+      dataIndex: "type",
+      key: "type",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
     },
     {
       title: "Category",
@@ -255,17 +273,43 @@ export default function MyProducts() {
   ];
 
   const fetchProducts = async () => {
-    const res = await getProductsByVendor();
-    if (res.status === 200) {
-      setProducts(res.data.products);
-    } else {
-      console.log(res);
+    try{
+      const res = await getProductsByVendor();
+      if (res.status === 200) {
+        setProducts(res.data.products);
+      } else {
+        Notification(
+          "Product Department",
+          res.data.message,
+          "Error"
+        );
+      }
+    }catch(err){
+      Notification(
+        "Product Department",
+        "Something went wrong",
+        "Error"
+      );
     }
   };
   const fetchCategories = async () => {
-    const res = await getCategories();
-    if (res.status === 200) {
-      setCategories(res.data.categoryList);
+    try{
+      const res = await getCategories();
+      if (res.status === 200) {
+        setCategories(res.data.categoryList);
+      }else{
+        Notification(
+          "Product Department",
+          res.data.message,
+          "Error"
+        );
+      }
+    }catch(err){
+      Notification(
+        "Product Department",
+        "Something went wrong",
+        "Error"
+      );
     }
   };
 
