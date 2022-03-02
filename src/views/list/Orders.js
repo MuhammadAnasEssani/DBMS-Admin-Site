@@ -6,7 +6,8 @@ import { useSelector } from "react-redux";
 import { Link, useHistory } from "react-router-dom";
 
 import BreadCrumbs from "../../component/breadcrumbs/BreadCrumbs";
-import { OrderList } from "../../config/api/OrdersAPI";
+import { getOrdersByVendor } from "../../config/api/OrdersAPI";
+import Notification from "../../component/notification/Notification";
 
 export default function Orders() {
   const [state, setState] = useState({});
@@ -16,21 +17,21 @@ export default function Orders() {
   const history = useHistory();
   const drawerState = states.DrawerReducer.State;
 
-  const [Isloading, setIsloading] = useState(true);
+  // const [Isloading, setIsloading] = useState(true);
   const [OrdersModel, setOrdersModel] = useState([]);
 
   const HandleorderList = async () => {
     try {
-      var res = await OrderList(auth.token);
-      if (res.Message != "Success") {
-        console.log(res.Message);
-        setIsloading(false);
-        return;
-      }
-      var resModel = res.Data;
-      setOrdersModel(resModel);
-      setIsloading(false);
-    } catch (error) {}
+      var res = await getOrdersByVendor();
+      console.log(res)
+      // if (res.Message != "Success") {
+      //   return;
+      // }
+      // var resModel = res.Data;
+      // setOrdersModel(resModel);
+    } catch (error) {
+
+    }
   };
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -361,9 +362,9 @@ export default function Orders() {
               }}
             >
               <Table
-                loading={Isloading}
+                // loading={Isloading}
                 columns={columns}
-                dataSource={OrdersModel}
+                dataSource={data}
                 pagination={{ pageSize: 5 }}
               />
             </div>

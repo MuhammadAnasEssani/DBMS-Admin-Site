@@ -9,5 +9,10 @@ function addCategory(model) {
     ...model
 })
 }
+function updateCategory(model) {
+  return axios.post('/category/update', {
+    ...model
+})
+}
 
-export { getCategories, addCategory };
+export { getCategories, addCategory,updateCategory };

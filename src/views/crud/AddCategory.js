@@ -5,7 +5,8 @@ import { Form, Select } from "antd";
 // import { PlusOutlined } from "@ant-design/icons";
 import { Upload, Button } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-
+import { Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import Notification from "../../component/notification/Notification";
 
 import BreadCrumbs from "../../component/breadcrumbs/BreadCrumbs";
@@ -16,40 +17,72 @@ import { useHistory } from "react-router-dom";
 
 export default function AddProduct() {
   const { Option } = Select;
-
+  const [loading, setLoading] = useState(false);
+  const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
   const states = useSelector((state) => state);
   const drawerState = states.DrawerReducer.State;
-  const [productImage, setProductImage] = useState([]);
+  const [categoryName, setCategoryName] = useState('');
+    const [parentCategory, setParentCategory] = useState(',');
+    
   const [change, setChange] = useState(false);
   const [categories, setCategories] = useState([]);
   const auth = useSelector((state) => state.auth);
   const history = useHistory();
 
-  const handleAddCategory = async (values) => {
-    const res = await addCategory(values);
-    if (res.status === 201) {
-      Notification("Category Department", "Category Added Sucessfully", "Success")
-      return
+  const handleAddCategory = async (e) => {
+    e.preventDefault();
+    const model= {
+      name: categoryName,
+      parentId: parentCategory.split(",")[0],
+      parentName: parentCategory.split(",")[1]
     }
-    if (res.status === 400) {
-      Notification("Category Department", res.data.message, "Error" )
-      return
+    // console.log(model)
+    try{
+      const res = await addCategory(model);
+      if (res.status === 201) {
+        Notification("Category Department", "Category Added Sucessfully", "Success")
+        setCategoryName("")
+        return
+      }else {
+        Notification("Category Department", res.data.message, "Error" )
+        return
+      }
+    }catch(err){
+      Notification("Category Department", "Something went wrong", "Error" )
     }
   };
   const fetchCategories = async () => {
-    const res = await getCategories();
-    if (res.status === 200) {
-      setCategories(res.data.categoryList);
+    try{
+      const res = await getCategories();
+      if (res.status === 200) {
+        setCategories(res.data.categoryList);
+      }else{
+        Notification(
+          "Categories",
+          res.data.message,
+          "Error"
+        );
+      }
+    }catch(err){
+      Notification(
+        "Categories",
+        "Something went wrong",
+        "Error"
+      );
     }
   };
 
-  const createCategoryList = (categories, options = []) => {
+  const createCategoryList = (categories,options = []) => {
+    // debugger;
+    // let options = [];
     for (let category of categories) {
       options.push({ value: category._id, name: category.name });
+      //  console.log(category)
       if (category.children.length > 0) {
         createCategoryList(category.children, options);
       }
     }
+    // let myCategories = [];
     return options;
   };
   useEffect(() => {
@@ -60,7 +93,12 @@ export default function AddProduct() {
   }, []);
   useEffect(() => {
     fetchCategories();
+    // console.log(createCategoryList(categories))
   }, []);
+  // if(categories.length > 0){
+  //   console.log(createCategoryList(categories))
+  // }
+  // console.log(categories)
   return (
     <section id="Crud" className="hero d-flex align-items-center">
       <div className="container ">
@@ -77,39 +115,60 @@ export default function AddProduct() {
             <div className=" col-lg-11 dashboardSections itempadding">
               <h1 className="mb-4">Enter Writer Information</h1>
 
-              <Form onFinish={handleAddCategory} initialValues={""}>
+              <form onSubmit={handleAddCategory} >
                 <div className="row">
                   <div className="col-lg-5">
                     <label className="labeltext">Category Name: (*)</label>
-                    <Form.Item name="name">
-                      <input type="text" required className="FormInput" />
-                    </Form.Item>
+                    {/* <Form.Item name="name"> */}
+                      <input type="text" required className="FormInput" value={categoryName}
+                      placeholder='Product Name'
+                      onChange={(e) => setCategoryName(e.target.value)}/>
+                    {/* </Form.Item> */}
                   </div>
 
                   <div className="col-lg-5 offset-xl-1">
                     <label className="labeltext">Parent: (*)</label>
-                    <Form.Item name="parentId">
                       <select
                         className="FormInput"
                         name="cars"
                         id="cars"
+                        value={parentCategory}
+                      onChange={(e) => setParentCategory(e.target.value)}
                       >
                         <option value="">None</option>
+                        {/* <option > */}
+                        {/* <option>
+                        {createCategoryList(categories)}
+                        </option> */}
+                          {/* </option> */}
+                        {/* {createCategoryList(categories)} */}
                         {createCategoryList(categories).map((option) => (
-                          <option key={option.value} value={option.value}>
+                          <option key={option.value} value={option.value+","+option.name}>
                             {option.name}
                           </option>
                         ))}
                       </select>
-                    </Form.Item>
                   </div>
                   <div className="col-lg-12">
-                    <Form.Item>
-                      <button className="btn btn-get-started">Submit</button>
-                    </Form.Item>
+                  {loading ? <button
+                      style={{ border: "none" }}
+                      type="submit"
+                      className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
+                    >
+                      <>
+                        <Spin indicator={antIcon} />
+                      </>
+                    </button> : <button
+                      style={{ border: "none" }}
+                      type="submit"
+                      className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
+                    >
+                      <span>Add Category</span>
+                      <i className="bi bi-arrow-right"></i>
+                    </button>}
                   </div>
                 </div>
-              </Form>
+              </form>
             </div>
           </div>
         </div>

@@ -8,20 +8,26 @@ import { Form, Select } from "antd";
 import { ImBin } from "react-icons/im";
 import BreadCrumbs from "../../component/breadcrumbs/BreadCrumbs";
 import { deleteProductById, editProduct, getProductsByVendor } from "../../config/api/Product";
-import { getCategories } from "../../config/api/Categories";
+import { getCategories, updateCategory } from "../../config/api/Categories";
 import Notification from "../../component/notification/Notification";
+import { Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 export default function CategoryList() {
   const [state, setState] = useState({});
+  const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
   const [searchInput, setSearchInput] = useState();
   const [viewVisible, setViewVisible] = useState(false);
   const [editCategoryVisible, setEditCategoryVisible] = useState(false);
   const [categoryEdit, setCategoryEdit] = useState(null);
-  const [productImage, setProductImage] = useState([]);
+  const [categoryId, setCategoryId] = useState('');
+  const [categoryName, setCategoryName] = useState('');
+    const [parentCategory, setParentCategory] = useState(',');
   const [change, setChange] = useState(false);
   const [changeAgain, setChangeAgain] = useState(false);
   const [categories, setCategories] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
+  const [loading, setLoading] = useState(false);
   const states = useSelector((state) => state);
   const auth = useSelector((state) => state.auth);
   const history = useHistory();
@@ -29,19 +35,43 @@ export default function CategoryList() {
 
   const showCategoryEditModal = (category) => {
     // console.log(category)
-    setCategoryEdit(category)
+    // setCategoryEdit(category)
+    // console.log(category)
+    setCategoryId(category._id)
+    setCategoryName(category.name)
+    setParentCategory(category.parentId+","+category.parentName)
     setEditCategoryVisible(true)
   };
 
-  const handleEditCategory = async (values) => {
-    console.log(values.parent.split("+")[0])
-    const data = {
-      _id: categoryEdit._id,
-       
+  const handleEditCategory = async (e) => {
+    e.preventDefault();
+    const model= {
+      _id: categoryId,
+      name: categoryName,
+      parentId: parentCategory.split(",")[0],
+      parentName: parentCategory.split(",")[1]
     }
-  };
-  const handleProductImage = (e) => {
-    setProductImage([...productImage, e.target.files[0]]);
+    // console.log(model)
+    try{
+      const res = await updateCategory(model);
+      if (res.status === 201) {
+        Notification("Category Department", "Category Updated Sucessfully", "Success")
+        {change ? setChange(false) : setChange(true)}
+        setEditCategoryVisible(false)
+        return
+      }else {
+        Notification("Category Department", res.data.message, "Error" )
+        return
+      }
+    }catch(err){
+      Notification("Category Department", "Something went wrong", "Error" )
+    }
+    // console.log(model)
+    // console.log(values.parent.split("+")[0])
+    // const data = {
+    //   _id: categoryEdit._id,
+       
+    // }
   };
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -167,13 +197,13 @@ export default function CategoryList() {
                 className="bi bi-pencil actionBtn"
                 onClick={() => showCategoryEditModal(category)}
               ></span>
-              <Popconfirm
+              {/* <Popconfirm
                 title="Are you sure？"
                 icon={<CloseCircleTwoTone twoToneColor="Red" />}
                 onConfirm={()=> handleDelete(category._id)}
               >
                 <Link className="bi bi-trash actionBtn"></Link>
-              </Popconfirm>
+              </Popconfirm> */}
             </div>
           ),
         })
@@ -220,6 +250,7 @@ export default function CategoryList() {
 
   const createCategoryList = (categories, options = []) => {
     for (let category of categories) {
+      // console.log(category.children.length)
       // console.log(category)
       options.push({ _id: category._id, name: category.name, parentName: category.parentName, parentId: category.parentId  });
       if (category.children.length > 0) {
@@ -237,6 +268,8 @@ export default function CategoryList() {
   useEffect(() => {
     fetchCategories();
   }, [change]);
+  // console.log(categoryList)
+  // console.log(categories)
   return (
     <>
       <Modal
@@ -257,43 +290,63 @@ export default function CategoryList() {
         }
         width={1000}
       >
-        {categoryEdit != null && (
+        {/* {categoryEdit != null && ( */}
           <>
-          <Form onFinish={handleEditCategory} initialValues={{name: categoryEdit.name,parent: `${categoryEdit.parentId}+${categoryEdit.parentName}` }}>
+          <form onSubmit={handleEditCategory} >
                 <div className="row">
                   <div className="col-lg-5">
                     <label className="labeltext">Category Name: (*)</label>
-                    <Form.Item name="name">
-                      <input type="text" required className="FormInput" />
-                    </Form.Item>
+                    {/* <Form.Item name="name"> */}
+                      <input type="text" required className="FormInput" value={categoryName}
+                      placeholder='Product Name'
+                      onChange={(e) => setCategoryName(e.target.value)} />
+                    {/* </Form.Item> */}
                   </div>
 
                   <div className="col-lg-5 offset-xl-1">
                     <label className="labeltext">Parent: (*)</label>
-                    <Form.Item name="parent">
+                    {/* <Form.Item name="parent"> */}
                       <select
                         className="FormInput"
                         name="cars"
                         id="cars"
+                        value={parentCategory}
+                      onChange={(e) => setParentCategory(e.target.value)}
                       >
-                        <option value="">{categoryEdit.parentName != undefined ? categoryEdit.parentName : "None"}</option>
+                        <option value="">{parentCategory.split(",")[1]}</option>
                         {createCategoryList(categoryList).map((option) => (
-                          <option key={option._id} value={`${option._id}+${option.parentName}`}>
+                          <option key={option._id} value={option._id+","+option.name}>
                             {option.name}
                           </option>
                         ))}
+                        ))}
                       </select>
-                    </Form.Item>
+                    {/* </Form.Item> */}
                   </div>
                   <div className="col-lg-12">
-                    <Form.Item>
-                      <button className="btn btn-get-started">Submit</button>
-                    </Form.Item>
+                    {/* <Form.Item> */}
+                    {loading ? <button
+                      style={{ border: "none" }}
+                      type="submit"
+                      className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
+                    >
+                      <>
+                        <Spin indicator={antIcon} />
+                      </>
+                    </button> : <button
+                      style={{ border: "none" }}
+                      type="submit"
+                      className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
+                    >
+                      <span>Edit Category</span>
+                      <i className="bi bi-arrow-right"></i>
+                    </button>}
+                    {/* </Form.Item> */}
                   </div>
                 </div>
-              </Form>
+              </form>
           </>
-        )}
+        {/* )} */}
       </Modal>
       <section id="List" className="hero d-flex align-items-center">
         <div className="container ">

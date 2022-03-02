@@ -1,26 +1,21 @@
 import BaseUrl from "./_Domain";
+import axios from "../helper/axios";
 
-function OrderList(token) {
-  const url = `${BaseUrl}Order/OrderList`;
+
+function OrderDetails(token, orderid) {
+  const url = `${BaseUrl}Order/OrderListByOrderId?orderId=${orderid}`;
   return fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-
-  }).then((res) => res.json());
+  })
+    .then((res) => console.log(res))
+    .catch((err) => console.log(err));
 }
-function OrderDetails(token,orderid) {
-    const url = `${BaseUrl}Order/OrderListByOrderId?orderId=${orderid}`;
-    return fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res) => console.log(res))
-    .catch((err)=> console.log(err));
-  }
+function getOrdersByVendor(model) {
+  return axios.post(`/order/getCustomerOrdersByVendors`);
+}
 
-export { OrderList,OrderDetails };
+export { OrderDetails, getOrdersByVendor };

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import Notification from "../../component/notification/Notification";
 import { Drawer } from "antd";
 
 
@@ -12,6 +13,7 @@ import StaffNav from "../menus/StaffNav";
 import WriterNav from "../menus/WriterNav";
 import StudentNav from "../menus/StudentNav";
 import { setDrawerState, unSetDrawerState } from "../../store/actions/DrawerState";
+import { authConstants } from "../../store/actions/contants";
 
 export default function Header() {
   var title = "Admin";
@@ -36,6 +38,9 @@ export default function Header() {
     removeStyle();
   };
   const handleLogout = () => {
+      localStorage.clear();
+      dispatch({ type: authConstants.LOGOUT_SUCCESS });
+      Notification("Logout", "Logout Successfully", "Success");
     // dispatch(unSetUser());
     // history.push("/");
   };

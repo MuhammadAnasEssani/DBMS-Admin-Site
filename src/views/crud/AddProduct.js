@@ -73,9 +73,23 @@ export default function AddProduct() {
     setProductImage([...productImage, e.target.files[0]]);
   };
   const fetchCategories = async () => {
-    const res = await getCategories();
-    if (res.status === 200) {
-      setCategories(res.data.categoryList);
+    try{
+      const res = await getCategories();
+      if (res.status === 200) {
+        setCategories(res.data.categoryList);
+      }else{
+        Notification(
+          "Product Department",
+          res.data.message,
+          "Error"
+        );
+      }
+    }catch(err){
+      Notification(
+        "Product Department",
+        "Something went wrong",
+        "Error"
+      );
     }
   };
 
