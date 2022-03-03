@@ -45,7 +45,7 @@ export default function MyProducts() {
     setViewVisible(true);
   };
   const showProductEditModal = (product) => {
-    console.log(product)
+    // console.log(product)
     // setProductEdit(product);
     setProductId(product._id)
     setProductName(product.name)
@@ -62,7 +62,7 @@ export default function MyProducts() {
 
   const handleEditProduct = async (e) => {
     e.preventDefault();
-    console.log(productCategory)
+    // console.log(productCategory)
     // console.log(values)
     var form = new FormData();
     form.append("_id", productId);

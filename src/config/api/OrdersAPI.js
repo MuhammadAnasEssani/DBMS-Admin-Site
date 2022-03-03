@@ -14,8 +14,13 @@ function OrderDetails(token, orderid) {
     .then((res) => console.log(res))
     .catch((err) => console.log(err));
 }
-function getOrdersByVendor(model) {
+function getOrdersByVendor() {
   return axios.post(`/order/getCustomerOrdersByVendors`);
 }
+function updateOrderByVendor(model) {
+  return axios.post(`/vendor/updateOrder`,{
+    ...model
+});
+}
 
-export { OrderDetails, getOrdersByVendor };
+export { OrderDetails, getOrdersByVendor,updateOrderByVendor };

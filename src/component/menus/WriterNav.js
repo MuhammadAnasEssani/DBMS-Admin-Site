@@ -121,6 +121,41 @@ export default function WriterNav() {
       >
         <Link to="/orders">Orders</Link>
       </Menu.Item>
+      <SubMenu
+        key="Offers"
+        icon={
+          <span
+            className="bi bi-journal-bookmark"
+            style={{ fontSize: iconsSize }}
+          ></span>
+        }
+        title="Offers"
+      >
+        <Menu.Item
+          key="7"
+          icon={
+            <span
+              className="bi bi-save"
+              style={{ fontSize: subMenuIconSize }}
+            ></span>
+          }
+        >
+          {" "}
+          <Link to="/add-offers">Add Offer</Link>
+        </Menu.Item>
+        <Menu.Item
+          key="8"
+          icon={
+            <span
+              className="bi bi-save"
+              style={{ fontSize: subMenuIconSize }}
+            ></span>
+          }
+        >
+          {" "}
+          <Link to="/offers">Offers</Link>
+        </Menu.Item>
+      </SubMenu>
     </Menu>
   );
 }

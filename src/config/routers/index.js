@@ -3,6 +3,7 @@ import ForgetPassword from "../../views/auth/ForgetPassword";
 import SignIn from "../../views/auth/SignIn";
 import Signup from "../../views/auth/Signup";
 import AddCategory from "../../views/crud/AddCategory";
+import AddOffer from "../../views/crud/AddOffer";
 import AddProduct from "../../views/crud/AddProduct";
 // import AddStaff from "../../views/crud/AddStaff";
 // import AddWriter from "../../views/crud/AddWriter";
@@ -10,6 +11,7 @@ import AddProduct from "../../views/crud/AddProduct";
 import Dashboard from "../../views/dashboard/Dashboard";
 // import AcademicLevel from "../../views/list/AcademicLevel";
 import CategoryList from "../../views/list/CategoryList";
+import Offers from "../../views/list/Offers";
 // import MyPapers from "../../views/list/MyPapers";
 import Orders from "../../views/list/Orders";
 import MyProducts from "../../views/list/Products";
@@ -136,6 +138,18 @@ const routes = [
     title: "Add Product",
     // isLoginRequired: true,
     component: () => <AddProduct />,
+  },
+  {
+    path: "/add-offers",
+    title: "Add Offer",
+    // isLoginRequired: true,
+    component: () => <AddOffer />,
+  },
+  {
+    path: "/offers",
+    title: "Offers",
+    // isLoginRequired: true,
+    component: () => <Offers />,
   },
   // {
   //   path: "/requested-papers",

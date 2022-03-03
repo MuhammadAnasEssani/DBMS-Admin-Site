@@ -236,15 +236,19 @@ export default function CategoryList() {
     },
   ];
   const fetchCategories = async () => {
-    const res = await getCategories();
-    if (res.status === 200) {
-      setCategoryList(res.data.categoryList)
-      setCategories(createCategoryList(res.data.categoryList));
-      return
-    }
-    if(res.status === 400) {
-      Notification("Category Department", res.data.message, "Error")
-      return
+    try{
+      const res = await getCategories();
+      if (res.status === 200) {
+        setCategoryList(res.data.categoryList)
+        setCategories(createCategoryList(res.data.categoryList));
+        return
+      }
+      if(res.status === 400) {
+        Notification("Category Department", res.data.message, "Error")
+        return
+      } 
+    }catch(err) {
+      Notification("Category Department", "Something went wrong", "Error")
     }
   };
 
@@ -318,7 +322,6 @@ export default function CategoryList() {
                           <option key={option._id} value={option._id+","+option.name}>
                             {option.name}
                           </option>
-                        ))}
                         ))}
                       </select>
                     {/* </Form.Item> */}
