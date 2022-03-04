@@ -6,6 +6,22 @@ function userSignin(user) {
       ...user,
     }).then((res) => res)
 }
+function activateVendor(model) {
+  return axios.post("/activateVendor", {
+      ...model,
+    }).then((res) => res)
+}
+function createVendor(form) {
+  // console.log(form)
+  return axios({
+    method: "post",
+    url: "/vendor/signup",
+    data: form,
+    headers: {
+      "Content-Type": `multipart/form-data; boundary=${form._boundary}`,
+    },
+  }).then((res) => res);
+}
 
 function userSignUp(model) {
   const url = `${BaseUrl}User/register`;
@@ -61,4 +77,4 @@ function updateProfile(token, model) {
 }
 
 
-export { userSignin, userSignUp,changePassword,updateProfile };
+export { userSignin,activateVendor, userSignUp,changePassword,updateProfile,createVendor };

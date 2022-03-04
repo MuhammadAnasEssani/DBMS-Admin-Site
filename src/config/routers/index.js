@@ -1,6 +1,7 @@
 import PageNotFound from "../../views/404/PageNotFound";
 import ForgetPassword from "../../views/auth/ForgetPassword";
 import SignIn from "../../views/auth/SignIn";
+import ActivateAccount from "../../views/ActivateAccount/ActivateAccount";
 import Signup from "../../views/auth/Signup";
 import AddCategory from "../../views/crud/AddCategory";
 import AddOffer from "../../views/crud/AddOffer";
@@ -150,6 +151,12 @@ const routes = [
     title: "Offers",
     // isLoginRequired: true,
     component: () => <Offers />,
+  },
+  {
+    path: "/authentication/activate/:token",
+    title: "Verify Account",
+    // isLoginRequired: true,
+    component: () => <ActivateAccount />,
   },
   // {
   //   path: "/requested-papers",

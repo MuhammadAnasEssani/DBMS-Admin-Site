@@ -158,7 +158,7 @@ export default function SignIn() {
                     <p className="mt-5 text-center">
                       New to website?{" "}
                       <Link
-                        // to="/sign-up"
+                        to="/sign-up"
                         className=""
                         style={{
                           color: "#333",
