@@ -354,6 +354,7 @@ export default function AddProduct() {
                       class="CheckBox__SyledCheckBox-sc-1go6jlo-0 gOojgn"
                       value="Maccs"
                       id="0.8918393257508421"
+                      checked = {productType == "featured" ? "checked" : null}
                       onChange={() => {
                         productType == "normal" ? setProductType("featured") : setProductType("normal")
                       }}
