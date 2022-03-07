@@ -15,6 +15,7 @@ export default function Signup() {
   const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
   const [fName, setfName] = useState("");
   const [lName, setlName] = useState("");
+  const [shopName, setShopName] = useState("");
   const [email, setEmail] = useState("");
   const [description, setDescription] = useState("");
   const [address, setAddress] = useState("");
@@ -37,6 +38,7 @@ export default function Signup() {
     form.append("cpassword", cPassword);
     form.append("description", description);
     form.append("address", address);
+    form.append("shopName", shopName);
     form.append("contactNumber", contactNumber);
     form.append("userImage", profileImage);
     try {
@@ -49,6 +51,7 @@ export default function Signup() {
         setEmail("");
         setDescription("");
         setAddress("");
+        setShopName("");
         setContactNumber("");
         setPassword("");
         setcPassword("");
@@ -223,7 +226,20 @@ export default function Signup() {
                   />
                   {/* </Form.Item> */}
                 </div>
-
+                <div className="col-lg-6">
+                  <label className="labeltext">Shop Name</label>
+                  {/* <Form.Item name="academic-level"> */}
+                  <input
+                    required
+                    type="text"
+                    placeholder="Shop Name"
+                    className="FormInput"
+                    style={{ borderRadius: "10px" }}
+                    value={shopName}
+                    onChange={(e) => setShopName(e.target.value)}
+                  />
+                  {/* </Form.Item> */}
+                </div>
                 <div className="col-lg-12">
                   <label className="labeltext">Description</label>
                   {/* <Form.Item name="description"> */}

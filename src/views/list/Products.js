@@ -12,6 +12,7 @@ import { getCategories } from "../../config/api/Categories";
 import Notification from "../../component/notification/Notification";
 import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
+import { getOffersByVendor } from "../../config/api/Offer";
 
 export default function MyProducts() {
   const [state, setState] = useState({});
@@ -25,12 +26,14 @@ export default function MyProducts() {
   const [change, setChange] = useState(false);
   const [changeAgain, setChangeAgain] = useState(false);
   const [product, setProducts] = useState([]);
+  const [offers, setOffers] = useState([]);
   const [categories, setCategories] = useState([]);
   const [productId, setProductId] = useState('');
   const [productName, setProductName] = useState('');
   const [productPrice, setProductPrice] = useState('');
   const [productDesc, setProductDesc] = useState('');
   const [productCategory, setProductCategory] = useState('');
+  const [productOffer, setProductOffer] = useState('');
   const [productCategoryName, setProductCategoryName] = useState('');
   const [productQuantity, setProductQuantity] = useState('');
   const [productDiscount, setProductDiscount] = useState(0)
@@ -45,13 +48,15 @@ export default function MyProducts() {
     setViewVisible(true);
   };
   const showProductEditModal = (product) => {
-    // console.log(product)
+    console.log(product)
     // setProductEdit(product);
     setProductId(product._id)
     setProductName(product.name)
     setProductPrice(product.price)
     setProductDesc(product.description)
     setProductCategory(product.category._id)
+    {product.offer && setProductOffer(product.offer._id)}
+    // setProductOffer(product.offer._id)
     setProductCategoryName(product.category.name)
     setProductQuantity(product.quantity)
     setProductDiscount(product.discount)
@@ -72,15 +77,16 @@ export default function MyProducts() {
     form.append("quantity", productQuantity);
     form.append("category", productCategory);
     form.append("discount", productDiscount);
+    form.append("offer", productOffer);
     form.append("type", productType);
     if (productImage.length > 0) {
       for (let pic of productImage) {
         form.append("productPicture", pic);
       }
     }
-    for (var key of form.entries()) {
-      console.log(key[0] + ", " + key[1]);
-    }
+    // for (var key of form.entries()) {
+    //   console.log(key[0] + ", " + key[1]);
+    // }
     try{
       const res = await editProduct(form);
       if (res.status === 201) {
@@ -343,6 +349,26 @@ export default function MyProducts() {
       );
     }
   };
+  const fetchOffers = async () => {
+    try{
+      const res = await getOffersByVendor();
+      if (res.status === 200) {
+        setOffers(res.data.offers);
+      }else{
+        Notification(
+          "Offers",
+          res.data.message,
+          "Error"
+        );
+      }
+    }catch(err){
+      Notification(
+        "Offers",
+        "Something went wrong",
+        "Error"
+      );
+    }
+  };
 
   const createCategoryList = (categories, options = []) => {
     // options.push({
@@ -365,6 +391,7 @@ export default function MyProducts() {
   }, []);
   useEffect(() => {
     fetchCategories();
+    fetchOffers();
   }, []);
   useEffect(() => {
     fetchProducts();
@@ -496,6 +523,29 @@ export default function MyProducts() {
                       {createCategoryList(categories).map((option) => (
                         <option key={option.value} value={option.value}>
                           {option.name}
+                        </option>
+                      ))}
+                    </select>
+                  {/* </Form.Item> */}
+                </div>
+                <div className="col-lg-6">
+                  <label className="labeltext">Offer</label>
+                  {/* <Form.Item name="category"> */}
+                    <select
+                      className="FormInput"
+                      name="cars"
+                      id="cars"
+                      value={productOffer}
+                      onChange={(e) => setProductOffer(e.target.value)}
+                    >
+                      {/* console.log(productEdit.category._id) */}
+                      {/* <option >
+                            {productCategoryName}
+                          </option> */}
+                          {productOffer == "" && <option value="">None</option>}
+                      {offers.map((option) => (
+                        <option key={option._id} value={option._id}>
+                          {option.title}
                         </option>
                       ))}
                     </select>

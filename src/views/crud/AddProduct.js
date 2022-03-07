@@ -14,6 +14,7 @@ import { ImBin } from "react-icons/im";
 import { addProduct } from "../../config/api/Product";
 import { getCategories } from "../../config/api/Categories";
 import { useHistory } from "react-router-dom";
+import { getOffersByVendor } from "../../config/api/Offer";
 
 export default function AddProduct() {
   const { Option } = Select;
@@ -24,12 +25,14 @@ export default function AddProduct() {
   const [productPrice, setProductPrice] = useState('');
   const [productDesc, setProductDesc] = useState('');
   const [productCategory, setProductCategory] = useState('');
+  const [productOffer, setProductOffer] = useState('');
   const [productQuantity, setProductQuantity] = useState('');
   const [productDiscount, setProductDiscount] = useState(0)
   const [productType, setProductType] = useState('normal')
   const [productImage, setProductImage] = useState([]);
   const [change, setChange] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [offers, setOffers] = useState([]);
   const [field, setField] = useState("");
   const [loading, setLoading] = useState(false);
   const auth = useSelector((state) => state.auth);
@@ -43,6 +46,7 @@ export default function AddProduct() {
     form.append("quantity", productQuantity);
     form.append("category", productCategory);
     form.append("discount", productDiscount);
+    form.append("offer", productOffer);
     form.append("type", productType);
     for (let pic of productImage) {
       form.append("productPicture", pic);
@@ -54,6 +58,7 @@ export default function AddProduct() {
         setProductName("")
         setProductDesc("")
         setProductCategory("")
+        setProductOffer("")
         setProductDiscount(0)
         setProductPrice("")
         setProductQuantity("")
@@ -65,7 +70,7 @@ export default function AddProduct() {
         return
       }
     } catch (err) {
-      console.log(err)
+      // console.log(err)
       Notification("Product Department", "Something went wrong", "Error")
     }
   };
@@ -92,6 +97,26 @@ export default function AddProduct() {
       );
     }
   };
+  const fetchOffers = async () => {
+    try{
+      const res = await getOffersByVendor();
+      if (res.status === 200) {
+        setOffers(res.data.offers);
+      }else{
+        Notification(
+          "Offers",
+          res.data.message,
+          "Error"
+        );
+      }
+    }catch(err){
+      Notification(
+        "Offers",
+        "Something went wrong",
+        "Error"
+      );
+    }
+  };
 
   const createCategoryList = (categories, options = []) => {
     for (let category of categories) {
@@ -108,7 +133,9 @@ export default function AddProduct() {
       return;
     }
     fetchCategories();
+    fetchOffers();
   }, []);
+  console.log(offers)
 
   useEffect(() => { }, [change]);
   return (
@@ -211,6 +238,24 @@ export default function AddProduct() {
                       onChange={(e) => setProductDiscount(e.target.value)} />
                     {/* </Form.Item> */}
                   </div>
+                  <div className="col-lg-6">
+                    <label className="labeltext">Offer)</label>
+                    {/* <Form.Item name="category"> */}
+                    <select
+                      className="FormInput"
+                      name="cars"
+                      id="cars"
+                      value={productOffer}
+                      onChange={(e) => setProductOffer(e.target.value)}
+                    >
+                      <option value="">None</option>
+                      {offers.map((option) => (
+                        <option key={option._id} value={option._id}>
+                          {option.title}
+                        </option>
+                      ))}
+                    </select>
+                    </div>
                   <div className="col-lg-12">
                     <label className="labeltext">
                       Product Description: (*)
