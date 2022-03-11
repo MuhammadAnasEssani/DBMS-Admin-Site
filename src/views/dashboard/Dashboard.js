@@ -19,7 +19,7 @@ export default function Dashboard() {
       history.push("/");
       return;
     }
-  }, []);
+  }, [auth.authenticate]);
   return (
     <>
     {/* <StudentDashboard /> */}
