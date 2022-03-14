@@ -122,7 +122,7 @@ export default function WriterDashboard() {
   //   }
   // }, []);
   return (
-    <section id="hero" className="hero d-flex align-items-center">
+    <section id="hero" className="hero d-flex align-items-center" style={{paddingBottom: "40px"}}>
       <div style={{ width: "100%" }}>
         <div
           className={drawerState.Drawer ? "row offset-xl-2" : "row offset-xl-1"}
@@ -1098,7 +1098,7 @@ export default function WriterDashboard() {
                       <div class="media">
                         <div class="media-body">
                           <div class="greeting-user">
-                            <h1>Hello, {auth.user.fullName}</h1>
+                            <h1 style={{color: "#fff"}}>Hello, {auth.user.fullName}</h1>
                             <p>Welcome back, your dashboard is ready!</p>
                             {/* <a
                               class="btn btn-outline-white_color"
@@ -1292,8 +1292,8 @@ export default function WriterDashboard() {
                         />
                       </div>
                       <div class="support-detail">
-                        <h5>Get support 24 hours</h5>
-                        <p>Check Our new service & feature about sales! </p>
+                        <h5 style={{color: "#fff"}}>Get support 24 hours</h5>
+                        <p style={{color: "#fff"}}>Check Our new service & feature about sales! </p>
                         {/* <Link
                           class="btn btn-outline-white_color"
                           // href="product-page.html"

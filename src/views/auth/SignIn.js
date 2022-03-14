@@ -185,7 +185,7 @@ export default function SignIn() {
       <div className="container">
         <div className="row sectionShadow">
           <div className="col-lg-6 offset-xl-1 align-items-center justify-content-center align-self-center">
-            <img src="assets/img/login.png" className="img-fluid" />
+            <img src="assets/img/sign-in-dashboard.png" className="img-fluid" />
           </div>
           <div className="col-lg-4 formSection">
             <h1 style={{ fontSize: 28 }}>Login!</h1>

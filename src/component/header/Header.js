@@ -58,8 +58,10 @@ export default function Header() {
         <header id="header" className="header fixed-top">
           <div className="container-fluid container-xl d-flex align-items-center justify-content-between">
             <div className="logo d-flex align-items-center">
-              <i className="bi bi-list drawerbtn" onClick={showDrawer}></i>
-              <span>Papersmates</span>
+            <i className="bi bi-list drawerbtn" onClick={showDrawer}></i>
+              <img src="assets/img/dashboard-logo.png" alt=""/>
+              {/* <i className="bi bi-list drawerbtn" onClick={showDrawer}></i>
+              <span>Papersmates</span> */}
             </div>
 
             <Drawer
@@ -87,7 +89,7 @@ export default function Header() {
 
             <nav id="navbar" className="navbar">
               <ul>
-                <li>
+                {/* <li>
                   <Link to="/my-profile" className="nav-link" style={{ display: "inline" }}>
                     <span
                       className="bi bi-person"
@@ -95,7 +97,7 @@ export default function Header() {
                     ></span>
                     My Profile
                   </Link>
-                </li>
+                </li> */}
                 <li>
                   <Link
                     className="nav-link"
