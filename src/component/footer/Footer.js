@@ -11,7 +11,7 @@ export default function Footer() {
            <div className="copyright">
              &copy; Copyright{" "}
              <strong>
-               <span>Papersmates.com</span>
+               <span>Multivendor.com</span>
              </strong>
              . All Rights Reserved
            </div>

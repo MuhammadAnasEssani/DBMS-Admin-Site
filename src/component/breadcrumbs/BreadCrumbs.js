@@ -17,7 +17,7 @@ export default function BreadCrumbs(props) {
             style={{
               fontSize: 16,
               fontWeight: 500,
-              color: "#012970",
+              // color: "#012970",
             }}
           >
             {" "}

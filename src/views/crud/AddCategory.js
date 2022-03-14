@@ -31,6 +31,7 @@ export default function AddProduct() {
 
   const handleAddCategory = async (e) => {
     e.preventDefault();
+    setLoading(true)
     const model= {
       name: categoryName,
       parentId: parentCategory.split(",")[0],
@@ -42,13 +43,17 @@ export default function AddProduct() {
       if (res.status === 201) {
         Notification("Category Department", "Category Added Sucessfully", "Success")
         setCategoryName("")
+        setParentCategory("")
+        setLoading(false)
         return
       }else {
         Notification("Category Department", res.data.message, "Error" )
+        setLoading(false)
         return
       }
     }catch(err){
       Notification("Category Department", "Something went wrong", "Error" )
+      setLoading(false)
     }
   };
   const fetchCategories = async () => {
@@ -79,7 +84,10 @@ export default function AddProduct() {
       options.push({ value: category._id, name: category.name });
       //  console.log(category)
       if (category.children.length > 0) {
-        createCategoryList(category.children, options);
+        // createCategoryList(category.children, options);
+        for (let categoryy of category.children) {
+          options.push({ value: categoryy._id, name: categoryy.name });
+        }
       }
     }
     // let myCategories = [];
@@ -90,7 +98,7 @@ export default function AddProduct() {
       history.push("/");
       return;
     }
-  }, []);
+  }, [auth.authenticate]);
   useEffect(() => {
     fetchCategories();
     // console.log(createCategoryList(categories))
@@ -107,13 +115,13 @@ export default function AddProduct() {
         >
           <BreadCrumbs
             icon={"bi bi-people-check"}
-            title={"Writers"}
+            title={"Category"}
             subicon={"bi bi-diagram-2"}
             subtitle={"Add"}
           />
           <div className="col-lg-12 d-flex flex-column">
             <div className=" col-lg-11 dashboardSections itempadding">
-              <h1 className="mb-4">Enter Writer Information</h1>
+              <h1 className="mb-4">Add Categories</h1>
 
               <form onSubmit={handleAddCategory} >
                 <div className="row">

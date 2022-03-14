@@ -21,15 +21,16 @@ export default function AddProduct() {
   const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
   const states = useSelector((state) => state);
   const drawerState = states.DrawerReducer.State;
-  const [productName, setProductName] = useState('');
-  const [productPrice, setProductPrice] = useState('');
-  const [productDesc, setProductDesc] = useState('');
-  const [productCategory, setProductCategory] = useState('');
-  const [productOffer, setProductOffer] = useState('');
-  const [productQuantity, setProductQuantity] = useState('');
-  const [productDiscount, setProductDiscount] = useState(0)
-  const [productType, setProductType] = useState('normal')
+  const [productName, setProductName] = useState("");
+  const [productPrice, setProductPrice] = useState("");
+  const [productDesc, setProductDesc] = useState("");
+  const [productCategory, setProductCategory] = useState("");
+  const [productOffer, setProductOffer] = useState("");
+  const [productQuantity, setProductQuantity] = useState("");
+  const [productDiscount, setProductDiscount] = useState(0);
+  const [productType, setProductType] = useState("normal");
   const [productImage, setProductImage] = useState([]);
+  const [displayProductImage, setDisplayProductImage] = useState([]);
   const [change, setChange] = useState(false);
   const [categories, setCategories] = useState([]);
   const [offers, setOffers] = useState([]);
@@ -39,6 +40,7 @@ export default function AddProduct() {
   const history = useHistory();
   const handleAddProduct = async (e) => {
     e.preventDefault();
+    setLoading(true);
     var form = new FormData();
     form.append("name", productName);
     form.append("price", productPrice);
@@ -54,67 +56,61 @@ export default function AddProduct() {
     try {
       const res = await addProduct(form);
       if (res.status === 201) {
-        Notification("Product Department", res.data.message, "Success")
-        setProductName("")
-        setProductDesc("")
-        setProductCategory("")
-        setProductOffer("")
-        setProductDiscount(0)
-        setProductPrice("")
-        setProductQuantity("")
-        setProductType("normal")
-        setProductImage([])
-        return
+        Notification("Product Department", res.data.message, "Success");
+        setProductName("");
+        setProductDesc("");
+        setProductCategory("");
+        setProductOffer("");
+        setProductDiscount(0);
+        setProductPrice("");
+        setProductQuantity("");
+        setProductType("normal");
+        setProductImage([]);
+        setDisplayProductImage([])
+        setLoading(false);
+        return;
       } else {
-        Notification("Product Department", res.data.message, "Error")
-        return
+        setLoading(false);
+        Notification("Product Department", res.data.message, "Error");
+        return;
       }
     } catch (err) {
+      setLoading(false);
       // console.log(err)
-      Notification("Product Department", "Something went wrong", "Error")
+      Notification("Product Department", "Something went wrong", "Error");
     }
   };
   const handleProductImage = (e) => {
     setProductImage([...productImage, e.target.files[0]]);
+    let reader = new FileReader();
+    reader.onloadend = () => {
+      displayProductImage.push(reader.result);
+      change ? setChange(false) : setChange(true);
+    };
+    reader.readAsDataURL(e.target.files[0]);
   };
   const fetchCategories = async () => {
-    try{
+    try {
       const res = await getCategories();
       if (res.status === 200) {
         setCategories(res.data.categoryList);
-      }else{
-        Notification(
-          "Product Department",
-          res.data.message,
-          "Error"
-        );
+      } else {
+        Notification("Product Department", res.data.message, "Error");
       }
-    }catch(err){
-      Notification(
-        "Product Department",
-        "Something went wrong",
-        "Error"
-      );
+    } catch (err) {
+      Notification("Product Department", "Something went wrong", "Error");
     }
   };
   const fetchOffers = async () => {
-    try{
+    try {
       const res = await getOffersByVendor();
       if (res.status === 200) {
         setOffers(res.data.offers);
-      }else{
-        Notification(
-          "Offers",
-          res.data.message,
-          "Error"
-        );
+      } else {
+        Notification("Offers", res.data.message, "Error");
       }
-    }catch(err){
-      Notification(
-        "Offers",
-        "Something went wrong",
-        "Error"
-      );
+    } catch (err) {
+      Notification("Offers", "Something went wrong", "Error");
     }
   };
 
@@ -134,10 +130,10 @@ export default function AddProduct() {
     }
     fetchCategories();
     fetchOffers();
-  }, []);
-  console.log(offers)
+  }, [displayProductImage,auth.authenticate]);
+  // console.log(displayProductImage);
 
-  useEffect(() => { }, [change]);
+  useEffect(() => {}, [change]);
   return (
     <section id="Crud" className="hero d-flex align-items-center">
       <div className="container ">
@@ -146,38 +142,53 @@ export default function AddProduct() {
         >
           <BreadCrumbs
             icon={"bi bi-people-check"}
-            title={"Writers"}
+            title={"Products"}
             subicon={"bi bi-diagram-2"}
             subtitle={"Add"}
           />
           <div className="col-lg-12 d-flex flex-column">
             <div className=" col-lg-11 dashboardSections itempadding">
-              <h1 className="mb-4">Enter Writer Information</h1>
+              <h1 className="mb-4">Add Products</h1>
 
               <form onSubmit={handleAddProduct}>
                 <div className="row">
                   <div className="col-lg-6">
                     <label className="labeltext">Product Name: (*)</label>
                     {/* <Form.Item name="name"> */}
-                    <input type="text" required className="FormInput" value={productName}
-                      placeholder='Product Name'
-                      onChange={(e) => setProductName(e.target.value)} />
+                    <input
+                      type="text"
+                      required
+                      className="FormInput"
+                      value={productName}
+                      placeholder="Product Name"
+                      onChange={(e) => setProductName(e.target.value)}
+                    />
                     {/* </Form.Item> */}
                   </div>
                   <div className="col-lg-6">
                     <label className="labeltext">Product Price: (*)</label>
                     {/* <Form.Item name="price"> */}
-                    <input type="number" required className="FormInput" value={productPrice}
-                      placeholder='Product Price'
-                      onChange={(e) => setProductPrice(e.target.value)} />
+                    <input
+                      type="number"
+                      required
+                      className="FormInput"
+                      value={productPrice}
+                      placeholder="Product Price"
+                      onChange={(e) => setProductPrice(e.target.value)}
+                    />
                     {/* </Form.Item> */}
                   </div>
                   <div className="col-lg-6">
                     <label className="labeltext">Product Quantity: (*)</label>
                     {/* <Form.Item name="quantity"> */}
-                    <input type="number" required className="FormInput" value={productQuantity}
-                      placeholder='Product Quantity'
-                      onChange={(e) => setProductQuantity(e.target.value)} />
+                    <input
+                      type="number"
+                      required
+                      className="FormInput"
+                      value={productQuantity}
+                      placeholder="Product Quantity"
+                      onChange={(e) => setProductQuantity(e.target.value)}
+                    />
                     {/* </Form.Item> */}
                   </div>
 
@@ -233,9 +244,13 @@ export default function AddProduct() {
                   <div className="col-lg-6">
                     <label className="labeltext">Product Discount</label>
                     {/* <Form.Item name="quantity"> */}
-                    <input type="number" className="FormInput" value={productDiscount}
-                      placeholder='Product Discount'
-                      onChange={(e) => setProductDiscount(e.target.value)} />
+                    <input
+                      type="number"
+                      className="FormInput"
+                      value={productDiscount}
+                      placeholder="Product Discount"
+                      onChange={(e) => setProductDiscount(e.target.value)}
+                    />
                     {/* </Form.Item> */}
                   </div>
                   <div className="col-lg-6">
@@ -255,20 +270,55 @@ export default function AddProduct() {
                         </option>
                       ))}
                     </select>
-                    </div>
+                  </div>
                   <div className="col-lg-12">
                     <label className="labeltext">
                       Product Description: (*)
                     </label>
                     {/* <Form.Item name="description"> */}
-                    <textarea type="text" required className="FormInput" value={productDesc}
-                      placeholder='Product Description'
-                      onChange={(e) => setProductDesc(e.target.value)} style={{ height: "110px" }} />
+                    <textarea
+                      type="text"
+                      required
+                      className="FormInput"
+                      value={productDesc}
+                      placeholder="Product Description"
+                      onChange={(e) => setProductDesc(e.target.value)}
+                      style={{ height: "110px" }}
+                    />
                     {/* </Form.Item> */}
                   </div>
                   <div className="col-lg-6">
-                    <label className="labeltext">Upload Images: (*)</label>
-                    {/* <Upload
+                    <div className="row">
+                      <label
+                        className="labeltext uploadImage"
+                        htmlFor="upload-button"
+                      >
+                        <div>
+                          <span
+                            role="img"
+                            aria-label="plus"
+                            class="anticon anticon-plus"
+                          >
+                            <svg
+                              viewBox="64 64 896 896"
+                              focusable="false"
+                              data-icon="plus"
+                              width="1em"
+                              height="1em"
+                              fill="currentColor"
+                              aria-hidden="true"
+                            >
+                              <defs>
+                                <style></style>
+                              </defs>
+                              <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
+                              <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
+                            </svg>
+                          </span>
+                          <div>Upload</div>
+                        </div>
+                      </label>
+                      {/* <Upload
                       action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                       listType="picture-card"
                       fileList={fileList}
@@ -289,7 +339,7 @@ export default function AddProduct() {
                         src={previewImage}
                       />
                     </Modal> */}
-                    {/* <Upload
+                      {/* <Upload
                       action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                       listType="picture"
                       defaultFileList={[...fileList]}
@@ -298,7 +348,7 @@ export default function AddProduct() {
                     </Upload>
                     <br />
                     <br /> */}
-                    {/* <Form.Item>
+                      {/* <Form.Item>
                     <Upload
                       listType="picture"
                       defaultFileList={[...fileList]}
@@ -307,43 +357,60 @@ export default function AddProduct() {
                       <Button icon={<UploadOutlined />} onClick={() => setFileList(fileList)}>Upload</Button>
                     </Upload>
                     </Form.Item> */}
-                    {productImage.length > 0
-                      ? productImage.map((pic, index) => (
-                        <div
-                          key={index}
-                          style={{
-                            height: "35px",
-                            margin: "1px",
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            border: "1px solid red",
-                          }}
-                        >
-                          <div>{JSON.stringify(pic.name)}</div>
-                          <ImBin
-                            id={pic}
-                            style={{ cursor: "pointer" }}
-                            onClick={() => {
-                              // console.log(index)
-                              // console.log(pic)
-                              productImage.splice(index, 1);
-                              {
-                                change ? setChange(false) : setChange(true);
-                              }
-                              // console.log(productImage);
-                            }}
-                          />
-                        </div>
-                      ))
-                      : null}
-                    <input
-                      required
-                      type="file"
-                      name="productImage"
-                      onChange={handleProductImage}
-                    />
+                      {displayProductImage.length > 0
+                        ? displayProductImage.map((pic, index) => (
+                            <div
+                              className="col-lg-3 uploadImage"
+                              key={index}
+                              // style={{
+                              //   height: "35px",
+                              //   margin: "1px",
+                              //   width: "100%",
+                              //   display: "flex",
+                              //   justifyContent: "space-between",
+                              //   alignItems: "center",
+                              //   border: "1px solid red",
+                              // }}
+                              style={{ position: "relative" }}
+                            >
+                              <img
+                                src={pic}
+                                alt=""
+                                style={{ width: "70px", height: "80px" }}
+                              />
+                              {/* <div>{JSON.stringify(pic.name)}</div> */}
+                              <ImBin
+                                id={pic}
+                                style={{
+                                  cursor: "pointer",
+                                  position: "absolute",
+                                  top: "40%",
+                                  left: "43%",
+                                  fontSize: "16px",
+                                }}
+                                onClick={() => {
+                                  // console.log(index)
+                                  // console.log(pic)
+                                  displayProductImage.splice(index, 1);
+                                  productImage.splice(index, 1);
+                                  {
+                                    change ? setChange(false) : setChange(true);
+                                  }
+                                  // console.log(productImage);
+                                }}
+                              />
+                            </div>
+                          ))
+                        : null}
+                      <input
+                        required
+                        type="file"
+                        name="productImage"
+                        id="upload-button"
+                        style={{ display: "none" }}
+                        onChange={handleProductImage}
+                      />
+                    </div>
                   </div>
                   <div className="col-lg-6">
                     <input
@@ -354,9 +421,11 @@ export default function AddProduct() {
                       class="CheckBox__SyledCheckBox-sc-1go6jlo-0 gOojgn"
                       value="Maccs"
                       id="0.8918393257508421"
-                      checked = {productType == "featured" ? "checked" : null}
+                      checked={productType == "featured" ? "checked" : null}
                       onChange={() => {
-                        productType == "normal" ? setProductType("featured") : setProductType("normal")
+                        productType == "normal"
+                          ? setProductType("featured")
+                          : setProductType("normal");
                       }}
                     />
                     <label for="0.8918393257508421">
@@ -370,22 +439,26 @@ export default function AddProduct() {
                     </label>
                   </div>
                   <div className="col-lg-12">
-                    {loading ? <button
-                      style={{ border: "none" }}
-                      type="submit"
-                      className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
-                    >
-                      <>
-                        <Spin indicator={antIcon} />
-                      </>
-                    </button> : <button
-                      style={{ border: "none" }}
-                      type="submit"
-                      className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
-                    >
-                      <span>Add Product</span>
-                      <i className="bi bi-arrow-right"></i>
-                    </button>}
+                    {loading ? (
+                      <button
+                        style={{ border: "none" }}
+                        type="submit"
+                        className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
+                      >
+                        <>
+                          <Spin indicator={antIcon} />
+                        </>
+                      </button>
+                    ) : (
+                      <button
+                        style={{ border: "none" }}
+                        type="submit"
+                        className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
+                      >
+                        <span>Add Product</span>
+                        <i className="bi bi-arrow-right"></i>
+                      </button>
+                    )}
                   </div>
                 </div>
               </form>

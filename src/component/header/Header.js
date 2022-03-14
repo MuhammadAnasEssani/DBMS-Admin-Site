@@ -68,7 +68,7 @@ export default function Header() {
               closable={true}
               onClose={onClose}
               visible={visible}
-              footer={"Papersmates.com"}
+              footer={"Multivendor.com"}
             >
               {/* <StudentNav /> */}
               <WriterNav />

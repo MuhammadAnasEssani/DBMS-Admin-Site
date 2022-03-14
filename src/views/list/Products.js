@@ -7,7 +7,11 @@ import { Link, useHistory } from "react-router-dom";
 import { Form, Select } from "antd";
 import { ImBin } from "react-icons/im";
 import BreadCrumbs from "../../component/breadcrumbs/BreadCrumbs";
-import { deleteProductById, editProduct, getProductsByVendor } from "../../config/api/Product";
+import {
+  deleteProductById,
+  editProduct,
+  getProductsByVendor,
+} from "../../config/api/Product";
 import { getCategories } from "../../config/api/Categories";
 import Notification from "../../component/notification/Notification";
 import { Spin } from "antd";
@@ -28,16 +32,17 @@ export default function MyProducts() {
   const [product, setProducts] = useState([]);
   const [offers, setOffers] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [productId, setProductId] = useState('');
-  const [productName, setProductName] = useState('');
-  const [productPrice, setProductPrice] = useState('');
-  const [productDesc, setProductDesc] = useState('');
-  const [productCategory, setProductCategory] = useState('');
-  const [productOffer, setProductOffer] = useState('');
-  const [productCategoryName, setProductCategoryName] = useState('');
-  const [productQuantity, setProductQuantity] = useState('');
-  const [productDiscount, setProductDiscount] = useState(0)
-  const [productType, setProductType] = useState('normal')
+  const [displayProductImage, setDisplayProductImage] = useState([]);
+  const [productId, setProductId] = useState("");
+  const [productName, setProductName] = useState("");
+  const [productPrice, setProductPrice] = useState("");
+  const [productDesc, setProductDesc] = useState("");
+  const [productCategory, setProductCategory] = useState("");
+  const [productOffer, setProductOffer] = useState("");
+  const [productCategoryName, setProductCategoryName] = useState("");
+  const [productQuantity, setProductQuantity] = useState("");
+  const [productDiscount, setProductDiscount] = useState(0);
+  const [productType, setProductType] = useState("normal");
   const [loading, setLoading] = useState(false);
   const states = useSelector((state) => state);
   const auth = useSelector((state) => state.auth);
@@ -48,20 +53,22 @@ export default function MyProducts() {
     setViewVisible(true);
   };
   const showProductEditModal = (product) => {
-    console.log(product)
+    console.log(product);
     // setProductEdit(product);
-    setProductId(product._id)
-    setProductName(product.name)
-    setProductPrice(product.price)
-    setProductDesc(product.description)
-    setProductCategory(product.category._id)
-    {product.offer && setProductOffer(product.offer._id)}
+    setProductId(product._id);
+    setProductName(product.name);
+    setProductPrice(product.price);
+    setProductDesc(product.description);
+    setProductCategory(product.category._id);
+    {
+      product.offer && setProductOffer(product.offer._id);
+    }
     // setProductOffer(product.offer._id)
-    setProductCategoryName(product.category.name)
-    setProductQuantity(product.quantity)
-    setProductDiscount(product.discount)
-    setProductType(product.type)
-    setProductImage(product.productPictures)
+    setProductCategoryName(product.category.name);
+    setProductQuantity(product.quantity);
+    setProductDiscount(product.discount);
+    setProductType(product.type);
+    setProductImage(product.productPictures);
     setEditProductVisible(true);
   };
 
@@ -87,7 +94,7 @@ export default function MyProducts() {
     // for (var key of form.entries()) {
     //   console.log(key[0] + ", " + key[1]);
     // }
-    try{
+    try {
       const res = await editProduct(form);
       if (res.status === 201) {
         Notification(
@@ -96,19 +103,27 @@ export default function MyProducts() {
           "Success"
         );
         setProductImage([]);
-        {changeAgain ? setChangeAgain(false) : setChangeAgain(true)}
-        setEditProductVisible(false)
+        {
+          changeAgain ? setChangeAgain(false) : setChangeAgain(true);
+        }
+        setEditProductVisible(false);
         return;
-      }else {
+      } else {
         Notification("Product Department", res.data.message, "Error");
         return;
       }
-    }catch(err){
+    } catch (err) {
       Notification("Product Department", "Something went wrong", "Error");
     }
   };
   const handleProductImage = (e) => {
     setProductImage([...productImage, e.target.files[0]]);
+    let reader = new FileReader();
+    reader.onloadend = () => {
+      displayProductImage.push(reader.result);
+      change ? setChange(false) : setChange(true);
+    };
+    reader.readAsDataURL(e.target.files[0]);
   };
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -197,21 +212,23 @@ export default function MyProducts() {
     clearFilters();
     setState({ searchText: "" });
   };
-  const handleDelete = async(id) => {
+  const handleDelete = async (id) => {
     const payload = {
-      productId : id
-    }
-    const res = await deleteProductById({payload});
+      productId: id,
+    };
+    const res = await deleteProductById({ payload });
     // if(res){
     //   console.log(res)
     // }
-    if(res.status === 202){
+    if (res.status === 202) {
       Notification(
         "Product Department",
         "Product Deleted Sucessfully",
         "Success"
       );
-      {changeAgain ? setChangeAgain(false) : setChangeAgain(true)}
+      {
+        changeAgain ? setChangeAgain(false) : setChangeAgain(true);
+      }
       return;
     }
     if (res.status === 400) {
@@ -310,63 +327,39 @@ export default function MyProducts() {
   ];
 
   const fetchProducts = async () => {
-    try{
+    try {
       const res = await getProductsByVendor();
       if (res.status === 200) {
         setProducts(res.data.products);
       } else {
-        Notification(
-          "Product Department",
-          res.data.message,
-          "Error"
-        );
+        Notification("Product Department", res.data.message, "Error");
       }
-    }catch(err){
-      Notification(
-        "Product Department",
-        "Something went wrong",
-        "Error"
-      );
+    } catch (err) {
+      Notification("Product Department", "Something went wrong", "Error");
     }
   };
   const fetchCategories = async () => {
-    try{
+    try {
       const res = await getCategories();
       if (res.status === 200) {
         setCategories(res.data.categoryList);
-      }else{
-        Notification(
-          "Product Department",
-          res.data.message,
-          "Error"
-        );
+      } else {
+        Notification("Product Department", res.data.message, "Error");
       }
-    }catch(err){
-      Notification(
-        "Product Department",
-        "Something went wrong",
-        "Error"
-      );
+    } catch (err) {
+      Notification("Product Department", "Something went wrong", "Error");
     }
   };
   const fetchOffers = async () => {
-    try{
+    try {
       const res = await getOffersByVendor();
       if (res.status === 200) {
         setOffers(res.data.offers);
-      }else{
-        Notification(
-          "Offers",
-          res.data.message,
-          "Error"
-        );
+      } else {
+        Notification("Offers", res.data.message, "Error");
       }
-    }catch(err){
-      Notification(
-        "Offers",
-        "Something went wrong",
-        "Error"
-      );
+    } catch (err) {
+      Notification("Offers", "Something went wrong", "Error");
     }
   };
 
@@ -388,7 +381,7 @@ export default function MyProducts() {
       history.push("/");
       return;
     }
-  }, []);
+  }, [auth.authenticate]);
   useEffect(() => {
     fetchCategories();
     fetchOffers();
@@ -462,113 +455,164 @@ export default function MyProducts() {
         width={1000}
       >
         {/* {productEdit != null && ( */}
-          <>
-            <form
-              onSubmit={handleEditProduct}
-              // initialValues={{
-              //   name: productEdit.name,
-              //   price: productEdit.price,
-              //   quantity: productEdit.quantity,
-              //   description: productEdit.description,
-              //   category: productEdit.category._id,
-              // }}
-            >
-              <div className="row">
-                <div className="col-lg-6">
-                  <label className="labeltext">Product Name: (*)</label>
-                  {/* <Form.Item name="name"> */}
-                    <input type="text" className="FormInput" value={productName}
-                      placeholder='Product Name'
-                      onChange={(e) => setProductName(e.target.value)} />
-                  {/* </Form.Item> */}
-                </div>
-                <div className="col-lg-6">
-                  <label className="labeltext">Product Price: (*)</label>
-                  {/* <Form.Item name="price"> */}
-                    <input type="number" className="FormInput" value={productPrice}
-                      placeholder='Product Price'
-                      onChange={(e) => setProductPrice(e.target.value)} />
-                  {/* </Form.Item> */}
-                </div>
-                <div className="col-lg-6">
-                  <label className="labeltext">Product Quantity: (*)</label>
-                  {/* <Form.Item name="quantity"> */}
-                    <input type="number" className="FormInput" value={productQuantity}
-                      placeholder='Product Quantity'
-                      onChange={(e) => setProductQuantity(e.target.value)} />
-                  {/* </Form.Item> */}
-                </div>
+        <>
+          <form
+            onSubmit={handleEditProduct}
+            // initialValues={{
+            //   name: productEdit.name,
+            //   price: productEdit.price,
+            //   quantity: productEdit.quantity,
+            //   description: productEdit.description,
+            //   category: productEdit.category._id,
+            // }}
+          >
+            <div className="row">
+              <div className="col-lg-6">
+                <label className="labeltext">Product Name: (*)</label>
+                {/* <Form.Item name="name"> */}
+                <input
+                  type="text"
+                  className="FormInput"
+                  value={productName}
+                  placeholder="Product Name"
+                  onChange={(e) => setProductName(e.target.value)}
+                />
+                {/* </Form.Item> */}
+              </div>
+              <div className="col-lg-6">
+                <label className="labeltext">Product Price: (*)</label>
+                {/* <Form.Item name="price"> */}
+                <input
+                  type="number"
+                  className="FormInput"
+                  value={productPrice}
+                  placeholder="Product Price"
+                  onChange={(e) => setProductPrice(e.target.value)}
+                />
+                {/* </Form.Item> */}
+              </div>
+              <div className="col-lg-6">
+                <label className="labeltext">Product Quantity: (*)</label>
+                {/* <Form.Item name="quantity"> */}
+                <input
+                  type="number"
+                  className="FormInput"
+                  value={productQuantity}
+                  placeholder="Product Quantity"
+                  onChange={(e) => setProductQuantity(e.target.value)}
+                />
+                {/* </Form.Item> */}
+              </div>
 
-                {/* <div className="col-lg-5 offset-xl-1">
+              {/* <div className="col-lg-5 offset-xl-1">
                     <label className="labeltext">Academic Level: (*)</label>
                     <Form.Item name="academic-level">
                       <input type="text" className="FormInput" />
                     </Form.Item>
                   </div> */}
 
-                <div className="col-lg-6">
-                  <label className="labeltext">Category : (*)</label>
-                  {/* <Form.Item name="category"> */}
-                    <select
-                      className="FormInput"
-                      name="cars"
-                      id="cars"
-                      value={productCategory}
-                      onChange={(e) => setProductCategory(e.target.value)}
-                    >
-                      {/* console.log(productEdit.category._id) */}
-                      {/* <option >
+              <div className="col-lg-6">
+                <label className="labeltext">Category : (*)</label>
+                {/* <Form.Item name="category"> */}
+                <select
+                  className="FormInput"
+                  name="cars"
+                  id="cars"
+                  value={productCategory}
+                  onChange={(e) => setProductCategory(e.target.value)}
+                >
+                  {/* console.log(productEdit.category._id) */}
+                  {/* <option >
                             {productCategoryName}
                           </option> */}
-                      {createCategoryList(categories).map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.name}
-                        </option>
-                      ))}
-                    </select>
-                  {/* </Form.Item> */}
-                </div>
-                <div className="col-lg-6">
-                  <label className="labeltext">Offer</label>
-                  {/* <Form.Item name="category"> */}
-                    <select
-                      className="FormInput"
-                      name="cars"
-                      id="cars"
-                      value={productOffer}
-                      onChange={(e) => setProductOffer(e.target.value)}
-                    >
-                      {/* console.log(productEdit.category._id) */}
-                      {/* <option >
+                  {createCategoryList(categories).map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.name}
+                    </option>
+                  ))}
+                </select>
+                {/* </Form.Item> */}
+              </div>
+              <div className="col-lg-6">
+                <label className="labeltext">Offer</label>
+                {/* <Form.Item name="category"> */}
+                <select
+                  className="FormInput"
+                  name="cars"
+                  id="cars"
+                  value={productOffer}
+                  onChange={(e) => setProductOffer(e.target.value)}
+                >
+                  {/* console.log(productEdit.category._id) */}
+                  {/* <option >
                             {productCategoryName}
                           </option> */}
-                          {productOffer == "" && <option value="">None</option>}
-                      {offers.map((option) => (
-                        <option key={option._id} value={option._id}>
-                          {option.title}
-                        </option>
-                      ))}
-                    </select>
-                  {/* </Form.Item> */}
-                </div>
-                <div className="col-lg-6">
-                    <label className="labeltext">Product Discount</label>
-                    {/* <Form.Item name="quantity"> */}
-                    <input type="number" className="FormInput" value={productDiscount}
-                      placeholder='Product Discount'
-                      onChange={(e) => setProductDiscount(e.target.value)} />
-                    {/* </Form.Item> */}
-                  </div>
-                <div className="col-lg-12">
-                  <label className="labeltext">Product Description: (*)</label>
-                  {/* <Form.Item name="description"> */}
-                    <textarea type="text" required className="FormInput" value={productDesc}
-                      placeholder='Product Description'
-                      onChange={(e) => setProductDesc(e.target.value)} style={{ height: "110px" }} />
-                  {/* </Form.Item> */}
-                </div>
-                <div className="col-lg-6">
-                  <label className="labeltext">Upload Images: (*)</label>
+                  {productOffer == "" && <option value="">None</option>}
+                  {offers.map((option) => (
+                    <option key={option._id} value={option._id}>
+                      {option.title}
+                    </option>
+                  ))}
+                </select>
+                {/* </Form.Item> */}
+              </div>
+              <div className="col-lg-6">
+                <label className="labeltext">Product Discount</label>
+                {/* <Form.Item name="quantity"> */}
+                <input
+                  type="number"
+                  className="FormInput"
+                  value={productDiscount}
+                  placeholder="Product Discount"
+                  onChange={(e) => setProductDiscount(e.target.value)}
+                />
+                {/* </Form.Item> */}
+              </div>
+              <div className="col-lg-12">
+                <label className="labeltext">Product Description: (*)</label>
+                {/* <Form.Item name="description"> */}
+                <textarea
+                  type="text"
+                  required
+                  className="FormInput"
+                  value={productDesc}
+                  placeholder="Product Description"
+                  onChange={(e) => setProductDesc(e.target.value)}
+                  style={{ height: "110px" }}
+                />
+                {/* </Form.Item> */}
+              </div>
+              <div className="col-lg-6">
+                <div className="row">
+                  <label
+                    className="labeltext uploadImage"
+                    htmlFor="upload-button"
+                  >
+                    <div>
+                      <span
+                        role="img"
+                        aria-label="plus"
+                        class="anticon anticon-plus"
+                      >
+                        <svg
+                          viewBox="64 64 896 896"
+                          focusable="false"
+                          data-icon="plus"
+                          width="1em"
+                          height="1em"
+                          fill="currentColor"
+                          aria-hidden="true"
+                        >
+                          <defs>
+                            <style></style>
+                          </defs>
+                          <path d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"></path>
+                          <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
+                        </svg>
+                      </span>
+                      <div>Upload</div>
+                    </div>
+                  </label>
                   {/* <Upload
                       action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                       listType="picture-card"
@@ -608,27 +652,69 @@ export default function MyProducts() {
                       <Button icon={<UploadOutlined />} onClick={() => setFileList(fileList)}>Upload</Button>
                     </Upload>
                     </Form.Item> */}
-                  {productImage.length > 0
-                    ? productImage.map((pic, index) => (
-                        <div
-                          key={index}
-                          style={{
-                            height: "35px",
-                            margin: "1px",
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            border: "1px solid red",
+                  {/* {productImage.length > 0
+                  ? productImage.map((pic, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          height: "35px",
+                          margin: "1px",
+                          width: "100%",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          border: "1px solid red",
+                        }}
+                      >
+                        <div>{JSON.stringify(pic.name)}</div>
+                        <ImBin
+                          id={pic}
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {
+                            productImage.splice(index, 1);
+                            {
+                              change ? setChange(false) : setChange(true);
+                            }
                           }}
+                        />
+                      </div>
+                    ))
+                  : null} */}
+                  {displayProductImage.length > 0
+                    ? displayProductImage.map((pic, index) => (
+                        <div
+                          className="col-lg-3 uploadImage"
+                          key={index}
+                          // style={{
+                          //   height: "35px",
+                          //   margin: "1px",
+                          //   width: "100%",
+                          //   display: "flex",
+                          //   justifyContent: "space-between",
+                          //   alignItems: "center",
+                          //   border: "1px solid red",
+                          // }}
+                          style={{ position: "relative" }}
                         >
-                          <div>{JSON.stringify(pic.name)}</div>
+                          <img
+                            src={pic}
+                            alt=""
+                            style={{ width: "70px", height: "80px" }}
+                          />
+                          {/* <div>{JSON.stringify(pic.name)}</div> */}
                           <ImBin
                             id={pic}
-                            style={{ cursor: "pointer" }}
+                            style={{
+                              cursor: "pointer",
+                              position: "absolute",
+                              top: "40%",
+                              left: "43%",
+                              fontSize: "16px",
+                            }}
                             onClick={() => {
                               // console.log(index)
                               // console.log(pic)
+                              displayProductImage.splice(index, 1);
                               productImage.splice(index, 1);
                               {
                                 change ? setChange(false) : setChange(true);
@@ -638,62 +724,100 @@ export default function MyProducts() {
                           />
                         </div>
                       ))
-                    : null}
+                    : productImage.map((pic, index) => (
+                      // console.log(pic)
+                        <div
+                          className="col-lg-3 uploadImage"
+                          key={index}
+                          style={{ position: "relative" }}
+                        >
+                          <img
+                            src={pic.avatar}
+                            alt=""
+                            style={{ width: "70px", height: "80px" }}
+                          />
+                          <ImBin
+                            id={pic}
+                            style={{
+                              cursor: "pointer",
+                              position: "absolute",
+                              top: "40%",
+                              left: "43%",
+                              fontSize: "16px",
+                            }}
+                            onClick={() => {
+                              productImage.splice(index, 1);
+                              {
+                                change ? setChange(false) : setChange(true);
+                              }
+                            }}
+                          />
+                        </div>
+                      ))}
                   {/* <Form.Item> */}
-                    <input
-                      type="file"
-                      name="productImage"
-                      onChange={handleProductImage}
-                    />
-                  {/* </Form.Item> */}
+                  <input
+                    type="file"
+                    name="productImage"
+                    id="upload-button"
+                    onChange={handleProductImage}
+                    style={{ display: "none" }}
+                  />
                 </div>
-                <div className="col-lg-6">
-                    <input
-                      type="checkbox"
-                      name="Maccs"
-                      color="secondary"
-                      size="18"
-                      class="CheckBox__SyledCheckBox-sc-1go6jlo-0 gOojgn"
-                      value="Maccs"
-                      checked = {productType == "featured" ? "checked" : null}
-                      id="0.8918393257508421"
-                      onChange={() => {
-                        productType == "normal" ? setProductType("featured") : setProductType("normal")
-                      }}
-                    />
-                    <label for="0.8918393257508421">
-                      <span
-                        font-size="14px"
-                        color="inherit"
-                        class="Typography-sc-1nbqu5-0 grIwdh"
-                      >
-                        Featured Product
-                      </span>
-                    </label>
-                  </div>
-                <div className="col-lg-12">
-                  {/* <Form.Item> */}
-                  {loading ? <button
-                      style={{ border: "none" }}
-                      type="submit"
-                      className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
-                    >
-                      <>
-                        <Spin indicator={antIcon} />
-                      </>
-                    </button> : <button
-                      style={{ border: "none" }}
-                      type="submit"
-                      className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
-                    >
-                      <span>Edit Product</span>
-                      <i className="bi bi-arrow-right"></i>
-                    </button>}
-                  {/* </Form.Item> */}
-                </div>
+                {/* </Form.Item> */}
               </div>
-            </form>
-          </>
+              <div className="col-lg-6">
+                <input
+                  type="checkbox"
+                  name="Maccs"
+                  color="secondary"
+                  size="18"
+                  class="CheckBox__SyledCheckBox-sc-1go6jlo-0 gOojgn"
+                  value="Maccs"
+                  checked={productType == "featured" ? "checked" : null}
+                  id="0.8918393257508421"
+                  onChange={() => {
+                    productType == "normal"
+                      ? setProductType("featured")
+                      : setProductType("normal");
+                  }}
+                />
+                <label for="0.8918393257508421">
+                  <span
+                    font-size="14px"
+                    color="inherit"
+                    class="Typography-sc-1nbqu5-0 grIwdh"
+                  >
+                    Featured Product
+                  </span>
+                </label>
+              </div>
+              <div className="col-lg-12">
+                {/* <Form.Item> */}
+                {loading ? (
+                  <button
+                    style={{ border: "none" }}
+                    type="submit"
+                    className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
+                  >
+                    <>
+                      <Spin indicator={antIcon} />
+                    </>
+                  </button>
+                ) : (
+                  <button
+                    style={{ border: "none" }}
+                    type="submit"
+                    className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
+                  >
+                    <span>Edit Product</span>
+                    <i className="bi bi-arrow-right"></i>
+                  </button>
+                )}
+                {/* </Form.Item> */}
+              </div>
+            </div>
+          </form>
+        </>
         {/* )} */}
       </Modal>
       <section id="List" className="hero d-flex align-items-center">
@@ -705,7 +829,7 @@ export default function MyProducts() {
           >
             <BreadCrumbs
               icon={"bi bi-book"}
-              title={"My Papers"}
+              title={"Products"}
               subicon={"bi bi-diagram-2"}
               subtitle={"List"}
             />

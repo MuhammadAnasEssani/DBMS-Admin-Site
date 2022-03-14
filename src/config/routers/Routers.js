@@ -10,10 +10,10 @@ function setTitle(path, routeArray) {
   var pageTitle;
   for (var i = 0; i < routeArray.length; i++) {
     if (routeArray[i].path === path) {
-      pageTitle = "Papers Mates | " + routeArray[i].title;
+      pageTitle = "Dashboard | " + routeArray[i].title;
     }
   }
-  document.title = pageTitle ? pageTitle : "Papers Mates";
+  document.title = pageTitle ? pageTitle : "Dashboard";
 }
 
 const RenderRoute = (route) => {

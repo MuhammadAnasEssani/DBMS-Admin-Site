@@ -301,7 +301,7 @@ export default function Orders() {
       history.push("/");
       return;
     }
-  }, []);
+  }, [auth.authenticate]);
   useEffect(() => {
     HandleorderList();
   }, [change]);

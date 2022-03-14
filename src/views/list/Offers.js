@@ -90,7 +90,12 @@ export default function Offers() {
   useEffect(() => {
     fetchOffers();
   }, [change]);
-
+  useEffect(() => {
+    if (!auth.authenticate) {
+      history.push("/");
+      return;
+    }
+  }, [auth.authenticate]);
   return (
     <>
       <section id="List" className="hero d-flex align-items-center">
@@ -102,7 +107,7 @@ export default function Offers() {
           >
             <BreadCrumbs
               icon={"bi bi-book"}
-              title={"My Papers"}
+              title={"Offers"}
               subicon={"bi bi-diagram-2"}
               subtitle={"List"}
             />

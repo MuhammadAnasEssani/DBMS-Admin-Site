@@ -251,7 +251,19 @@ export default function CategoryList() {
       Notification("Category Department", "Something went wrong", "Error")
     }
   };
-
+  const createSelectCategoryList = (categories, options = []) => {
+    for (let category of categories) {
+      options.push({ value: category._id, name: category.name });
+      //  console.log(category)
+      if (category.children.length > 0) {
+        // createCategoryList(category.children, options);
+        for (let categoryy of category.children) {
+          options.push({ value: categoryy._id, name: categoryy.name });
+        }
+      }
+    }
+    return options;
+  };
   const createCategoryList = (categories, options = []) => {
     for (let category of categories) {
       // console.log(category.children.length)
@@ -268,7 +280,7 @@ export default function CategoryList() {
       history.push("/");
       return;
     }
-  }, []);
+  }, [auth.authenticate]);
   useEffect(() => {
     fetchCategories();
   }, [change]);
@@ -318,7 +330,7 @@ export default function CategoryList() {
                       onChange={(e) => setParentCategory(e.target.value)}
                       >
                         <option value="">{parentCategory.split(",")[1]}</option>
-                        {createCategoryList(categoryList).map((option) => (
+                        {createSelectCategoryList(categoryList).map((option) => (
                           <option key={option._id} value={option._id+","+option.name}>
                             {option.name}
                           </option>
@@ -360,7 +372,7 @@ export default function CategoryList() {
           >
             <BreadCrumbs
               icon={"bi bi-book"}
-              title={"My Papers"}
+              title={"Categories"}
               subicon={"bi bi-diagram-2"}
               subtitle={"List"}
             />

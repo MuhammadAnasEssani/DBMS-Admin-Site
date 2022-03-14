@@ -36,7 +36,7 @@ export default function ActivateAccount() {
     // }
   };
   return (
-    <section id="signin" className="hero d-flex align-items-center">
+    <section id="signin" className="hero d-flex align-items-center" style={{height: "100vh"}}>
       <div className="container">
         <div
           className="row sectionShadow"

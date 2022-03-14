@@ -17,6 +17,8 @@ export default function WriterDashboard() {
   const state = useSelector((state) => state);
   // const authState = state.AuthReducer.user;
   const drawerState = state.DrawerReducer.State;
+  const auth = useSelector((state) => state.auth);
+
 
   const history = useHistory();
 
@@ -121,7 +123,7 @@ export default function WriterDashboard() {
   // }, []);
   return (
     <section id="hero" className="hero d-flex align-items-center">
-      <div style={{width: "100%"}}>
+      <div style={{ width: "100%" }}>
         <div
           className={drawerState.Drawer ? "row offset-xl-2" : "row offset-xl-1"}
         >
@@ -202,8 +204,40 @@ export default function WriterDashboard() {
           <div class="page-body">
             <div class="container-fluid ecommerce-dash">
               <div class="row">
-                <div class="col-xl-3 col-md-6 dash-xl-33 dash-lg-50">
-                  <div class="card sales-state">
+                <div class="col-xl-4 col-md-6 dash-xl-33 dash-lg-50">
+                  <div
+                    spacing="6"
+                    class="GridStyle__StyledGrid-sc-1r6thsr-0 DwCWS"
+                  >
+                    <div
+                      height="100%"
+                      class="Box-sc-15jsbqj-0 Card-sc-1rfvr4b-0 jELKxp FODSZ Typography-sc-1nbqu5-0 jwCRmv"
+                      cursor="unset"
+                    >
+                      <h5
+                        font-weight="600"
+                        font-size="16px"
+                        color="text.muted"
+                        class="Typography-sc-1nbqu5-0 wkSqn"
+                      >
+                        Earnings (before taxes)
+                      </h5>
+                      <h1
+                        font-size="30px"
+                        color="gray.700"
+                        class="Typography-sc-1nbqu5-0 igxEVo"
+                      >
+                        $30450.00
+                      </h1>
+                      <p
+                        color="text.muted"
+                        class="Typography-sc-1nbqu5-0 feXfPn"
+                      >
+                        after associated vendor fees
+                      </p>
+                    </div>
+                  </div>
+                  {/* <div class="card sales-state">
                     <div class="row m-0">
                       <div class="col-12 p-0">
                         <div class="card bg-primary">
@@ -250,10 +284,10 @@ export default function WriterDashboard() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
-                <div class="col-xl-5 col-md-6 dash-xl-33 dash-lg-50">
-                  <div class="card pb-0 invoice-overviwe">
+                <div class="col-xl-4 col-md-6 dash-xl-33 dash-lg-50">
+                  {/* <div class="card pb-0 invoice-overviwe">
                     <div class="card-header card-no-border">
                       <div class="header-top">
                         <h5 class="m-0">Invoice Overview</h5>
@@ -281,10 +315,128 @@ export default function WriterDashboard() {
                     <div class="card-body pt-0">
                       <div id="invoice-overviwe-chart"></div>
                     </div>
+                  </div> */}
+                  <div
+                    spacing="6"
+                    class="GridStyle__StyledGrid-sc-1r6thsr-0 DwCWS"
+                  >
+                    <div
+                      height="100%"
+                      class="Box-sc-15jsbqj-0 Card-sc-1rfvr4b-0 jELKxp FODSZ Typography-sc-1nbqu5-0 jwCRmv"
+                      cursor="unset"
+                    >
+                      <h5
+                        font-weight="600"
+                        font-size="16px"
+                        color="text.muted"
+                        class="Typography-sc-1nbqu5-0 wkSqn"
+                      >
+                        Your balance
+                      </h5>
+                      <h1
+                        font-size="30px"
+                        color="gray.700"
+                        class="Typography-sc-1nbqu5-0 igxEVo"
+                      >
+                        $4000.00
+                      </h1>
+                      <p
+                        color="text.muted"
+                        class="Typography-sc-1nbqu5-0 feXfPn"
+                      >
+                        Will be processed on Feb 15, 2021
+                      </p>
+                    </div>
+                    {/* <div
+                      height="100%"
+                      class="Box-sc-15jsbqj-0 Card-sc-1rfvr4b-0 jELKxp FODSZ Typography-sc-1nbqu5-0 jwCRmv"
+                      cursor="unset"
+                    >
+                      <h5
+                        font-weight="600"
+                        font-size="16px"
+                        color="text.muted"
+                        class="Typography-sc-1nbqu5-0 wkSqn"
+                      >
+                        Earnings (before taxes)
+                      </h5>
+                      <h1
+                        font-size="30px"
+                        color="gray.700"
+                        class="Typography-sc-1nbqu5-0 igxEVo"
+                      >
+                        $30450.00
+                      </h1>
+                      <p
+                        color="text.muted"
+                        class="Typography-sc-1nbqu5-0 feXfPn"
+                      >
+                        after associated vendor fees
+                      </p>
+                    </div> */}
                   </div>
                 </div>
                 <div class="col-xl-4 col-md-6 dash-lgorder-1 dash-xl-33 dash-lg-50">
-                  <div class="card hot-selling">
+                  <div
+                    spacing="6"
+                    class="GridStyle__StyledGrid-sc-1r6thsr-0 DwCWS"
+                  >
+                    <div
+                      height="100%"
+                      class="Box-sc-15jsbqj-0 Card-sc-1rfvr4b-0 jELKxp FODSZ Typography-sc-1nbqu5-0 jwCRmv"
+                      cursor="unset"
+                    >
+                      <h5
+                        font-weight="600"
+                        font-size="16px"
+                        color="text.muted"
+                        class="Typography-sc-1nbqu5-0 wkSqn"
+                      >
+                        Pending Orders
+                      </h5>
+                      <h1
+                        font-size="30px"
+                        color="gray.700"
+                        class="Typography-sc-1nbqu5-0 igxEVo"
+                      >
+                        08
+                      </h1>
+                      <p
+                        color="text.muted"
+                        class="Typography-sc-1nbqu5-0 feXfPn"
+                      >
+                        7/3/2020 - 8/1/2020
+                      </p>
+                    </div>
+                    {/* <div
+                      height="100%"
+                      class="Box-sc-15jsbqj-0 Card-sc-1rfvr4b-0 jELKxp FODSZ Typography-sc-1nbqu5-0 jwCRmv"
+                      cursor="unset"
+                    >
+                      <h5
+                        font-weight="600"
+                        font-size="16px"
+                        color="text.muted"
+                        class="Typography-sc-1nbqu5-0 wkSqn"
+                      >
+                        Earnings (before taxes)
+                      </h5>
+                      <h1
+                        font-size="30px"
+                        color="gray.700"
+                        class="Typography-sc-1nbqu5-0 igxEVo"
+                      >
+                        $30450.00
+                      </h1>
+                      <p
+                        color="text.muted"
+                        class="Typography-sc-1nbqu5-0 feXfPn"
+                      >
+                        after associated vendor fees
+                      </p>
+                    </div> */}
+                  </div>
+                  {/* <div class="card hot-selling">
                     <div class="card-header card-no-border">
                       <div class="header-top">
                         <h5 class="m-0">Hot Selling Products</h5>
@@ -406,7 +558,7 @@ export default function WriterDashboard() {
                         </table>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
                 <div class="col-xl-5 col-md-12 dash-xl-50 dash-lg-100 dash-39">
                   <div class="card ongoing-project recent-orders">
@@ -745,7 +897,152 @@ export default function WriterDashboard() {
                   </div>
                 </div>
                 <div class="col-xl-3 col-md-6 dash-xl-50 dash-32">
-                  <div class="card revenue-category">
+                  <div class="card hot-selling">
+                    <div class="card-header card-no-border">
+                      <div class="header-top">
+                        <h5 class="m-0">Hot Selling Products</h5>
+                        <div class="icon-box onhover-dropdown">
+                          <i data-feather="more-horizontal"></i>
+                          <div class="icon-box-show onhover-show-div">
+                            <ul>
+                              <li>
+                                {" "}
+                                <a>Today</a>
+                              </li>
+                              <li>
+                                {" "}
+                                <a>Yesterday</a>
+                              </li>
+                              <li>
+                                {" "}
+                                <a>Tommorow</a>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-body pt-0">
+                      <div class="table-responsive">
+                        <table class="table table-bordernone">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <div class="media">
+                                  <img
+                                    class="img-fluid me-3 b-r-5"
+                                    src="../assets/images/dashboard-2/rectangle-26.png"
+                                    alt=""
+                                  />
+                                  <div class="media-body">
+                                    <a href="product-page.html">
+                                      <h5>Dominoes Coffee Table Game</h5>
+                                    </a>
+                                    <p>60k Sales</p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <span class="badge badge-light-theme-light font-theme-light">
+                                  $50
+                                </span>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <div class="media">
+                                  {" "}
+                                  <img
+                                    class="img-fluid me-3 b-r-5"
+                                    src="../assets/images/dashboard-2/rectangle-27.png"
+                                    alt=""
+                                  />
+                                  <div class="media-body">
+                                    <a href="product-page.html">
+                                      <h5>Photive Wireless speakers</h5>
+                                    </a>
+                                    <p>35k Sales</p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <span class="badge badge-light-theme-light font-theme-light">
+                                  $25
+                                </span>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <div class="media">
+                                  <img
+                                    class="img-fluid me-3 b-r-5"
+                                    src="../assets/images/dashboard-2/rectangle-28.png"
+                                    alt=""
+                                  />
+                                  <div class="media-body">
+                                    <a href="product-page.html">
+                                      <h5>Urbanears Lotsen Speaker</h5>
+                                    </a>
+                                    <p>53k Sales</p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <span class="badge badge-light-theme-light font-theme-light">
+                                  $30
+                                </span>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <div class="media">
+                                  <img
+                                    class="img-fluid me-3 b-r-5"
+                                    src="../assets/images/dashboard-2/rectangle-29.png"
+                                    alt=""
+                                  />
+                                  <div class="media-body">
+                                    <a href="product-page.html">
+                                      <h5>Plattan 2 Headphones</h5>
+                                    </a>
+                                    <p>35k Sales</p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <span class="badge badge-light-theme-light font-theme-light">
+                                  $45{" "}
+                                </span>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <div class="media">
+                                  <img
+                                    class="img-fluid me-3 b-r-5"
+                                    src="../assets/images/dashboard-2/rectangle-29.png"
+                                    alt=""
+                                  />
+                                  <div class="media-body">
+                                    <a href="product-page.html">
+                                      <h5>Plattan 2 Headphones</h5>
+                                    </a>
+                                    <p>35k Sales</p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <span class="badge badge-light-theme-light font-theme-light">
+                                  $45{" "}
+                                </span>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                  {/* <div class="card revenue-category">
                     <div class="card-header card-no-border">
                       <div class="media">
                         <div class="media-body">
@@ -775,10 +1072,53 @@ export default function WriterDashboard() {
                       </div>
                       <div id="revenue-chart"> </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
-                <div class="col-xl-5 col-md-6 dash-lgorder-1 dash-xl-50 dash-39">
-                  <div class="card special-discount">
+                <div class="col-xl-8 col-md-8 dash-lgorder-1 dash-xl-50 ">
+                  {/* <div
+                    cursor="unset"
+                    class="Box-sc-15jsbqj-0 Card-sc-1rfvr4b-0 hrQCit jTGtOC"
+                  >
+                    <h5
+                      font-weight="600"
+                      font-size="16px"
+                      class="Typography-sc-1nbqu5-0 fyYUUC"
+                    >
+                      Sales
+                    </h5>
+                    <canvas
+                      role="img"
+                      height="263"
+                      width="528"
+                      style={{display: "block", boxSizing: "border-box", height: "263px", width: "528px"}}
+                    ></canvas>
+                  </div> */}
+                  <div class="card profile-greeting">
+                    <div class="card-body">
+                      <div class="media">
+                        <div class="media-body">
+                          <div class="greeting-user">
+                            <h1>Hello, {auth.user.fullName}</h1>
+                            <p>Welcome back, your dashboard is ready!</p>
+                            {/* <a
+                              class="btn btn-outline-white_color"
+                              href="blog-single.html"
+                            >
+                              Get Started<i class="icon-arrow-right"> </i>
+                            </a> */}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="cartoon-img">
+                        <img
+                          class="img-fluid"
+                          src="http://admin.pixelstrap.com/zeta/assets/images/images.svg"
+                          alt=""
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  {/* <div class="card special-discount">
                     <div class="card-body">
                       <div class="discount-slide owl-carousel owl-theme">
                         <div class="item">
@@ -939,9 +1279,9 @@ export default function WriterDashboard() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
-                <div class="col-xl-4 col-md-6 dash-xl-50 dash-29">
+                <div class="col-xl-4 col-md-4 dash-xl-50 dash-29">
                   <div class="card bg-primary get-support">
                     <div class="card-body">
                       <div class="support-sec-img">
@@ -954,17 +1294,17 @@ export default function WriterDashboard() {
                       <div class="support-detail">
                         <h5>Get support 24 hours</h5>
                         <p>Check Our new service & feature about sales! </p>
-                        <a
+                        {/* <Link
                           class="btn btn-outline-white_color"
-                          href="product-page.html"
+                          // href="product-page.html"
                         >
                           Interested?
-                        </a>
+                        </Link> */}
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-xl-4 col-md-6 dash-xl-50 dash-31">
+                {/* <div class="col-xl-4 col-md-6 dash-xl-50 dash-31">
                   <div class="card total-sale">
                     <div class="card-header card-no-border">
                       <div class="media">
@@ -1020,7 +1360,7 @@ export default function WriterDashboard() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
