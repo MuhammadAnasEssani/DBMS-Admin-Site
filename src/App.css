@@ -95,6 +95,18 @@
 .ant-menu-item-icon {
   color: #012970;
 }
+.ReactTags__tagInputField {
+  margin: 10px 0px;
+    padding: 8px 12px;
+    height: 40px;
+    font-size: inherit;
+    color: rgb(43, 52, 69);
+    border-radius: 5px;
+    border: 1px solid rgb(218, 225, 231);
+    width: 100%;
+    outline: none;
+    font-family: inherit;
+} 
 /* .anticon {
   color: #012970;
 } */

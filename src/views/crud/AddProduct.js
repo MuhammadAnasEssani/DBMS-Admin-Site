@@ -15,6 +15,14 @@ import { addProduct } from "../../config/api/Product";
 import { getCategories } from "../../config/api/Categories";
 import { useHistory } from "react-router-dom";
 import { getOffersByVendor } from "../../config/api/Offer";
+import { WithContext as ReactTags } from "react-tag-input";
+
+const KeyCodes = {
+  comma: 188,
+  enter: 13,
+};
+
+const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
 export default function AddProduct() {
   const { Option } = Select;
@@ -38,46 +46,143 @@ export default function AddProduct() {
   const [loading, setLoading] = useState(false);
   const auth = useSelector((state) => state.auth);
   const history = useHistory();
+  const [colours, setColours] = useState([]);
+  const [sizes, setSizes] = useState([]);
+  const [colourError, setColourError] = useState(false);
+  const [sizeError, setSizeError] = useState(false);
+
+  const handleDelete = (i) => {
+    setColours(colours.filter((colours, index) => index !== i));
+    if (colours.length == 0) {
+      setColourError(true);
+    }
+  };
+
+  const handleAddition = (colour) => {
+    setColours([...colours, colour]);
+    setColourError(false);
+  };
+
+  const handleDrag = (colour, currPos, newPos) => {
+    const newColours = colours.slice();
+
+    newColours.splice(currPos, 1);
+    newColours.splice(newPos, 0, colour);
+
+    // re-render
+    setColours(newColours);
+  };
+
+  const handleTagClick = (index) => {
+    // console.log("The tag at index " + index + " was clicked");
+  };
+  const handleDeleteSizes = (i) => {
+    setSizes(sizes.filter((sizes, index) => index !== i));
+    if (sizes.length == 0) {
+      setSizeError(true);
+    }
+  };
+
+  const handleAdditionSizes = (size) => {
+    setSizes([...sizes, size]);
+    setSizeError(false);
+  };
+
+  const handleDragSizes = (size, currPos, newPos) => {
+    const newSizes = sizes.slice();
+
+    newSizes.splice(currPos, 1);
+    newSizes.splice(newPos, 0, size);
+
+    // re-render
+    setSizes(newSizes);
+  };
+
+  const handleTagClickSizes = (index) => {
+    // console.log("The tag at index " + index + " was clicked");
+  };
+  // const selectedTags = (tags) => {
+  //   console.log(tags);
+  // };
+  // const removeTags = (indexToRemove) => {
+  //   setTags([...tags.filter((_, index) => index !== indexToRemove)]);
+  // };
+  // const addTags = (event) => {
+  //   if (event.target.value !== "") {
+  //     setTags([...tags, event.target.value]);
+  //     selectedTags([...tags, event.target.value]);
+  //     event.target.value = "";
+  //   }
+  // };
   const handleAddProduct = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    var form = new FormData();
-    form.append("name", productName);
-    form.append("price", productPrice);
-    form.append("description", productDesc);
-    form.append("quantity", productQuantity);
-    form.append("category", productCategory);
-    form.append("discount", productDiscount);
-    form.append("offer", productOffer);
-    form.append("type", productType);
-    for (let pic of productImage) {
-      form.append("productPicture", pic);
-    }
-    try {
-      const res = await addProduct(form);
-      if (res.status === 201) {
-        Notification("Product Department", res.data.message, "Success");
-        setProductName("");
-        setProductDesc("");
-        setProductCategory("");
-        setProductOffer("");
-        setProductDiscount(0);
-        setProductPrice("");
-        setProductQuantity("");
-        setProductType("normal");
-        setProductImage([]);
-        setDisplayProductImage([])
-        setLoading(false);
-        return;
-      } else {
-        setLoading(false);
-        Notification("Product Department", res.data.message, "Error");
-        return;
+    if (colours.length > 0 && sizes.length > 0) {
+      setLoading(true);
+      console.log(colours);
+      console.log(sizes);
+      var form = new FormData();
+      form.append("name", productName);
+      form.append("price", productPrice);
+      form.append("description", productDesc);
+      form.append("quantity", productQuantity);
+      form.append("category", productCategory);
+      form.append("discount", productDiscount);
+      form.append("offer", productOffer);
+      form.append("type", productType);
+      form.append("colours", JSON.stringify(colours));
+      form.append("sizes", JSON.stringify(sizes));
+    //   for (var i in data) {
+    //     createFormData(formData, key + '[' + i + ']', data[i]);
+    // }
+      // for (let colour of colours) {
+      //   form.append("colours", colour);
+      // }
+      // for (let size of sizes) {
+      //   form.append("sizes", size);
+      // }
+      for (let pic of productImage) {
+        form.append("productPicture", pic);
       }
-    } catch (err) {
-      setLoading(false);
-      // console.log(err)
-      Notification("Product Department", "Something went wrong", "Error");
+      // console.log(colours);
+      // console.log(sizes);
+      try {
+        const res = await addProduct(form);
+        if (res.status === 201) {
+          Notification("Product Department", res.data.message, "Success");
+          setProductName("");
+          setProductDesc("");
+          setProductCategory("");
+          setProductOffer("");
+          setProductDiscount(0);
+          setProductPrice("");
+          setProductQuantity("");
+          setProductType("normal");
+          setProductImage([]);
+          setDisplayProductImage([]);
+          setColours([]);
+          setSizes([]);
+          setLoading(false);
+          return;
+        } else {
+          setLoading(false);
+          Notification("Product Department", res.data.message, "Error");
+          return;
+        }
+      } catch (err) {
+        setLoading(false);
+        Notification("Product Department", "Something went wrong", "Error");
+      }
+    } else {
+      if (colours.length == 0) {
+        setColourError(true);
+      } else {
+        setColourError(false);
+      }
+      if (sizes.length == 0) {
+        setSizeError(true);
+      } else {
+        setSizeError(false);
+      }
     }
   };
   const handleProductImage = (e) => {
@@ -130,7 +235,7 @@ export default function AddProduct() {
     }
     fetchCategories();
     fetchOffers();
-  }, [displayProductImage,auth.authenticate]);
+  }, [displayProductImage, auth.authenticate]);
   // console.log(displayProductImage);
 
   useEffect(() => {}, [change]);
@@ -254,7 +359,7 @@ export default function AddProduct() {
                     {/* </Form.Item> */}
                   </div>
                   <div className="col-lg-6">
-                    <label className="labeltext">Offer)</label>
+                    <label className="labeltext">Offer</label>
                     {/* <Form.Item name="category"> */}
                     <select
                       className="FormInput"
@@ -271,6 +376,28 @@ export default function AddProduct() {
                       ))}
                     </select>
                   </div>
+                  {/* <div className="tags-input col-lg-6">
+                    <ul id="tags">
+                      {tags.map((tag, index) => (
+                        <li key={index} className="tag">
+                          <span className="tag-title">{tag}</span>
+                          <span
+                            className="tag-close-icon"
+                            onClick={() => removeTags(index)}
+                          >
+                            x
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    <input
+                      type="text"
+                      onKeyUp={(event) =>
+                        event.key === "Enter" ? addTags(event) : null
+                      }
+                      placeholder="Press enter to add tags"
+                    />
+                  </div> */}
                   <div className="col-lg-12">
                     <label className="labeltext">
                       Product Description: (*)
@@ -437,6 +564,87 @@ export default function AddProduct() {
                         Featured Product
                       </span>
                     </label>
+                  </div>
+                  <div className="col-lg-6">
+                    <label className="labeltext">Product Colours</label>
+                    {colourError && (
+                      <p
+                        style={{
+                          color: "red",
+                          position: "absolute",
+                          top: "47px",
+                          right: "21px",
+                        }}
+                      >
+                        Colours are required
+                      </p>
+                    )}
+                    <ReactTags
+                      required
+                      // style={{
+                      //   margin: "10px 0px",
+                      //   padding: "8px 12px",
+                      //   height: "40px",
+                      //   fontSize: "inherit",
+                      //   color: "rgb(43, 52, 69)",
+                      //   borderRadius: "5px",
+                      //   border: "1px solid rgb(218, 225, 231)",
+                      //   width: "100%",
+                      //   outline: "none",
+                      //   fontFamily: "inherit",
+                      // }}
+                      // inputProps={{
+                      //   required: true,
+                      // }}
+                      tags={colours}
+                      delimiters={delimiters}
+                      handleDelete={handleDelete}
+                      handleAddition={handleAddition}
+                      handleDrag={handleDrag}
+                      handleTagClick={handleTagClick}
+                      inputFieldPosition="bottom"
+                      autocomplete
+                    />
+                  </div>
+                  <div className="col-lg-6">
+                    <label className="labeltext">Product Sizes</label>
+                    {sizeError && (
+                      <p
+                        style={{
+                          color: "red",
+                          position: "absolute",
+                          top: "47px",
+                          right: "21px",
+                        }}
+                      >
+                        Size are required
+                      </p>
+                    )}
+                    <ReactTags
+                      // inputProps={{
+                      //   required: true,
+                      // }}
+                      // style={{
+                      //   margin: "10px 0px",
+                      //   padding: "8px 12px",
+                      //   height: "40px",
+                      //   fontSize: "inherit",
+                      //   color: "rgb(43, 52, 69)",
+                      //   borderRadius: "5px",
+                      //   border: "1px solid rgb(218, 225, 231)",
+                      //   width: "100%",
+                      //   outline: "none",
+                      //   fontFamily: "inherit",
+                      // }}
+                      tags={sizes}
+                      delimiters={delimiters}
+                      handleDelete={handleDeleteSizes}
+                      handleAddition={handleAdditionSizes}
+                      handleDrag={handleDragSizes}
+                      handleTagClick={handleTagClickSizes}
+                      inputFieldPosition="bottom"
+                      autocomplete
+                    />
                   </div>
                   <div className="col-lg-12">
                     {loading ? (
