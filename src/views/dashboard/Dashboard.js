@@ -25,16 +25,12 @@ export default function Dashboard() {
     {/* <StudentDashboard /> */}
     {/* <StaffDashboard /> */}
     {/* <AdminDashboard /> */}
-    <WriterDashboard />
-      {/* {authState.role === "Administration" ? (
-        <AdminDashboard />
-      ) : authState.role === "Staff" ? (
-        <StaffDashboard />
-      ) : authState.role === "Writer" ? (
+    {/* <WriterDashboard /> */}
+      {auth.user.role === "vendor" ? (
         <WriterDashboard />
-      ) : (
-        <StudentDashboard />
-      )} */}
+      ) : auth.user.role === "admin" ? (
+        <AdminDashboard />
+      ) : null }
     </>
   );
 }

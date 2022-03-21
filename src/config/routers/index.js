@@ -16,6 +16,10 @@ import Offers from "../../views/list/Offers";
 // import MyPapers from "../../views/list/MyPapers";
 import Orders from "../../views/list/Orders";
 import MyProducts from "../../views/list/Products";
+import AddStaff from "../../views/crud/AddStaff";
+import Staff from "../../views/list/Staff";
+import AdminOrders from "../../views/list/AdminOrders";
+import Vendors from "../../views/list/Vendors";
 // import RequestedPapers from "../../views/list/RequestedPapers";
 // import StaffList from "../../views/list/StaffList";
 // import StudentList from "../../views/list/StudentList";
@@ -80,6 +84,18 @@ const routes = [
     // isLoginRequired: true,
     component: () => <Orders />,
   },
+  {
+    path: "/admin-orders",
+    title: "Orders",
+    // isLoginRequired: true,
+    component: () => <AdminOrders />,
+  },
+  {
+    path: "/vendors",
+    title: "Vendors",
+    // isLoginRequired: true,
+    component: () => <Vendors />,
+  },
   // {
   //   path: "/my-papers",
   //   title: "My Papers",
@@ -122,12 +138,18 @@ const routes = [
   //   isLoginRequired: true,
   //   component: () => <WritersList />,
   // },
-  // {
-  //   path: "/add-staff",
-  //   title: "Add staff",
-  //   // isLoginRequired: true,
-  //   component: () => <AddStaff />,
-  // },
+  {
+    path: "/staff",
+    title: "Staff",
+    // isLoginRequired: true,
+    component: () => <Staff />,
+  },
+  {
+    path: "/add-staff",
+    title: "Add staff",
+    // isLoginRequired: true,
+    component: () => <AddStaff />,
+  },
   {
     path: "/my-products",
     title: "Add staff",

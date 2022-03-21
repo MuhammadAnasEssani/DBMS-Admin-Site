@@ -17,10 +17,17 @@ function OrderDetails(token, orderid) {
 function getOrdersByVendor() {
   return axios.post(`/order/getCustomerOrdersByVendors`);
 }
+function getOrdersByAdmin() {
+  return axios.post(`/order/getCustomerOrders`);
+}
 function updateOrderByVendor(model) {
   return axios.post(`/vendor/updateOrder`,{
     ...model
 });
 }
-
-export { OrderDetails, getOrdersByVendor,updateOrderByVendor };
+function updateOrderByAdmin(model) {
+  return axios.post(`/order/updateOrderStatus`,{
+    ...model
+});
+}
+export { OrderDetails, getOrdersByVendor,updateOrderByVendor,getOrdersByAdmin,updateOrderByAdmin };

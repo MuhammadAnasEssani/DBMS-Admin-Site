@@ -38,152 +38,101 @@ export default function AdminNav() {
       >
         <Link to="/dashboard">Dashboard</Link>
       </Menu.Item>
-      <Menu.Item
-        key="2"
-        icon={
-          <span className="bi bi-person" style={{ fontSize: iconsSize }}></span>
-        }
-      >
-        <Link to="/student-list"> Students</Link>
-      </Menu.Item>
-      <SubMenu
-        key="Writers"
-        icon={
-          <span
-            className="bi bi-person-check"
-            style={{ fontSize: iconsSize }}
-          ></span>
-        }
-        title="Writers"
-      >
-        <Menu.Item
-          key="3"
-          icon={
-            <span
-              className="bi bi-plus-circle"
-              style={{ fontSize: subMenuIconSize }}
-            ></span>
-          }
-        >
-          {" "}
-          <Link to="/add-writer">Add</Link>
-        </Menu.Item>
-        <Menu.Item
-          key="4"
-          icon={
-            <span
-              className="bi bi-list-ol"
-              style={{ fontSize: subMenuIconSize }}
-            ></span>
-          }
-        >
-          {" "}
-          <Link to="/writer-list">List</Link>
-        </Menu.Item>
-      </SubMenu>
-      <SubMenu
-        key="Staff"
-        icon={
-          <span className="bi bi-people" style={{ fontSize: iconsSize }}></span>
-        }
-        title="Staff"
-      >
-        <Menu.Item
-          key="5"
-          icon={
-            <span
-              className="bi bi-plus-circle"
-              style={{ fontSize: subMenuIconSize }}
-            ></span>
-          }
-        >
-          {" "}
-          <Link to="/add-staff">Add</Link>
-        </Menu.Item>
-        <Menu.Item
-          key="6"
-          icon={
-            <span
-              className="bi bi-list-ol"
-              style={{ fontSize: subMenuIconSize }}
-            ></span>
-          }
-        >
-          {" "}
-          <Link to="/staff-list">List</Link>
-        </Menu.Item>
-      </SubMenu>
-
-      {/* <SubMenu
+     
+     <SubMenu
         key="Categories"
         icon={
           <span
-            className="bi bi-list-ul"
+            className="bi bi-journal-bookmark"
             style={{ fontSize: iconsSize }}
           ></span>
         }
         title="Categories"
       >
         <Menu.Item
-          key="6"
+          key="2"
           icon={
             <span
-              className="bi bi-plus-circle"
+              className="bi bi-save"
               style={{ fontSize: subMenuIconSize }}
             ></span>
           }
         >
           {" "}
-          <Link>Add</Link>
+          <Link to="/add-category">Add Category</Link>
+        </Menu.Item>
+        <Menu.Item
+          key="3"
+          icon={
+            <span
+              className="bi bi-save"
+              style={{ fontSize: subMenuIconSize }}
+            ></span>
+          }
+        >
+          {" "}
+          <Link to="/categories">Categories</Link>
+        </Menu.Item>
+      </SubMenu>
+      <SubMenu
+        key="Staff"
+        icon={
+          <span
+            className="bi bi-journal-bookmark"
+            style={{ fontSize: iconsSize }}
+          ></span>
+        }
+        title="Staff"
+      >
+        <Menu.Item
+          key="4"
+          icon={
+            <span
+              className="bi bi-save"
+              style={{ fontSize: subMenuIconSize }}
+            ></span>
+          }
+        >
+          {" "}
+          <Link to="/add-staff">Add Staff</Link>
+        </Menu.Item>
+        <Menu.Item
+          key="5"
+          icon={
+            <span
+              className="bi bi-save"
+              style={{ fontSize: subMenuIconSize }}
+            ></span>
+          }
+        >
+          {" "}
+          <Link to="/staff">Staff</Link>
+        </Menu.Item>
+      </SubMenu>
+      <Menu.Item
+          key="6"
+          icon={
+            <span
+              className="bi bi-save"
+              style={{ fontSize: subMenuIconSize }}
+            ></span>
+          }
+        >
+          {" "}
+          <Link to="/admin-orders">Orders</Link>
         </Menu.Item>
         <Menu.Item
           key="7"
           icon={
             <span
-              className="bi bi-list-ol"
+              className="bi bi-save"
               style={{ fontSize: subMenuIconSize }}
             ></span>
           }
         >
           {" "}
-          <Link to="/category-list">List</Link>
+          <Link to="/vendors">Vendors</Link>
         </Menu.Item>
-      </SubMenu> */}
-      <Menu.Item
-        key="7"
-        icon={
-          <span
-            className="bi bi-list-ul"
-            style={{ fontSize: iconsSize }}
-          ></span>
-        }
-      >
-        <Link to="/categories">Categories</Link>
-      </Menu.Item>
-      <Menu.Item
-        key="8"
-        icon={
-          <span
-            className="bi bi-book"
-            style={{ fontSize: iconsSize }}
-          ></span>
-        }
-      >
-        <Link to="/academic-levels">Academic levels</Link>
-      </Menu.Item>
-      <Menu.Item
-        key="9"
-        icon={
-          <span
-            className="bi bi-journal-text"
-            style={{ fontSize: iconsSize }}
-          ></span>
-        }
-      >
-        <Link to="/orders">Orders</Link>
-      </Menu.Item>
-     
-   
     </Menu>
     
   );
