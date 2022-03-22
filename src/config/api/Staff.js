@@ -9,4 +9,10 @@ function getStaff(model) {
   return axios.get("/admin/get-staff");
 }
 
-export { addStaff,getStaff };
+function changeStaffStatus(model) {
+  return axios.post("/admin/update-staff", {
+    ...model,
+  });
+}
+
+export { addStaff,getStaff ,changeStaffStatus};

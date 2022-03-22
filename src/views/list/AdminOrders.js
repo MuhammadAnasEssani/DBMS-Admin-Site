@@ -223,11 +223,21 @@ export default function AdminOrders() {
           email: order.user.email,
           items: order.items.length,
           status:
-            order.orderStatus[
-              order.orderStatus.findIndex((status) => {
-                return status.isCompleted == false;
-              }) - 1
-            ].type,
+          order.orderStatus[
+            order.orderStatus.findIndex(
+              (status) => {
+                return (
+                  status.isCompleted == false
+                );
+              }
+            ) != -1 ? order.orderStatus.findIndex(
+              (status) => {
+                return (
+                  status.isCompleted == false
+                );
+              }
+            ) - 1 : 3
+          ].type,
           //   changeStatus: (
           //     <label class="switch">
           //       <input

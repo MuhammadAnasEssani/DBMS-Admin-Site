@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Table } from "antd";
-
-import BreadCrumbs from "../../component/breadcrumbs/BreadCrumbs";
-import CounterCard from "../../component/counterCard/CounterCard";
-import IntroCard from "../../component/introCard/IntroCard";
-import ChangePassword from "../../component/changePassword/ChangePassword";
+import { getOrdersByAdmin, getRecentOrdersByAdmin } from "../../config/api/OrdersAPI";
+import { Skeleton } from "antd";
+import Notification from "../../component/notification/Notification";
+import { getRecentVendors } from "../../config/api/Vendor";
 
 export default function AdminDashboard() {
   const state = useSelector((state) => state);
@@ -16,107 +14,88 @@ export default function AdminDashboard() {
 
   const history = useHistory();
 
-  const [changePassword, setChangePassword] = useState(false);
+  const [recentLoading, setRecentLoading] = useState(false);
+  const [vendorLoading, setVendorLoading] = useState(false);
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [recentVendors, setRecentVendors] = useState([]);
+  const [pendingLoading, setPendingLoading] = useState(false);
+  const [pendingOrders, setPendingOrders] = useState("");
 
-  const columnsTopic = [
-    {
-      title: "No",
-      dataIndex: "no",
-      key: "no",
-    },
-    {
-      title: "Topic",
-      dataIndex: "topic",
-      key: "topic",
-    },
-    {
-      title: "Orders",
-      dataIndex: "orders",
-      key: "orders",
-    },
-  ];
-  const columnsOrder = [
-    {
-      title: "No",
-      dataIndex: "no",
-      key: "no",
-      responsive: ["md"],
-    },
-    {
-      title: "Student Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Paper Type",
-      dataIndex: "type",
-      key: "type",
-    },
-    {
-      title: "DeadLine",
-      dataIndex: "deadline",
-      key: "deadline",
-    },
-    {
-      title: "Action",
-      dataIndex: "action",
-      key: "action",
-      render: (text, record, index) => (
-        <div className="d-sm-inline-flex gap-2 actionDiv">
-          <Link
-            className="bi bi-pencil actionBtn"
-            onClick={() => console.log(record.key)}
-          ></Link>
-          <Link className="bi bi-trash actionBtn"></Link>
-        </div>
-      ),
-    },
-  ];
-  const dataOrder = [
-    {
-      key: "1",
-      no: "1",
-      name: "Admin",
-      type: "Essay",
-      deadline: "20/12/2020",
-    },
-    {
-      key: "2",
-      no: "2",
-      name: "Mr Admin",
-      type: "Essay",
-      deadline: "20/12/2020",
-    },
-  ];
-  const data = [
-    {
-      key: "1",
-      no: "1",
-      topic: "Essay",
-      orders: 23,
-    },
-    {
-      key: "2",
-      no: "2",
-      topic: "Essay",
-      orders: 24,
-    },
-  ];
-
-  const model = {
-    name: "Admin",
-    role: "Administration",
-    email: "Admin@app.com",
-    phone: "(+971) 446546 54",
+  const fetchRecentOrders = async () => {
+    setRecentLoading(true);
+    try {
+      const res = await getRecentOrdersByAdmin();
+      if (res.status == 200) {
+        setRecentOrders(res.data.orders);
+        setRecentLoading(false);
+        return;
+      } else {
+        Notification("Recent Orderst", res.data.message, "Error");
+        setRecentLoading(false);
+        return;
+      }
+    } catch (err) {
+      Notification("Recent Orders", "Something went wrong", "Error");
+      setRecentLoading(false);
+    }
   };
+  const fetchRecentVendors = async () => {
+    setVendorLoading(true);
+    try {
+      const res = await getRecentVendors();
+      if (res.status == 200) {
+        setRecentVendors(res.data.users);
+        setVendorLoading(false);
+        return;
+      } else {
+        Notification("Recent Vendors", res.data.message, "Error");
+        setVendorLoading(false);
+        return;
+      }
+    } catch (err) {
+      Notification("Recent Vendors", "Something went wrong", "Error");
+      setVendorLoading(false);
+    }
+  };
+  const HandleorderList = async () => {
+    setPendingLoading(true)
+    try {
+      var res = await getOrdersByAdmin();
+      if (res.status == 200) {
+        // setOrders(res.data.orders);
+      // console.log(res.data.orders)
+      let count = 1
+      res.data.orders.map((order) => {
 
-  // useEffect(() => {
-  //   if (authState.token == null) {
-  //     history.push("/");
-  //   }
-  // }, []);
+      })
+        setPendingLoading(false)
+        return;
+      } else {
+        Notification("Pending Orders", res.data.message, "Error");
+        setPendingLoading(false)
+        return;
+      }
+      // console.log(res);
+      // if (res.Message != "Success") {
+      //   return;
+      // }
+      // var resModel = res.Data;
+      // setOrdersModel(resModel);
+    } catch (err) {
+      Notification("Pending Orders", "Something went wrong", "Error");
+    }
+  };
+  useEffect(() => {
+    fetchRecentOrders();
+    fetchRecentVendors();
+  }, []);
+  // console.log(recentOrders)
   return (
-    <section id="hero" className="hero d-flex align-items-center" style={{paddingBottom: "40px"}}>
+    <section
+      id="hero"
+      className="hero d-flex align-items-center"
+      style={{ paddingBottom: "40px" }}
+    >
       <div style={{ width: "100%" }}>
         <div
           className={drawerState.Drawer ? "row offset-xl-2" : "row offset-xl-1"}
@@ -226,496 +205,198 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 </div>
-                <div class="col-xl-5 col-md-12 dash-xl-50 dash-lg-100 dash-39">
-                  <div class="card ongoing-project recent-orders">
-                    <div class="card-header card-no-border">
-                      <div class="media media-dashboard">
-                        <div class="media-body">
-                          <h5 class="mb-0">Recent Orders</h5>
-                        </div>
-                        <div class="icon-box onhover-dropdown">
-                          <i data-feather="more-horizontal"></i>
-                          <div class="icon-box-show onhover-show-div">
-                            <ul>
-                              <li>
-                                {" "}
-                                <a>Done</a>
-                              </li>
-                              <li>
-                                {" "}
-                                <a>Pending</a>
-                              </li>
-                              <li>
-                                {" "}
-                                <a>Rejected</a>
-                              </li>
-                              <li>
-                                {" "}
-                                <a>In Progress</a>
-                              </li>
-                            </ul>
+                <div class="col-xl-6 col-md-12">
+                  {recentLoading ? (
+                    <Skeleton.Input className={"recentLoader"} active={true} />
+                  ) : (
+                    <div class="card ongoing-project recent-orders">
+                      <div class="card-header card-no-border">
+                        <div class="media media-dashboard">
+                          <div class="media-body">
+                            <h5 class="mb-0">Recent Orders</h5>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="card-body pt-0">
-                      <div class="table-responsive">
-                        <table class="table table-bordernone">
-                          <thead>
-                            <tr>
-                              <th>
-                                {" "}
-                                <span>Product Name</span>
-                              </th>
-                              <th>
-                                {" "}
-                                <span>Customer</span>
-                              </th>
-                              <th>
-                                {" "}
-                                <span>Price </span>
-                              </th>
-                              <th>
-                                {" "}
-                                <span>Quantity</span>
-                              </th>
-                              <th>
-                                {" "}
-                                <span>Status</span>
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>
-                                <div class="media">
-                                  <div class="square-box me-2">
-                                    <img
-                                      class="img-fluid b-r-5"
-                                      src="../assets/images/dashboard-2/running-shoe.png"
-                                      alt=""
-                                    />
-                                  </div>
-                                  <div class="media-body ps-2">
-                                    <div class="avatar-details">
-                                      <a href="product-page.html">
-                                        <h6>Nike Sports NK</h6>
-                                      </a>
-                                      <span> Free delivery</span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </td>
-                              <td class="img-content-box">
-                                <h6>Harold More</h6>
-                                <span>UK Desig Team</span>
-                              </td>
-                              <td>
-                                <h6>$99.85</h6>
-                                <span>Nok </span>
-                              </td>
-                              <td>
-                                <h6>20</h6>
-                              </td>
-                              <td>
-                                <div class="badge badge-light-primary">
-                                  Done
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <div class="media">
-                                  <div class="square-box me-2">
-                                    <img
-                                      class="img-fluid b-r-5"
-                                      src="../assets/images/dashboard-2/hand-bag.png"
-                                      alt=""
-                                    />
-                                  </div>
-                                  <div class="media-body ps-2">
-                                    <div class="avatar-details">
-                                      <a href="product-page.html">
-                                        <h6>Women Bag</h6>
-                                      </a>
-                                      <span> ₹83.65 delivery</span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </td>
-                              <td class="img-content-box">
-                                <h6>Daniel Poller</h6>
-                                <span>UX Ninjas</span>
-                              </td>
-                              <td>
-                                <h6>$79.99</h6>
-                                <span>Nok </span>
-                              </td>
-                              <td>
-                                <h6>12</h6>
-                              </td>
-                              <td>
-                                <div class="badge badge-light-secondary">
-                                  Pending
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <div class="media">
-                                  <div class="square-box me-2">
-                                    <img
-                                      class="img-fluid b-r-5"
-                                      src="../assets/images/dashboard-2/sun-glasses.png"
-                                      alt=""
-                                    />
-                                  </div>
-                                  <div class="media-body ps-2">
-                                    <div class="avatar-details">
-                                      <a href="product-page.html">
-                                        <h6>Sunglasses</h6>
-                                      </a>
-                                      <span> Free delivery</span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </td>
-                              <td class="img-content-box">
-                                <h6>Frank Borker</h6>
-                                <span>SF Dev Team</span>
-                              </td>
-                              <td>
-                                <h6>$59.20</h6>
-                                <span>Nok </span>
-                              </td>
-                              <td>
-                                <h6>23</h6>
-                              </td>
-                              <td>
-                                <div class="badge badge-light-danger">
-                                  Rejected
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <div class="media">
-                                  <div class="square-box me-2">
-                                    <img
-                                      class="img-fluid b-r-5"
-                                      src="../assets/images/dashboard-2/shirt.png"
-                                      alt=""
-                                    />
-                                  </div>
-                                  <div class="media-body ps-2">
-                                    <div class="avatar-details">
-                                      <a href="product-page.html">
-                                        <h6>Cotton T-shirt</h6>
-                                      </a>
-                                      <span> ₹283.65 delivery</span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </td>
-                              <td class="img-content-box">
-                                <h6>Adam Moris</h6>
-                                <span>Moscow Office</span>
-                              </td>
-                              <td>
-                                <h6>$49.99</h6>
-                                <span>Nok </span>
-                              </td>
-                              <td>
-                                <h6>34</h6>
-                              </td>
-                              <td>
-                                <div class="badge badge-light-info">
-                                  In Progress
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-xl-4 col-md-6 dash-xl-50 dash-29">
-                  <div class="card our-activities">
-                    <div class="card-header card-no-border">
-                      <div class="media media-dashboard">
-                        <div class="media-body">
-                          <h5 class="mb-0">Our Activities </h5>
-                        </div>
-                        <div class="icon-box onhover-dropdown">
-                          <i data-feather="more-horizontal"></i>
-                          <div class="icon-box-show onhover-show-div">
-                            <ul>
-                              <li>
-                                {" "}
-                                <a>Latest </a>
-                              </li>
-                              <li>
-                                {" "}
-                                <a>Earlist</a>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="card-body pt-0">
-                      <div class="table-responsive">
-                        <table class="table table-bordernone">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <div class="media">
-                                  <div class="icon-wrappar">
-                                    <i class="fa fa-trophy font-primary"> </i>
-                                  </div>
-                                  <div class="media-body">
-                                    <a href="#">
-                                      <h5>
-                                        Win best seller of the year awaed{" "}
-                                      </h5>
-                                    </a>
-                                    <p>Company, San Francisco</p>
-                                  </div>
-                                </div>
-                              </td>
-                              <td>
-                                <span class="badge badge-light-theme-light font-theme-light">
-                                  1 day ago
-                                </span>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <div class="media">
-                                  <div class="icon-wrappar">
-                                    <i class="fa fa-check-circle font-secondary">
-                                      {" "}
-                                    </i>
-                                  </div>
-                                  <div class="media-body">
-                                    <a href="#">
-                                      <h5>Apporved our product</h5>
-                                    </a>
-                                    <p>Elisse joson, San Francisco</p>
-                                  </div>
-                                </div>
-                              </td>
-                              <td>
-                                <span class="badge badge-light-theme-light font-theme-light">
-                                  2 weeks ago
-                                </span>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <div class="media">
-                                  <div class="icon-wrappar">
-                                    <i class="fa fa-bookmark font-success"> </i>
-                                  </div>
-                                  <div class="media-body">
-                                    <a href="#">
-                                      <h5>
-                                        Win best seller of the year awaed{" "}
-                                      </h5>
-                                    </a>
-                                    <p>Company, San Francisco</p>
-                                  </div>
-                                </div>
-                              </td>
-                              <td>
-                                <span class="badge badge-light-theme-light font-theme-light">
-                                  3 day ago
-                                </span>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <div class="media">
-                                  <div class="icon-wrappar">
-                                    <i class="fa fa-shopping-basket font-warning">
-                                      {" "}
-                                    </i>
-                                  </div>
-                                  <div class="media-body">
-                                    <a href="#">
-                                      <h5>Apporved our product in checking</h5>
-                                    </a>
-                                    <p>35k Sales</p>
-                                  </div>
-                                </div>
-                              </td>
-                              <td>
-                                <span class="badge badge-light-theme-light font-theme-light">
-                                  2 hours ago
-                                </span>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-xl-3 col-md-6 dash-xl-50 dash-32">
-                  <div class="card hot-selling">
-                    <div class="card-header card-no-border">
-                      <div class="header-top">
-                        <h5 class="m-0">Hot Selling Products</h5>
-                        <div class="icon-box onhover-dropdown">
-                          <i data-feather="more-horizontal"></i>
-                          <div class="icon-box-show onhover-show-div">
-                            <ul>
-                              <li>
-                                {" "}
-                                <a>Today</a>
-                              </li>
-                              <li>
-                                {" "}
-                                <a>Yesterday</a>
-                              </li>
-                              <li>
-                                {" "}
-                                <a>Tommorow</a>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="card-body pt-0">
-                      <div class="table-responsive">
-                        <table class="table table-bordernone">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <div class="media">
-                                  <img
-                                    class="img-fluid me-3 b-r-5"
-                                    src="../assets/images/dashboard-2/rectangle-26.png"
-                                    alt=""
-                                  />
-                                  <div class="media-body">
-                                    <a href="product-page.html">
-                                      <h5>Dominoes Coffee Table Game</h5>
-                                    </a>
-                                    <p>60k Sales</p>
-                                  </div>
-                                </div>
-                              </td>
-                              <td>
-                                <span class="badge badge-light-theme-light font-theme-light">
-                                  $50
-                                </span>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <div class="media">
+                      <div class="card-body pt-0">
+                        <div class="table-responsive">
+                          <table class="table table-bordernone">
+                            <thead>
+                              <tr>
+                                <th>
                                   {" "}
-                                  <img
-                                    class="img-fluid me-3 b-r-5"
-                                    src="../assets/images/dashboard-2/rectangle-27.png"
-                                    alt=""
-                                  />
-                                  <div class="media-body">
-                                    <a href="product-page.html">
-                                      <h5>Photive Wireless speakers</h5>
-                                    </a>
-                                    <p>35k Sales</p>
-                                  </div>
-                                </div>
-                              </td>
-                              <td>
-                                <span class="badge badge-light-theme-light font-theme-light">
-                                  $25
-                                </span>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <div class="media">
-                                  <img
-                                    class="img-fluid me-3 b-r-5"
-                                    src="../assets/images/dashboard-2/rectangle-28.png"
-                                    alt=""
-                                  />
-                                  <div class="media-body">
-                                    <a href="product-page.html">
-                                      <h5>Urbanears Lotsen Speaker</h5>
-                                    </a>
-                                    <p>53k Sales</p>
-                                  </div>
-                                </div>
-                              </td>
-                              <td>
-                                <span class="badge badge-light-theme-light font-theme-light">
-                                  $30
-                                </span>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <div class="media">
-                                  <img
-                                    class="img-fluid me-3 b-r-5"
-                                    src="../assets/images/dashboard-2/rectangle-29.png"
-                                    alt=""
-                                  />
-                                  <div class="media-body">
-                                    <a href="product-page.html">
-                                      <h5>Plattan 2 Headphones</h5>
-                                    </a>
-                                    <p>35k Sales</p>
-                                  </div>
-                                </div>
-                              </td>
-                              <td>
-                                <span class="badge badge-light-theme-light font-theme-light">
-                                  $45{" "}
-                                </span>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <div class="media">
-                                  <img
-                                    class="img-fluid me-3 b-r-5"
-                                    src="../assets/images/dashboard-2/rectangle-29.png"
-                                    alt=""
-                                  />
-                                  <div class="media-body">
-                                    <a href="product-page.html">
-                                      <h5>Plattan 2 Headphones</h5>
-                                    </a>
-                                    <p>35k Sales</p>
-                                  </div>
-                                </div>
-                              </td>
-                              <td>
-                                <span class="badge badge-light-theme-light font-theme-light">
-                                  $45{" "}
-                                </span>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                                  <span>Customer Name</span>
+                                </th>
+                                <th>
+                                  {" "}
+                                  <span>Customer Email</span>
+                                </th>
+                                <th>
+                                  {" "}
+                                  <span>Amount</span>
+                                </th>
+                                <th>
+                                  {" "}
+                                  <span>Quantity</span>
+                                </th>
+                                <th>
+                                  {" "}
+                                  <span>Status</span>
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {recentOrders.length > 0 &&
+                                recentOrders.map((order) => (
+                                  <tr>
+                                    <td class="img-content-box">
+                                      <h6>
+                                        {order.user.firstName}{" "}
+                                        {order.user.lastName}
+                                      </h6>
+                                    </td>
+                                    <td class="img-content-box">
+                                      <h6>{order.user.email}</h6>
+                                    </td>
+                                    <td>
+                                      <h6>{order.totalAmount}</h6>
+                                      <span>{order.paymentType}</span>
+                                    </td>
+                                    <td>
+                                      <h6>{order.items.length}</h6>
+                                    </td>
+                                    <td>
+                                      <div class="badge badge-light-primary">
+                                        {
+                                          // console.log(order.orderStatus.findIndex(
+                                          //   (status) => {
+                                          //     return (
+                                          //       status.isCompleted == false
+                                          //     );
+                                          //   }
+                                          // ))
+                                          order.orderStatus[
+                                            order.orderStatus.findIndex(
+                                              (status) => {
+                                                return (
+                                                  status.isCompleted == false
+                                                );
+                                              }
+                                            ) != -1 ? order.orderStatus.findIndex(
+                                              (status) => {
+                                                return (
+                                                  status.isCompleted == false
+                                                );
+                                              }
+                                            ) - 1 : 3
+                                          ].type
+                                        }
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
+                <div class="col-xl-6 col-md-12">
+                  {vendorLoading ? (
+                    <Skeleton.Input className={"recentLoader"} active={true} />
+                  ) : (
+                    <div class="card ongoing-project recent-orders">
+                      <div class="card-header card-no-border">
+                        <div class="media media-dashboard">
+                          <div class="media-body">
+                            <h5 class="mb-0">Recent Vendors</h5>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card-body pt-0">
+                        <div class="table-responsive">
+                          <table class="table table-bordernone">
+                            <thead>
+                              <tr>
+                                <th>
+                                  {" "}
+                                  <span>Shop Detail</span>
+                                </th>
+                                <th>
+                                  {" "}
+                                  <span>Vendor Name</span>
+                                </th>
+                                <th>
+                                  {" "}
+                                  <span>Vendor Email</span>
+                                </th>
+                                {/* <th>
+                                  {" "}
+                                  <span>Quantity</span>
+                                </th> */}
+                                <th>
+                                  {" "}
+                                  <span>Status</span>
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {recentVendors.length > 0 &&
+                                recentVendors.map((vendor) => (
+                                  <tr>
+                                    <td>
+                                      <div class="media">
+                                        <div class="square-box me-2">
+                                          <img
+                                            class="img-fluid b-r-5"
+                                            src={vendor.avatar}
+                                            alt=""
+                                          />
+                                        </div>
+                                        <div class="media-body ps-2">
+                                          <div class="avatar-details" style={{textAlign: "left"}}>
+                                            <a href="product-page.html">
+                                              <h6>{vendor.shopName}</h6>
+                                            </a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </td>
+                                    <td class="img-content-box">
+                                      <h6>
+                                        {vendor.firstName}{" "}
+                                        {vendor.lastName}
+                                      </h6>
+                                    </td>
+                                    <td class="img-content-box" style={{textAlign: "left"}}>
+                                      <h6>{vendor.email}</h6>
+                                    </td>
+                                    <td>
+                                      <div class="badge badge-light-primary">
+                                        {
+                                          vendor.status
+                                        }
+                                      </div>
+                                    </td>
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
                 <div class="col-xl-8 col-md-8 dash-lgorder-1 dash-xl-50 ">
                   <div class="card profile-greeting">
                     <div class="card-body">
                       <div class="media">
                         <div class="media-body">
                           <div class="greeting-user">
-                            <h1 style={{color: "#fff"}}>Hello, {auth.user.fullName}</h1>
+                            <h1 style={{ color: "#fff" }}>
+                              Hello, {auth.user.fullName}
+                            </h1>
                             <p>Welcome back, your dashboard is ready!</p>
                           </div>
                         </div>
@@ -741,8 +422,10 @@ export default function AdminDashboard() {
                         />
                       </div>
                       <div class="support-detail">
-                        <h5 style={{color: "#fff"}}>Get support 24 hours</h5>
-                        <p style={{color: "#fff"}}>Check Our new service & feature about sales! </p>
+                        <h5 style={{ color: "#fff" }}>Get support 24 hours</h5>
+                        <p style={{ color: "#fff" }}>
+                          Check Our new service & feature about sales!{" "}
+                        </p>
                       </div>
                     </div>
                   </div>

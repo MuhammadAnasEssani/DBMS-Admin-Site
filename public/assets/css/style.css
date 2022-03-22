@@ -1419,7 +1419,7 @@ List Table
   position: relative;
   display: inline-block;
   width: 69px;
-  height: 31px;
+  height: 29px;
 }
 .switch input {
   width: 0;
@@ -1444,8 +1444,8 @@ List Table
   height: 20px;
   width: 23px;
   background: #656464e8;
-  left: 0px;
-  bottom: 7px;
+  left: 1px;
+  bottom: 5px;
   border-radius: 50%;
   transition: 0.3s cubic-bezier(0.42, 0, 0, 1.68);
 }
@@ -16328,7 +16328,7 @@ form.basic-html-input-control-form input[type="time"]::after {
   position: relative;
   display: inline-block;
   width: 60px;
-  height: 34px;
+  height: 29px;
 }
 .switch input {
   display: none;

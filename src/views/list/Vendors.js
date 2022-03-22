@@ -16,7 +16,7 @@ import { getCategories, updateCategory } from "../../config/api/Categories";
 import Notification from "../../component/notification/Notification";
 import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-import { getStaff } from "../../config/api/Staff";
+import { changeStaffStatus, getStaff } from "../../config/api/Staff";
 import { getVendors } from "../../config/api/Vendor";
 
 export default function Vendors() {
@@ -197,6 +197,31 @@ export default function Vendors() {
       return;
     }
   };
+  const updateStaff = async(id, status) => {
+    const model = {
+      id,
+    };
+    if (status != "verified") {
+      model.status = "verified";
+    } else {
+      model.status = "disable";
+    }
+    // console.log(model);
+    try {
+      const res = await changeStaffStatus(model);
+      if (res.status === 201) {
+        Notification("Staff", res.data.message, "Success");
+        {change ? setChange(false) : setChange(true)}
+        return;
+      } else {
+        Notification("Staff", res.data.message, "Error");
+        return;
+      }
+    } catch (err) {
+      setLoading(false);
+      Notification("Staff", "Something went wrong", "Error");
+    }
+  };
   const data = [];
   {
     vendorList.length > 0 &&
@@ -207,6 +232,19 @@ export default function Vendors() {
           name: vendor.firstName + vendor.lastName,
           email: vendor.email,
           status: vendor.status,
+          changeStatus: (
+            <label class="switch">
+              {vendor.status != "disable" ? <input
+                type="checkbox"
+                defaultChecked
+                onChange={() => updateStaff(vendor._id, vendor.status)}
+              /> : <input
+              type="checkbox"
+              onChange={() => updateStaff(vendor._id, vendor.status)}
+            />}
+              <span class="slider"></span>
+            </label>
+          ),
           action: (
             <div className="d-sm-inline-flex gap-2 actionDiv">
               <span
@@ -248,6 +286,11 @@ export default function Vendors() {
       title: "Status",
       dataIndex: "status",
       key: "status",
+    },
+    {
+      title: "Change Status",
+      dataIndex: "changeStatus",
+      key: "changeStatus",
     },
     {
       title: "Action",

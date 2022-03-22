@@ -16,7 +16,7 @@ import { getCategories, updateCategory } from "../../config/api/Categories";
 import Notification from "../../component/notification/Notification";
 import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-import { getStaff } from "../../config/api/Staff";
+import { changeStaffStatus, getStaff } from "../../config/api/Staff";
 
 export default function Staff() {
   const [state, setState] = useState({});
@@ -84,6 +84,31 @@ export default function Staff() {
     //   _id: categoryEdit._id,
 
     // }
+  };
+  const updateStaff = async(id, status) => {
+    const model = {
+      id,
+    };
+    if (status != "verified") {
+      model.status = "verified";
+    } else {
+      model.status = "disable";
+    }
+    // console.log(model);
+    try {
+      const res = await changeStaffStatus(model);
+      if (res.status === 201) {
+        Notification("Staff", res.data.message, "Success");
+        {change ? setChange(false) : setChange(true)}
+        return;
+      } else {
+        Notification("Staff", res.data.message, "Error");
+        return;
+      }
+    } catch (err) {
+      setLoading(false);
+      Notification("Staff", "Something went wrong", "Error");
+    }
   };
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -206,6 +231,19 @@ export default function Staff() {
           name: staff.firstName + staff.lastName,
           email: staff.email,
           status: staff.status,
+          changeStatus: (
+            <label class="switch">
+              {staff.status != "disable" ? <input
+                type="checkbox"
+                defaultChecked
+                onChange={() => updateStaff(staff._id, staff.status)}
+              /> : <input
+              type="checkbox"
+              onChange={() => updateStaff(staff._id, staff.status)}
+            />}
+              <span class="slider"></span>
+            </label>
+          ),
           action: (
             <div className="d-sm-inline-flex gap-2 actionDiv">
               <span
@@ -249,6 +287,11 @@ export default function Staff() {
       key: "status",
     },
     {
+      title: "Change Status",
+      dataIndex: "changeStatus",
+      key: "changeStatus",
+    },
+    {
       title: "Action",
       dataIndex: "action",
       key: "action",
@@ -282,7 +325,7 @@ export default function Staff() {
   useEffect(() => {
     fetchStaff();
   }, [change]);
-//   console.log(staffList);
+  //   console.log(staffList);
   // console.log(categories)
   return (
     <>

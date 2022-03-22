@@ -177,7 +177,7 @@ export default function Orders() {
     // console.log("hello")
     try{
       var res = await updateOrderByVendor(model);
-      console.log(res)
+      // console.log(res)
       if (res.status == 201) {
         // setOrders(res.data.orders);
         Notification("Order Department", res.data.message, "Error");

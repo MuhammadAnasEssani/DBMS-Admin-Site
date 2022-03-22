@@ -20,6 +20,9 @@ function getOrdersByVendor() {
 function getOrdersByAdmin() {
   return axios.post(`/order/getCustomerOrders`);
 }
+function getRecentOrdersByAdmin() {
+  return axios.post(`/order/getRecentOrdersByAdmin`);
+}
 function updateOrderByVendor(model) {
   return axios.post(`/vendor/updateOrder`,{
     ...model
@@ -30,4 +33,4 @@ function updateOrderByAdmin(model) {
     ...model
 });
 }
-export { OrderDetails, getOrdersByVendor,updateOrderByVendor,getOrdersByAdmin,updateOrderByAdmin };
+export { OrderDetails, getOrdersByVendor,updateOrderByVendor,getOrdersByAdmin,updateOrderByAdmin,getRecentOrdersByAdmin };
