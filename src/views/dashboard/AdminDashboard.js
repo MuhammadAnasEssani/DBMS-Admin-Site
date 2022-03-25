@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { getOrdersByAdmin, getRecentOrdersByAdmin } from "../../config/api/OrdersAPI";
+import {
+  getOrdersByAdmin,
+  getPendingOrdersByAdmin,
+  getRecentOrdersByAdmin,
+} from "../../config/api/OrdersAPI";
 import { Skeleton } from "antd";
 import Notification from "../../component/notification/Notification";
 import { getRecentVendors } from "../../config/api/Vendor";
@@ -18,8 +22,8 @@ export default function AdminDashboard() {
   const [vendorLoading, setVendorLoading] = useState(false);
   const [recentOrders, setRecentOrders] = useState([]);
   const [recentVendors, setRecentVendors] = useState([]);
-  const [pendingLoading, setPendingLoading] = useState(false);
-  const [pendingOrders, setPendingOrders] = useState("");
+  const [pendingLoading, setPendingLoading] = useState(true);
+  const [pendingOrders, setPendingOrders] = useState([]);
 
   const fetchRecentOrders = async () => {
     setRecentLoading(true);
@@ -40,7 +44,7 @@ export default function AdminDashboard() {
     }
   };
   const fetchRecentVendors = async () => {
-    setVendorLoading(true);
+    setRecentVendors(true);
     try {
       const res = await getRecentVendors();
       if (res.status == 200) {
@@ -57,37 +61,36 @@ export default function AdminDashboard() {
       setVendorLoading(false);
     }
   };
-  const HandleorderList = async () => {
-    setPendingLoading(true)
+  const fetchPendingOrders = async () => {
+    setPendingLoading(true);
     try {
-      var res = await getOrdersByAdmin();
+      const res = await getPendingOrdersByAdmin();
       if (res.status == 200) {
-        // setOrders(res.data.orders);
-      // console.log(res.data.orders)
-      let count = 1
-      res.data.orders.map((order) => {
-
-      })
-        setPendingLoading(false)
+        setPendingOrders(res.data.orders);
+        setPendingLoading(false);
         return;
       } else {
         Notification("Pending Orders", res.data.message, "Error");
-        setPendingLoading(false)
+        setPendingLoading(false);
         return;
       }
-      // console.log(res);
-      // if (res.Message != "Success") {
-      //   return;
-      // }
-      // var resModel = res.Data;
-      // setOrdersModel(resModel);
     } catch (err) {
       Notification("Pending Orders", "Something went wrong", "Error");
+      setPendingLoading(false);
     }
   };
+  const formatDate = (date) => {
+    if (date) {
+      const d = new Date(date);
+      return `${d.getDate()}-${d.getMonth() + 1}-${d.getFullYear()}`;
+    }
+    return "";
+  };
+
   useEffect(() => {
     fetchRecentOrders();
     fetchRecentVendors();
+    fetchPendingOrders();
   }, []);
   // console.log(recentOrders)
   return (
@@ -108,102 +111,117 @@ export default function AdminDashboard() {
                     spacing="6"
                     class="GridStyle__StyledGrid-sc-1r6thsr-0 DwCWS"
                   >
-                    <div
-                      height="100%"
-                      class="Box-sc-15jsbqj-0 Card-sc-1rfvr4b-0 jELKxp FODSZ Typography-sc-1nbqu5-0 jwCRmv"
-                      cursor="unset"
-                    >
-                      <h5
-                        font-weight="600"
-                        font-size="16px"
-                        color="text.muted"
-                        class="Typography-sc-1nbqu5-0 wkSqn"
+                    {pendingLoading ? (
+                      <Skeleton.Input className={"statics"} active={true} />
+                    ) : (
+                      <div
+                        height="100%"
+                        class="Box-sc-15jsbqj-0 Card-sc-1rfvr4b-0 jELKxp FODSZ Typography-sc-1nbqu5-0 jwCRmv"
+                        cursor="unset"
                       >
-                        Earnings (before taxes)
-                      </h5>
-                      <h1
-                        font-size="30px"
-                        color="gray.700"
-                        class="Typography-sc-1nbqu5-0 igxEVo"
-                      >
-                        $30450.00
-                      </h1>
-                      <p
-                        color="text.muted"
-                        class="Typography-sc-1nbqu5-0 feXfPn"
-                      >
-                        after associated vendor fees
-                      </p>
-                    </div>
+                        <h5
+                          font-weight="600"
+                          font-size="16px"
+                          color="text.muted"
+                          class="Typography-sc-1nbqu5-0 wkSqn"
+                        >
+                          Earnings (before taxes)
+                        </h5>
+                        <h1
+                          font-size="30px"
+                          color="gray.700"
+                          class="Typography-sc-1nbqu5-0 igxEVo"
+                        >
+                          $30450.00
+                        </h1>
+                        <p
+                          color="text.muted"
+                          class="Typography-sc-1nbqu5-0 feXfPn"
+                        >
+                          after associated vendor fees
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div class="col-xl-4 col-md-6 dash-xl-33 dash-lg-50">
-                  <div
-                    spacing="6"
-                    class="GridStyle__StyledGrid-sc-1r6thsr-0 DwCWS"
-                  >
+                  {pendingLoading ? (
+                    <Skeleton.Input className={"statics"} active={true} />
+                  ) : (
                     <div
-                      height="100%"
-                      class="Box-sc-15jsbqj-0 Card-sc-1rfvr4b-0 jELKxp FODSZ Typography-sc-1nbqu5-0 jwCRmv"
-                      cursor="unset"
+                      spacing="6"
+                      class="GridStyle__StyledGrid-sc-1r6thsr-0 DwCWS"
                     >
-                      <h5
-                        font-weight="600"
-                        font-size="16px"
-                        color="text.muted"
-                        class="Typography-sc-1nbqu5-0 wkSqn"
+                      <div
+                        height="100%"
+                        class="Box-sc-15jsbqj-0 Card-sc-1rfvr4b-0 jELKxp FODSZ Typography-sc-1nbqu5-0 jwCRmv"
+                        cursor="unset"
                       >
-                        Your balance
-                      </h5>
-                      <h1
-                        font-size="30px"
-                        color="gray.700"
-                        class="Typography-sc-1nbqu5-0 igxEVo"
-                      >
-                        $4000.00
-                      </h1>
-                      <p
-                        color="text.muted"
-                        class="Typography-sc-1nbqu5-0 feXfPn"
-                      >
-                        Will be processed on Feb 15, 2021
-                      </p>
+                        <h5
+                          font-weight="600"
+                          font-size="16px"
+                          color="text.muted"
+                          class="Typography-sc-1nbqu5-0 wkSqn"
+                        >
+                          Your balance
+                        </h5>
+                        <h1
+                          font-size="30px"
+                          color="gray.700"
+                          class="Typography-sc-1nbqu5-0 igxEVo"
+                        >
+                          $4000.00
+                        </h1>
+                        <p
+                          color="text.muted"
+                          class="Typography-sc-1nbqu5-0 feXfPn"
+                        >
+                          Will be processed on Feb 15, 2021
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
                 <div class="col-xl-4 col-md-6 dash-lgorder-1 dash-xl-33 dash-lg-50">
-                  <div
-                    spacing="6"
-                    class="GridStyle__StyledGrid-sc-1r6thsr-0 DwCWS"
-                  >
+                  {pendingLoading ? (
+                    <Skeleton.Input className={"statics"} active={true} />
+                  ) : (
                     <div
-                      height="100%"
-                      class="Box-sc-15jsbqj-0 Card-sc-1rfvr4b-0 jELKxp FODSZ Typography-sc-1nbqu5-0 jwCRmv"
-                      cursor="unset"
+                      spacing="6"
+                      class="GridStyle__StyledGrid-sc-1r6thsr-0 DwCWS"
                     >
-                      <h5
-                        font-weight="600"
-                        font-size="16px"
-                        color="text.muted"
-                        class="Typography-sc-1nbqu5-0 wkSqn"
+                      <div
+                        height="100%"
+                        class="Box-sc-15jsbqj-0 Card-sc-1rfvr4b-0 jELKxp FODSZ Typography-sc-1nbqu5-0 jwCRmv"
+                        cursor="unset"
                       >
-                        Pending Orders
-                      </h5>
-                      <h1
-                        font-size="30px"
-                        color="gray.700"
-                        class="Typography-sc-1nbqu5-0 igxEVo"
-                      >
-                        08
-                      </h1>
-                      <p
-                        color="text.muted"
-                        class="Typography-sc-1nbqu5-0 feXfPn"
-                      >
-                        7/3/2020 - 8/1/2020
-                      </p>
+                        <h5
+                          font-weight="600"
+                          font-size="16px"
+                          color="text.muted"
+                          class="Typography-sc-1nbqu5-0 wkSqn"
+                        >
+                          Pending Orders
+                        </h5>
+                        <h1
+                          font-size="30px"
+                          color="gray.700"
+                          class="Typography-sc-1nbqu5-0 igxEVo"
+                        >
+                          {pendingOrders.length}
+                        </h1>
+                        <p
+                          color="text.muted"
+                          class="Typography-sc-1nbqu5-0 feXfPn"
+                        >
+                          {formatDate(pendingOrders[0].createdAt)} -{" "}
+                          {formatDate(
+                            pendingOrders[pendingOrders.length - 1].createdAt
+                          )}
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
                 <div class="col-xl-6 col-md-12">
                   {recentLoading ? (
@@ -281,13 +299,16 @@ export default function AdminDashboard() {
                                                   status.isCompleted == false
                                                 );
                                               }
-                                            ) != -1 ? order.orderStatus.findIndex(
-                                              (status) => {
-                                                return (
-                                                  status.isCompleted == false
-                                                );
-                                              }
-                                            ) - 1 : 3
+                                            ) != -1
+                                              ? order.orderStatus.findIndex(
+                                                  (status) => {
+                                                    return (
+                                                      status.isCompleted ==
+                                                      false
+                                                    );
+                                                  }
+                                                ) - 1
+                                              : 3
                                           ].type
                                         }
                                       </div>
@@ -354,28 +375,31 @@ export default function AdminDashboard() {
                                           />
                                         </div>
                                         <div class="media-body ps-2">
-                                          <div class="avatar-details" style={{textAlign: "left"}}>
-                                            <a href="product-page.html">
+                                          <div
+                                            class="avatar-details"
+                                            style={{ textAlign: "left" }}
+                                          >
+                                            <Link >
                                               <h6>{vendor.shopName}</h6>
-                                            </a>
+                                            </Link>
                                           </div>
                                         </div>
                                       </div>
                                     </td>
                                     <td class="img-content-box">
                                       <h6>
-                                        {vendor.firstName}{" "}
-                                        {vendor.lastName}
+                                        {vendor.firstName} {vendor.lastName}
                                       </h6>
                                     </td>
-                                    <td class="img-content-box" style={{textAlign: "left"}}>
+                                    <td
+                                      class="img-content-box"
+                                      style={{ textAlign: "left" }}
+                                    >
                                       <h6>{vendor.email}</h6>
                                     </td>
                                     <td>
                                       <div class="badge badge-light-primary">
-                                        {
-                                          vendor.status
-                                        }
+                                        {vendor.status}
                                       </div>
                                     </td>
                                   </tr>
@@ -387,7 +411,7 @@ export default function AdminDashboard() {
                     </div>
                   )}
                 </div>
-                
+
                 <div class="col-xl-8 col-md-8 dash-lgorder-1 dash-xl-50 ">
                   <div class="card profile-greeting">
                     <div class="card-body">

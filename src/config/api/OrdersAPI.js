@@ -17,8 +17,14 @@ function OrderDetails(token, orderid) {
 function getOrdersByVendor() {
   return axios.post(`/order/getCustomerOrdersByVendors`);
 }
+function getPendingOrdersByVendor() {
+  return axios.post(`/order/getPendingOrdersByVendors`);
+}
 function getOrdersByAdmin() {
   return axios.post(`/order/getCustomerOrders`);
+}
+function getPendingOrdersByAdmin() {
+  return axios.post(`/order/getPending`);
 }
 function getRecentOrdersByAdmin() {
   return axios.post(`/order/getRecentOrdersByAdmin`);
@@ -33,4 +39,4 @@ function updateOrderByAdmin(model) {
     ...model
 });
 }
-export { OrderDetails, getOrdersByVendor,updateOrderByVendor,getOrdersByAdmin,updateOrderByAdmin,getRecentOrdersByAdmin };
+export { OrderDetails, getOrdersByVendor,updateOrderByVendor,getOrdersByAdmin,updateOrderByAdmin,getRecentOrdersByAdmin,getPendingOrdersByAdmin,getPendingOrdersByVendor };
