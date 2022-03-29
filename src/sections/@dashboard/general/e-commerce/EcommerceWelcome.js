@@ -28,7 +28,8 @@ export default function EcommerceWelcome() {
         sx={{
           color: 'grey.800',
           p: { md: 0 },
-          pl: { md: 5 }
+          pl: { md: 5 },
+          height: 350
         }}
       >
         <Typography gutterBottom variant="h4">

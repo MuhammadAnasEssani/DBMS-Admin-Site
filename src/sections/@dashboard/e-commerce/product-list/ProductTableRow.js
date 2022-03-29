@@ -27,7 +27,7 @@ ProductTableRow.propTypes = {
 export default function ProductTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
   const theme = useTheme();
 
-  const { name, cover, createdAt, inventoryType, price } = row;
+  const { name, productPictures, createdAt, quantity, price } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -41,12 +41,12 @@ export default function ProductTableRow({ row, selected, onEditRow, onSelectRow,
 
   return (
     <TableRow hover selected={selected}>
-      <TableCell padding="checkbox">
+      {/* <TableCell padding="checkbox">
         <Checkbox checked={selected} onClick={onSelectRow} />
-      </TableCell>
+      </TableCell> */}
 
       <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Image disabledEffect alt={name} src={cover} sx={{ borderRadius: 1.5, width: 48, height: 48, mr: 2 }} />
+        <Image disabledEffect alt={name} src={productPictures[0].avatar} sx={{ borderRadius: 1.5, width: 48, height: 48, mr: 2 }} />
         <Typography variant="subtitle2" noWrap>
           {name}
         </Typography>
@@ -58,11 +58,12 @@ export default function ProductTableRow({ row, selected, onEditRow, onSelectRow,
         <Label
           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
           color={
-            (inventoryType === 'out_of_stock' && 'error') || (inventoryType === 'low_stock' && 'warning') || 'success'
+            (quantity == 0 && 'error') || (quantity <= 5 && 'warning') || 'success'
           }
           sx={{ textTransform: 'capitalize' }}
         >
-          {inventoryType ? sentenceCase(inventoryType) : ''}
+          {/* {inventoryType ? sentenceCase(inventoryType) : ''} */}
+          {quantity > 5 ? sentenceCase("InStock") : quantity == 5 ? sentenceCase("Out Of Stock") : sentenceCase("Low Stock")}
         </Label>
       </TableCell>
 
