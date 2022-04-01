@@ -22,6 +22,7 @@ export default function AddProduct() {
   const states = useSelector((state) => state);
   const drawerState = states.DrawerReducer.State;
   const [categoryName, setCategoryName] = useState('');
+  const [categoryNameArabic, setCategoryNameArabic] = useState('');
     const [parentCategory, setParentCategory] = useState(',');
     
   const [change, setChange] = useState(false);
@@ -34,8 +35,10 @@ export default function AddProduct() {
     setLoading(true)
     const model= {
       name: categoryName,
+      nameArabic: categoryNameArabic,
       parentId: parentCategory.split(",")[0],
-      parentName: parentCategory.split(",")[1]
+      parentName: parentCategory.split(",")[1],
+      parentNameArabic : parentCategory.split(",")[2]
     }
     // console.log(model)
     try{
@@ -43,6 +46,7 @@ export default function AddProduct() {
       if (res.status === 201) {
         Notification("Category Department", "Category Added Sucessfully", "Success")
         setCategoryName("")
+        setCategoryNameArabic("")
         setParentCategory("")
         setLoading(false)
         return
@@ -78,13 +82,9 @@ export default function AddProduct() {
   };
 
   const createCategoryList = (categories,options = []) => {
-    // debugger;
-    // let options = [];
     for (let category of categories) {
-      options.push({ value: category._id, name: category.name });
-      //  console.log(category)
+      options.push({ value: category._id, name: category.name, nameArabic: category.nameArabic });
       if (category.children.length > 0) {
-        // createCategoryList(category.children, options);
         for (let categoryy of category.children) {
           options.push({ value: categoryy._id, name: categoryy.name });
         }
@@ -125,16 +125,24 @@ export default function AddProduct() {
 
               <form onSubmit={handleAddCategory} >
                 <div className="row">
-                  <div className="col-lg-5">
+                  <div className="col-lg-6">
                     <label className="labeltext">Category Name: (*)</label>
                     {/* <Form.Item name="name"> */}
                       <input type="text" required className="FormInput" value={categoryName}
-                      placeholder='Product Name'
+                      placeholder='Category Name'
                       onChange={(e) => setCategoryName(e.target.value)}/>
                     {/* </Form.Item> */}
                   </div>
+                  <div className="col-lg-6">
+                    <label className="labeltext">Category Name Arabic: (*)</label>
+                    {/* <Form.Item name="name"> */}
+                      <input type="text" required className="FormInput" value={categoryNameArabic}
+                      placeholder='Category Name Arabic'
+                      onChange={(e) => setCategoryNameArabic(e.target.value)}/>
+                    {/* </Form.Item> */}
+                  </div>
 
-                  <div className="col-lg-5 offset-xl-1">
+                  <div className="col-lg-6">
                     <label className="labeltext">Parent: (*)</label>
                       <select
                         className="FormInput"
@@ -151,7 +159,7 @@ export default function AddProduct() {
                           {/* </option> */}
                         {/* {createCategoryList(categories)} */}
                         {createCategoryList(categories).map((option) => (
-                          <option key={option.value} value={option.value+","+option.name}>
+                          <option key={option.value} value={option.value+","+option.name+","+option.nameArabic}>
                             {option.name}
                           </option>
                         ))}

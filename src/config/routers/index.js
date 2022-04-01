@@ -20,6 +20,7 @@ import AddStaff from "../../views/crud/AddStaff";
 import Staff from "../../views/list/Staff";
 import AdminOrders from "../../views/list/AdminOrders";
 import Vendors from "../../views/list/Vendors";
+import AddPolicy from "../../views/crud/AddPolicy";
 // import RequestedPapers from "../../views/list/RequestedPapers";
 // import StaffList from "../../views/list/StaffList";
 // import StudentList from "../../views/list/StudentList";
@@ -173,6 +174,12 @@ const routes = [
     title: "Offers",
     // isLoginRequired: true,
     component: () => <Offers />,
+  },
+  {
+    path: "/add-policy",
+    title: "Add Policy",
+    // isLoginRequired: true,
+    component: () => <AddPolicy />,
   },
   {
     path: "/authentication/activate/:token",

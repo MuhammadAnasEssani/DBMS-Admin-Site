@@ -117,6 +117,16 @@
     outline: none;
     font-family: inherit;
 } 
+.ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+  border-color: var(--ck-color-base-border);
+  height: 160px;
+}
+.ck-rounded-corners .ck.ck-editor__main>.ck-editor__editable, .ck.ck-editor__main>.ck-editor__editable.ck-rounded-corners {
+  border-radius: var(--ck-border-radius);
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  height: 160px;
+}
 /* .anticon {
   color: #012970;
 } */

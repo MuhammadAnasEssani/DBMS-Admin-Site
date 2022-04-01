@@ -133,6 +133,29 @@ export default function AdminNav() {
           {" "}
           <Link to="/vendors">Vendors</Link>
         </Menu.Item>
+        <SubMenu
+        key="Policy"
+        icon={
+          <span
+            className="bi bi-journal-bookmark"
+            style={{ fontSize: iconsSize }}
+          ></span>
+        }
+        title="Policy"
+      >
+        <Menu.Item
+          key="8"
+          icon={
+            <span
+              className="bi bi-save"
+              style={{ fontSize: subMenuIconSize }}
+            ></span>
+          }
+        >
+          {" "}
+          <Link to="/add-policy">Add Policy</Link>
+        </Menu.Item>
+      </SubMenu>
     </Menu>
     
   );

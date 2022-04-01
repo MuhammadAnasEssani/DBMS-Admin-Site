@@ -17,6 +17,7 @@ import { useHistory } from "react-router-dom";
 import { getOffersByVendor } from "../../config/api/Offer";
 import { WithContext as ReactTags } from "react-tag-input";
 
+
 const KeyCodes = {
   comma: 188,
   enter: 13,
@@ -30,8 +31,10 @@ export default function AddProduct() {
   const states = useSelector((state) => state);
   const drawerState = states.DrawerReducer.State;
   const [productName, setProductName] = useState("");
+  const [productNameArabic, setProductNameArabic] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [productDesc, setProductDesc] = useState("");
+  const [productDescArabic, setProductDescArabic] = useState("");
   const [productCategory, setProductCategory] = useState("");
   const [productOffer, setProductOffer] = useState("");
   const [productQuantity, setProductQuantity] = useState("");
@@ -50,6 +53,10 @@ export default function AddProduct() {
   const [sizes, setSizes] = useState([]);
   const [colourError, setColourError] = useState(false);
   const [sizeError, setSizeError] = useState(false);
+  const [coloursArabic, setColoursArabic] = useState([]);
+  const [sizesArabic, setSizesArabic] = useState([]);
+  const [colourErrorArabic, setColourErrorArabic] = useState(false);
+  const [sizeErrorArabic, setSizeErrorArabic] = useState(false);
 
   const handleDelete = (i) => {
     setColours(colours.filter((colours, index) => index !== i));
@@ -74,6 +81,31 @@ export default function AddProduct() {
   };
 
   const handleTagClick = (index) => {
+    // console.log("The tag at index " + index + " was clicked");
+  };
+  const handleDeleteArabicColours = (i) => {
+    setColoursArabic(coloursArabic.filter((colours, index) => index !== i));
+    if (coloursArabic.length == 0) {
+      setColourErrorArabic(true);
+    }
+  };
+
+  const handleAdditionArabicColours = (colour) => {
+    setColoursArabic([...coloursArabic, colour]);
+    setColourErrorArabic(false);
+  };
+
+  const handleDragArabicColours = (colour, currPos, newPos) => {
+    const newColours = coloursArabic.slice();
+
+    newColours.splice(currPos, 1);
+    newColours.splice(newPos, 0, colour);
+
+    // re-render
+    setColoursArabic(newColours);
+  };
+
+  const handleTagClickArabicColours = (index) => {
     // console.log("The tag at index " + index + " was clicked");
   };
   const handleDeleteSizes = (i) => {
@@ -101,6 +133,31 @@ export default function AddProduct() {
   const handleTagClickSizes = (index) => {
     // console.log("The tag at index " + index + " was clicked");
   };
+  const handleDeleteSizesArabic = (i) => {
+    setSizesArabic(sizesArabic.filter((sizes, index) => index !== i));
+    if (sizesArabic.length == 0) {
+      setSizeError(true);
+    }
+  };
+
+  const handleAdditionSizesArabic  = (size) => {
+    setSizesArabic([...sizesArabic, size]);
+    setSizeErrorArabic(false);
+  };
+
+  const handleDragSizesArabic  = (size, currPos, newPos) => {
+    const newSizes = sizesArabic.slice();
+
+    newSizes.splice(currPos, 1);
+    newSizes.splice(newPos, 0, size);
+
+    // re-render
+    setSizesArabic(newSizes);
+  };
+
+  const handleTagClickSizesArabic  = (index) => {
+    // console.log("The tag at index " + index + " was clicked");
+  };
   // const selectedTags = (tags) => {
   //   console.log(tags);
   // };
@@ -114,6 +171,9 @@ export default function AddProduct() {
   //     event.target.value = "";
   //   }
   // };
+  const handleDescription = () => {
+
+  }
   const handleAddProduct = async (e) => {
     e.preventDefault();
     if (colours.length > 0 && sizes.length > 0) {
@@ -122,15 +182,19 @@ export default function AddProduct() {
       console.log(sizes);
       var form = new FormData();
       form.append("name", productName);
+      form.append("nameArabic", productNameArabic);
       form.append("price", productPrice);
       form.append("description", productDesc);
+      form.append("descriptionArabic", productDescArabic);
       form.append("quantity", productQuantity);
       form.append("category", productCategory);
       form.append("discount", productDiscount);
       form.append("offer", productOffer);
       form.append("type", productType);
       form.append("colours", JSON.stringify(colours));
+      form.append("coloursArabic", JSON.stringify(coloursArabic));
       form.append("sizes", JSON.stringify(sizes));
+      form.append("sizesArabic", JSON.stringify(sizesArabic));
     //   for (var i in data) {
     //     createFormData(formData, key + '[' + i + ']', data[i]);
     // }
@@ -150,7 +214,9 @@ export default function AddProduct() {
         if (res.status === 201) {
           Notification("Product Department", res.data.message, "Success");
           setProductName("");
+          setProductNameArabic("");
           setProductDesc("");
+          setProductDescArabic("");
           setProductCategory("");
           setProductOffer("");
           setProductDiscount(0);
@@ -160,7 +226,9 @@ export default function AddProduct() {
           setProductImage([]);
           setDisplayProductImage([]);
           setColours([]);
+          setColoursArabic([]);
           setSizes([]);
+          setSizesArabic([]);
           setLoading(false);
           return;
         } else {
@@ -259,7 +327,6 @@ export default function AddProduct() {
                 <div className="row">
                   <div className="col-lg-6">
                     <label className="labeltext">Product Name: (*)</label>
-                    {/* <Form.Item name="name"> */}
                     <input
                       type="text"
                       required
@@ -268,7 +335,17 @@ export default function AddProduct() {
                       placeholder="Product Name"
                       onChange={(e) => setProductName(e.target.value)}
                     />
-                    {/* </Form.Item> */}
+                  </div>
+                  <div className="col-lg-6">
+                    <label className="labeltext">Product Name Arabic: (*)</label>
+                    <input
+                      type="text"
+                      required
+                      className="FormInput"
+                      value={productNameArabic}
+                      placeholder="Product Name Arabic"
+                      onChange={(e) => setProductNameArabic(e.target.value)}
+                    />
                   </div>
                   <div className="col-lg-6">
                     <label className="labeltext">Product Price: (*)</label>
@@ -402,7 +479,7 @@ export default function AddProduct() {
                     <label className="labeltext">
                       Product Description: (*)
                     </label>
-                    {/* <Form.Item name="description"> */}
+                    {/* <CKEditor editor={ClassicEditor} data={productDesc} onChange={handleDescription} /> */}
                     <textarea
                       type="text"
                       required
@@ -412,7 +489,20 @@ export default function AddProduct() {
                       onChange={(e) => setProductDesc(e.target.value)}
                       style={{ height: "110px" }}
                     />
-                    {/* </Form.Item> */}
+                  </div>
+                  <div className="col-lg-12">
+                    <label className="labeltext">
+                      Product Description Arabic: (*)
+                    </label>
+                    <textarea
+                      type="text"
+                      required
+                      className="FormInput"
+                      value={productDescArabic}
+                      placeholder="Product Description Arabic"
+                      onChange={(e) => setProductDescArabic(e.target.value)}
+                      style={{ height: "110px" }}
+                    />
                   </div>
                   <div className="col-lg-6">
                     <div className="row">
@@ -581,27 +671,38 @@ export default function AddProduct() {
                     )}
                     <ReactTags
                       required
-                      // style={{
-                      //   margin: "10px 0px",
-                      //   padding: "8px 12px",
-                      //   height: "40px",
-                      //   fontSize: "inherit",
-                      //   color: "rgb(43, 52, 69)",
-                      //   borderRadius: "5px",
-                      //   border: "1px solid rgb(218, 225, 231)",
-                      //   width: "100%",
-                      //   outline: "none",
-                      //   fontFamily: "inherit",
-                      // }}
-                      // inputProps={{
-                      //   required: true,
-                      // }}
                       tags={colours}
                       delimiters={delimiters}
                       handleDelete={handleDelete}
                       handleAddition={handleAddition}
                       handleDrag={handleDrag}
                       handleTagClick={handleTagClick}
+                      inputFieldPosition="bottom"
+                      autocomplete
+                    />
+                  </div>
+                  <div className="col-lg-6">
+                    <label className="labeltext">Product Colours Arabic</label>
+                    {colourErrorArabic && (
+                      <p
+                        style={{
+                          color: "red",
+                          position: "absolute",
+                          top: "47px",
+                          right: "21px",
+                        }}
+                      >
+                        Colours are required
+                      </p>
+                    )}
+                    <ReactTags
+                      required
+                      tags={coloursArabic}
+                      delimiters={delimiters}
+                      handleDelete={handleDeleteArabicColours}
+                      handleAddition={handleAdditionArabicColours}
+                      handleDrag={handleDragArabicColours}
+                      handleTagClick={handleTagClickArabicColours}
                       inputFieldPosition="bottom"
                       autocomplete
                     />
@@ -621,27 +722,37 @@ export default function AddProduct() {
                       </p>
                     )}
                     <ReactTags
-                      // inputProps={{
-                      //   required: true,
-                      // }}
-                      // style={{
-                      //   margin: "10px 0px",
-                      //   padding: "8px 12px",
-                      //   height: "40px",
-                      //   fontSize: "inherit",
-                      //   color: "rgb(43, 52, 69)",
-                      //   borderRadius: "5px",
-                      //   border: "1px solid rgb(218, 225, 231)",
-                      //   width: "100%",
-                      //   outline: "none",
-                      //   fontFamily: "inherit",
-                      // }}
                       tags={sizes}
                       delimiters={delimiters}
                       handleDelete={handleDeleteSizes}
                       handleAddition={handleAdditionSizes}
                       handleDrag={handleDragSizes}
                       handleTagClick={handleTagClickSizes}
+                      inputFieldPosition="bottom"
+                      autocomplete
+                    />
+                  </div>
+                  <div className="col-lg-6">
+                    <label className="labeltext">Product Sizes Arabic</label>
+                    {sizeErrorArabic && (
+                      <p
+                        style={{
+                          color: "red",
+                          position: "absolute",
+                          top: "47px",
+                          right: "21px",
+                        }}
+                      >
+                        Size are required
+                      </p>
+                    )}
+                    <ReactTags
+                      tags={sizesArabic}
+                      delimiters={delimiters}
+                      handleDelete={handleDeleteSizesArabic}
+                      handleAddition={handleAdditionSizesArabic}
+                      handleDrag={handleDragSizesArabic}
+                      handleTagClick={handleTagClickSizesArabic}
                       inputFieldPosition="bottom"
                       autocomplete
                     />

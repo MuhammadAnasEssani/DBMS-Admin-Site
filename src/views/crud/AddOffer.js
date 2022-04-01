@@ -10,7 +10,9 @@ import { useHistory } from "react-router-dom";
 export default function AddOffer() {
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
+  const [titleArabic, setTitleArabic] = useState("");
   const [offerDesc, setOfferDesc] = useState("");
+  const [offerDescArabic, setOfferDescArabic] = useState("");
   const [offerImage, setOfferImage] = useState("");
   const [offersImage, setOffersImage] = useState("");
   const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
@@ -21,10 +23,12 @@ export default function AddOffer() {
 
   const handleAddOffer = async (e) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
     var form = new FormData();
     form.append("title", title);
+    form.append("titleArabic", titleArabic);
     form.append("description", offerDesc);
+    form.append("descriptionArabic", offerDescArabic);
     form.append("offerImage", offerImage);
     try {
       const res = await addOffer(form);
@@ -32,17 +36,19 @@ export default function AddOffer() {
         Notification("Offer Department", res.data.message, "Success");
         setTitle("");
         setOfferDesc("");
+        setTitleArabic("");
+        setOfferDescArabic("");
         setOfferImage("");
-        setOffersImage("")
-        setLoading(false)
+        setOffersImage("");
+        setLoading(false);
         return;
       } else {
         Notification("Offer Department", res.data.message, "Error");
-        setLoading(false)
+        setLoading(false);
         return;
       }
     } catch (err) {
-      setLoading(false)
+      setLoading(false);
       // console.log(err);
       Notification("Offer", "Something went wrong", "Error");
     }
@@ -90,72 +96,72 @@ export default function AddOffer() {
                     />
                   </div> */}
                   <div className="col-lg-12">
-                  <label
-                    htmlFor="upload-button"
-                    display="flex"
-                    role="button"
-                    tabindex="0"
-                    cursor="unset"
-                    class="Box-sc-15jsbqj-0 bLhEoJ"
-                    style={{ outline: "none", position: "relative" }}
-                  >
-                    {offersImage != "" && (
-                      <img
-                        className="editImage"
-                        src={offersImage}
-                        alt=""
-                        style={{
-                          position: "absolute",
-                          width: "100%",
-                          height: "100%",
-                        }}
-                      />
-                    )}
-                    <h5
-                      font-weight="600"
-                      font-size="16px"
-                      color="text.muted"
-                      class="Typography-sc-1nbqu5-0 hCoDOS"
-                    >
-                      Offer image here
-                    </h5>
-                    <div
-                      width="200px"
-                      class="Divider-sc-119puxu-0 cLMkXD"
-                    ></div>
-                    <div
-                      color="text.muted"
-                      class="Typography-sc-1nbqu5-0 kTSWSV"
-                    >
-                      on
-                    </div>
                     <label
                       htmlFor="upload-button"
-                      color="primary"
-                      type="button"
-                      class="Button-sc-l2616d-0 fDufhf"
+                      display="flex"
+                      role="button"
+                      tabindex="0"
+                      cursor="unset"
+                      class="Box-sc-15jsbqj-0 bLhEoJ"
+                      style={{ outline: "none", position: "relative" }}
                     >
-                      Select file
+                      {offersImage != "" && (
+                        <img
+                          className="editImage"
+                          src={offersImage}
+                          alt=""
+                          style={{
+                            position: "absolute",
+                            width: "100%",
+                            height: "100%",
+                          }}
+                        />
+                      )}
+                      <h5
+                        font-weight="600"
+                        font-size="16px"
+                        color="text.muted"
+                        class="Typography-sc-1nbqu5-0 hCoDOS"
+                      >
+                        Offer image here
+                      </h5>
+                      <div
+                        width="200px"
+                        class="Divider-sc-119puxu-0 cLMkXD"
+                      ></div>
+                      <div
+                        color="text.muted"
+                        class="Typography-sc-1nbqu5-0 kTSWSV"
+                      >
+                        on
+                      </div>
+                      <label
+                        htmlFor="upload-button"
+                        color="primary"
+                        type="button"
+                        class="Button-sc-l2616d-0 fDufhf"
+                      >
+                        Select file
+                      </label>
+                      <span
+                        font-size="12px"
+                        color="text.muted"
+                        class="Typography-sc-1nbqu5-0 fwJlYS"
+                      >
+                        Upload 280*280 image
+                      </span>
                     </label>
-                    <span
-                      font-size="12px"
-                      color="text.muted"
-                      class="Typography-sc-1nbqu5-0 fwJlYS"
-                    >
-                      Upload 280*280 image
-                    </span>
-                  </label>
-                  <input
-                    accept=".jpeg,.jpg,.png,.gif"
-                    id="upload-button"
-                    multiple=""
-                    type="file"
-                    autocomplete="off"
-                    tabindex="-1"
-                    style={{ display: "none" }}
-                    onChange={handleOfferImage}
-                  />
-                </div>
+                    <input
+                      accept=".jpeg,.jpg,.png,.gif"
+                      id="upload-button"
+                      multiple=""
+                      type="file"
+                      autocomplete="off"
+                      tabindex="-1"
+                      style={{ display: "none" }}
+                      onChange={handleOfferImage}
+                    />
+                  </div>
                   <div className="col-lg-6">
                     <label className="labeltext">Offer Title: (*)</label>
                     <input
@@ -165,6 +171,17 @@ export default function AddOffer() {
                       value={title}
                       placeholder="Offer Title"
                       onChange={(e) => setTitle(e.target.value)}
+                    />
+                  </div>
+                  <div className="col-lg-6">
+                    <label className="labeltext">Offer Title Arabic: (*)</label>
+                    <input
+                      type="text"
+                      required
+                      className="FormInput"
+                      value={titleArabic}
+                      placeholder="Offer Title Arabic"
+                      onChange={(e) => setTitleArabic(e.target.value)}
                     />
                   </div>
 
@@ -177,6 +194,18 @@ export default function AddOffer() {
                       value={offerDesc}
                       placeholder="Offer Description"
                       onChange={(e) => setOfferDesc(e.target.value)}
+                      style={{ height: "110px" }}
+                    />
+                  </div>
+                  <div className="col-lg-12 ">
+                    <label className="labeltext">Offer Description Arabic: (*)</label>
+                    <textarea
+                      type="text"
+                      required
+                      className="FormInput"
+                      value={offerDescArabic}
+                      placeholder="Offer Description Arabic"
+                      onChange={(e) => setOfferDescArabic(e.target.value)}
                       style={{ height: "110px" }}
                     />
                   </div>

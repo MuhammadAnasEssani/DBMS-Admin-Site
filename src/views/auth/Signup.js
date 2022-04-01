@@ -15,11 +15,16 @@ export default function Signup() {
   const history = useHistory();
   const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
   const [fName, setfName] = useState("");
+  const [fNameArabic, setfNameArabic] = useState("");
   const [lName, setlName] = useState("");
+  const [lNameArabic, setlNameArabic] = useState("");
   const [shopName, setShopName] = useState("");
+  const [shopNameArabic, setShopNameArabic] = useState("");
   const [email, setEmail] = useState("");
   const [description, setDescription] = useState("");
+  const [descriptionArabic, setDescriptionArabic] = useState("");
   const [address, setAddress] = useState("");
+  const [addressArabic, setAddressArabic] = useState("");
   const [contactNumber, setContactNumber] = useState("");
   const [password, setPassword] = useState("");
   const [cPassword, setcPassword] = useState("");
@@ -34,13 +39,18 @@ export default function Signup() {
     setLoading(true);
     var form = new FormData();
     form.append("firstName", fName);
+    form.append("firstNameArabic", fNameArabic);
     form.append("lastName", lName);
+    form.append("lastNameArabic", lNameArabic);
     form.append("email", email);
     form.append("password", password);
     form.append("cpassword", cPassword);
     form.append("description", description);
+    form.append("descriptionArabic", descriptionArabic);
     form.append("address", address);
+    form.append("addressArabic", addressArabic);
     form.append("shopName", shopName);
+    form.append("shopNameArabic", shopNameArabic);
     form.append("contactNumber", contactNumber);
     form.append("userImage", profileImage);
     try {
@@ -50,11 +60,16 @@ export default function Signup() {
         Notification("Create Vendor", res.data.message, "Success");
         setLoading(false);
         setfName("");
+        setfNameArabic("");
         setlName("");
+        setlNameArabic("");
         setEmail("");
         setDescription("");
+        setDescriptionArabic("");
         setAddress("");
+        setAddressArabic("");
         setShopName("");
+        setShopNameArabic("");
         setContactNumber("");
         setPassword("");
         setcPassword("");
@@ -413,6 +428,18 @@ export default function Signup() {
                     onChange={(e) => setfName(e.target.value)}
                   />
                 </div>
+                <div className="col-lg-6">
+                  <label className="labeltext">First Name Arabic</label>
+                  <input
+                    required
+                    type="text"
+                    placeholder="First Name Arabic"
+                    className="FormInput"
+                    style={{ borderRadius: "10px" }}
+                    value={fNameArabic}
+                    onChange={(e) => setfNameArabic(e.target.value)}
+                  />
+                </div>
                 <div className="col-lg-6 ">
                   <label className="labeltext">Last Name</label>
                   <input
@@ -423,6 +450,18 @@ export default function Signup() {
                     style={{ borderRadius: "10px" }}
                     value={lName}
                     onChange={(e) => setlName(e.target.value)}
+                  />
+                </div>
+                <div className="col-lg-6 ">
+                  <label className="labeltext">Last Name Arabic</label>
+                  <input
+                    required
+                    type="text"
+                    placeholder="Last Name Arabic"
+                    className="FormInput"
+                    style={{ borderRadius: "10px" }}
+                    value={lNameArabic}
+                    onChange={(e) => setlNameArabic(e.target.value)}
                   />
                 </div>
                 <div className="col-lg-6">
@@ -488,6 +527,18 @@ export default function Signup() {
                   />
                 </div>
                 <div className="col-lg-6">
+                  <label className="labeltext">Address Arabic</label>
+                  <input
+                    required
+                    type="text"
+                    placeholder="Address Arabic"
+                    className="FormInput"
+                    style={{ borderRadius: "10px" }}
+                    value={addressArabic}
+                    onChange={(e) => setAddressArabic(e.target.value)}
+                  />
+                </div>
+                <div className="col-lg-6">
                   <label className="labeltext">Shop Name</label>
                   <input
                     required
@@ -497,6 +548,18 @@ export default function Signup() {
                     style={{ borderRadius: "10px" }}
                     value={shopName}
                     onChange={(e) => setShopName(e.target.value)}
+                  />
+                </div>
+                <div className="col-lg-6">
+                  <label className="labeltext">Shop Name Arabic</label>
+                  <input
+                    required
+                    type="text"
+                    placeholder="Shop Name Arabic"
+                    className="FormInput"
+                    style={{ borderRadius: "10px" }}
+                    value={shopNameArabic}
+                    onChange={(e) => setShopNameArabic(e.target.value)}
                   />
                 </div>
                 <div className="col-lg-12">
@@ -509,6 +572,18 @@ export default function Signup() {
                     style={{ height: "150px", borderRadius: "10px" }}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
+                  />
+                </div>
+                <div className="col-lg-12">
+                  <label className="labeltext">Description Arabic</label>
+                  <textarea
+                    required
+                    type="text"
+                    placeholder="Details Arabic"
+                    className="FormInput"
+                    style={{ height: "150px", borderRadius: "10px" }}
+                    value={descriptionArabic}
+                    onChange={(e) => setDescriptionArabic(e.target.value)}
                   />
                 </div>
                 <div className="col-lg-6 col-12">

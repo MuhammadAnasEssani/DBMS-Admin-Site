@@ -11,7 +11,9 @@ import { addStaff } from "../../config/api/Staff";
 export default function AddStaff() {
   const [loading, setLoading] = useState(false);
   const [fName, setfName] = useState("");
+  const [fNameArabic, setfNameArabic] = useState("");
   const [lName, setlName] = useState("");
+  const [lNameArabic, setlNameArabic] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [cPassword, setcPassword] = useState("");
@@ -25,22 +27,26 @@ export default function AddStaff() {
     e.preventDefault();
     setLoading(true);
     const model = {
-        firstName : fName,
-        lastName : lName,
-        email : email,
-        password : password,
-        cpassword : cPassword
-    }
+      firstName: fName,
+      firstNameArabic : fNameArabic,
+      lastName: lName,
+      lastNameArabic: lNameArabic,
+      email: email,
+      password: password,
+      cpassword: cPassword,
+    };
     // console.log(model)
     try {
       const res = await addStaff(model);
       if (res.status === 201) {
         Notification("Staff", res.data.message, "Success");
         setfName("");
+        setfNameArabic("");
         setlName("");
+        setlNameArabic("");
         setEmail("");
         setPassword("");
-        setcPassword("")
+        setcPassword("");
         setLoading(false);
         return;
       } else {
@@ -97,6 +103,18 @@ export default function AddStaff() {
                     />
                   </div>
                   <div className="col-lg-6">
+                    <label className="labeltext">First Name Arabic</label>
+                    <input
+                      required
+                      type="text"
+                      placeholder="First Name Arabic"
+                      className="FormInput"
+                      style={{ borderRadius: "10px" }}
+                      value={fNameArabic}
+                      onChange={(e) => setfNameArabic(e.target.value)}
+                    />
+                  </div>
+                  <div className="col-lg-6">
                     <label className="labeltext">Last Name: (*)</label>
                     <input
                       type="text"
@@ -105,6 +123,18 @@ export default function AddStaff() {
                       value={lName}
                       placeholder="Last Name"
                       onChange={(e) => setlName(e.target.value)}
+                    />
+                  </div>
+                  <div className="col-lg-6 ">
+                    <label className="labeltext">Last Name Arabic</label>
+                    <input
+                      required
+                      type="text"
+                      placeholder="Last Name Arabic"
+                      className="FormInput"
+                      style={{ borderRadius: "10px" }}
+                      value={lNameArabic}
+                      onChange={(e) => setlNameArabic(e.target.value)}
                     />
                   </div>
                   <div className="col-lg-6">
