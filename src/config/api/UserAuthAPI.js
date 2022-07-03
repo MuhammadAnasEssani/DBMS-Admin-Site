@@ -2,7 +2,7 @@ import BaseUrl from "./_Domain";
 import axios from "../helper/axios";
 
 function userSignin(user) {
-  return axios.post("/vendor/signin", {
+  return axios.post("vendor-login", {
       ...user,
     }).then((res) => res)
 }
@@ -15,7 +15,7 @@ function createVendor(form) {
   // console.log(form)
   return axios({
     method: "post",
-    url: "/vendor/signup",
+    url: "/vendor",
     data: form,
     headers: {
       "Content-Type": `multipart/form-data; boundary=${form._boundary}`,

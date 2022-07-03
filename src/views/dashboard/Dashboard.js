@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
+import React, {useEffect} from "react";
+import {useHistory} from "react-router-dom";
+import {useSelector} from "react-redux";
 
 import AdminDashboard from "./AdminDashboard";
-import StaffDashboard from "./StaffDashboard";
 import WriterDashboard from "./WriterDashboard";
-import StudentDashboard from "./StudentDashboard";
-import Header from "../../component/header/Header";
-import Footer from "../../component/header/Header";
+
 export default function Dashboard() {
   // const state = useSelector((state) => state);
   // const authState = state.AuthReducer.user;
@@ -26,9 +23,9 @@ export default function Dashboard() {
     {/* <StaffDashboard /> */}
     {/* <AdminDashboard /> */}
     {/* <WriterDashboard /> */}
-      {auth.user.role === "vendor" ? (
+      {auth.user.role == 20 ? (
         <WriterDashboard />
-      ) : auth.user.role === "admin" ? (
+      ) : auth.user.role == 30 ? (
         <AdminDashboard />
       ) : null }
     </>

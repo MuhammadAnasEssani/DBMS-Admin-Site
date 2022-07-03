@@ -1,21 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import React, {useEffect, useState} from "react";
+import {Link, useHistory} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
 import Notification from "../../component/notification/Notification";
-import { Drawer } from "antd";
+import {Drawer} from "antd";
 
 import $ from "jquery";
-
 // imports
 import AdminNav from "../menus/AdminNav";
-import StaffNav from "../menus/StaffNav";
 import WriterNav from "../menus/WriterNav";
-import StudentNav from "../menus/StudentNav";
-import {
-  setDrawerState,
-  unSetDrawerState,
-} from "../../store/actions/DrawerState";
-import { authConstants } from "../../store/actions/contants";
+import {setDrawerState, unSetDrawerState,} from "../../store/actions/DrawerState";
+import {authConstants} from "../../store/actions/contants";
 
 export default function Header() {
   var title = "Admin";
@@ -67,8 +61,8 @@ export default function Header() {
           </div>
 
           <Drawer
-            title={`Welcome ${auth.user.fullName}`}
-            placement="left"
+              title={`Welcome ${auth.user.first_name}`}
+              placement="left"
             closable={true}
             onClose={onClose}
             visible={visible}
@@ -78,9 +72,9 @@ export default function Header() {
             {/* <WriterNav /> */}
             {/* <StaffNav /> */}
             {/* <AdminNav /> */}
-            {auth.user.role === "vendor" ? (
-              <WriterNav />
-            ) : auth.user.role === "admin" ? (
+            {auth.user.role == 20 ? (
+                <WriterNav />
+            ) : auth.user.role == 30 ? (
               <AdminNav />
             ) : null}
             {/* {authState.role == "Administration" ? (

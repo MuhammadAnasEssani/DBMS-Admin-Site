@@ -463,41 +463,19 @@
 //   );
 // }
 
-import React, { useState, useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { Container, Grid } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import React, {useEffect, useState} from "react";
+import {Link, useHistory} from "react-router-dom";
+import {useSelector} from "react-redux";
+import {useTheme} from "@mui/material/styles";
+import Notification from "../../component/notification/Notification";
+import {getOrdersByVendor, getPendingOrdersByVendor,} from "../../config/api/OrdersAPI";
+import {Skeleton} from "antd";
+import {getProductsByVendor} from "../../config/api/Product";
 // import "../../chart/chartjs/chart.min.js"
 // import "../../chart/chartist/chartist.js"
 // import "../../chart/chartist/chartist-plugin-tooltip.js"
 // import "../../chart/apex-chart/apex-chart.js"
 // import "../../chart/apex-chart/stock-prices.js"
-import Page from "../../components/Page";
-import {
-  EcommerceWelcome,
-  EcommerceNewProducts,
-  EcommerceYearlySales,
-  EcommerceBestSalesman,
-  EcommerceSaleByGender,
-  EcommerceWidgetSummary,
-  EcommerceSalesOverview,
-  EcommerceLatestProducts,
-  EcommerceCurrentBalance,
-} from "../../sections/@dashboard/general/e-commerce";
-import BreadCrumbs from "../../component/breadcrumbs/BreadCrumbs";
-import CounterCard from "../../component/counterCard/CounterCard";
-import IntroCard from "../../component/introCard/IntroCard";
-import ChangePassword from "../../component/changePassword/ChangePassword";
-import { getRecentVendors } from "../../config/api/Vendor";
-import Notification from "../../component/notification/Notification";
-import {
-  getOrdersByVendor,
-  getPendingOrdersByVendor,
-  getRecentOrdersByAdmin,
-} from "../../config/api/OrdersAPI";
-import { Skeleton } from "antd";
-import { getProductsByVendor } from "../../config/api/Product";
 export default function WriterDashboard() {
   const state = useSelector((state) => state);
   // const authState = state.AuthReducer.user;
