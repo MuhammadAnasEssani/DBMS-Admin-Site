@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { Table, Button, Space, Input, Popconfirm, Modal } from "antd";
-import { useSelector } from 'react-redux';
+import React, {useEffect, useState} from 'react'
+import {Table} from "antd";
+import {useSelector} from 'react-redux';
 import BreadCrumbs from "../../component/breadcrumbs/BreadCrumbs";
-import { useHistory } from "react-router-dom";
-import { getOffersByVendor } from '../../config/api/Offer';
+import {useHistory} from "react-router-dom";
+import {getOffersByVendor} from '../../config/api/Offer';
+import Popconfirm from "antd/es/popconfirm";
+import Notification from "../../component/notification/Notification";
+import {deleteOffer} from "../../config/api/offers";
 
 export default function Offers() {
     const states = useSelector((state) => state);
@@ -12,29 +15,52 @@ export default function Offers() {
   const drawerState = states.DrawerReducer.State;
   const [change, setChange] = useState(false);
   const [offers, setOffers] = useState([]);
+  const handleDelete = async (id) => {
+    try{
+      const res = await deleteOffer(id);
+      // if(res){
+      //   console.log(res)
+      // }
+      if(res.status === 204){
+        Notification(
+            "Offer Department",
+            res.data.message,
+            "Success"
+        );
+        {change ? setChange(false) : setChange(true)}
+        return;
+      }else{
+        Notification("Offer Department", res.data.message, "Error");
+        return;
+      }
+    }catch(err){
+      Notification("Offer Department", "Something went wrong", "Error");
 
+    }
+
+  };
   const data = [];
   {
     offers.length > 0 &&
       offers.map((offer, index) =>
-        data.push({
+          data.push({
           key: index + 1,
           no: index + 1,
-          title: offer.title,
-          status: offer.status,
+            title: offer.title,
+            status: offer.status == 10 ? "Active" : "InActive",
           action: (
             <div className="d-sm-inline-flex gap-2 actionDiv">
-              <span
-                className="bi bi-pencil actionBtn"
-                // onClick={() => showCategoryEditModal(category)}
-              ></span>
-              {/* <Popconfirm
-                title="Are you sure？"
-                icon={<CloseCircleTwoTone twoToneColor="Red" />}
-                onConfirm={()=> handleDelete(category._id)}
+              {/*<span*/}
+              {/*  className="bi bi-pencil actionBtn"*/}
+              {/*  // onClick={() => showCategoryEditModal(category)}*/}
+              {/*></span>*/}
+              <Popconfirm
+                  title="Are you sure？"
+                  // icon={<CloseCircleTwoTone twoToneColor="Red" />}
+                  onConfirm={()=> handleDelete(offer.id)}
               >
-                <Link className="bi bi-trash actionBtn"></Link>
-              </Popconfirm> */}
+                <span className="bi bi-trash actionBtn"></span>
+              </Popconfirm>
             </div>
           ),
         })
@@ -70,7 +96,7 @@ export default function Offers() {
     try{
       const res = await getOffersByVendor();
       if (res.status === 200) {
-          setOffers(res.data.offers)
+          setOffers(res.data.data)
         return
       }else {
         Notification("Offers Department", res.data.message, "Error")
@@ -81,12 +107,7 @@ export default function Offers() {
     }
   };
 
-  useEffect(() => {
-    if (!auth.authenticate) {
-      history.push("/");
-      return;
-    }
-  }, []);
+
   useEffect(() => {
     fetchOffers();
   }, [change]);

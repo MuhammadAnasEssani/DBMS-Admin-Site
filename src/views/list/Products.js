@@ -1,22 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Table, Button, Space, Input, Popconfirm, Modal } from "antd";
-import { CloseCircleTwoTone } from "@ant-design/icons";
-import { SearchOutlined } from "@ant-design/icons";
-import { useSelector } from "react-redux";
-import { Link, useHistory } from "react-router-dom";
-import { Form, Select } from "antd";
-import { ImBin } from "react-icons/im";
+import React, {useEffect, useState} from "react";
+import {Button, Input, Modal, Space, Spin, Table} from "antd";
+import {LoadingOutlined, SearchOutlined} from "@ant-design/icons";
+import {useSelector} from "react-redux";
+import {useHistory} from "react-router-dom";
+import {ImBin} from "react-icons/im";
 import BreadCrumbs from "../../component/breadcrumbs/BreadCrumbs";
-import {
-  deleteProductById,
-  editProduct,
-  getProductsByVendor,
-} from "../../config/api/Product";
-import { getCategories } from "../../config/api/Categories";
+import {deleteProductById, editProduct, getProductsByVendor,} from "../../config/api/Product";
+import {getCategories} from "../../config/api/Categories";
 import Notification from "../../component/notification/Notification";
-import { Spin } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
-import { getOffersByVendor } from "../../config/api/Offer";
+import {getOffersByVendor} from "../../config/api/Offer";
 
 export default function MyProducts() {
   const [state, setState] = useState({});
@@ -53,22 +45,21 @@ export default function MyProducts() {
     setViewVisible(true);
   };
   const showProductEditModal = (product) => {
-    console.log(product);
     // setProductEdit(product);
     setProductId(product._id);
     setProductName(product.name);
     setProductPrice(product.price);
     setProductDesc(product.description);
-    setProductCategory(product.category._id);
-    {
-      product.offer && setProductOffer(product.offer._id);
-    }
+    // setProductCategory(product.category._id);
+    // {
+    //   product.offer && setProductOffer(product.offer._id);
+    // }
     // setProductOffer(product.offer._id)
-    setProductCategoryName(product.category.name);
+    // setProductCategoryName(product.category.name);
     setProductQuantity(product.quantity);
     setProductDiscount(product.discount);
     setProductType(product.type);
-    setProductImage(product.productPictures);
+    setProductImage(product.pictures);
     setEditProductVisible(true);
   };
 
@@ -151,7 +142,7 @@ export default function MyProducts() {
             type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
             icon={
-              <SearchOutlined style={{ color: "#fff", alignSelf: "center" }} />
+              <SearchOutlined style={{ color: "#ffffff", alignSelf: "center" }} />
             }
             size="small"
             style={{ width: 90, color: "#fff", display: "flex" }}
@@ -247,19 +238,19 @@ export default function MyProducts() {
           price: product.price,
           discount: product.discount,
           quantity: product.quantity,
-          type: product.type,
-          status: product.status,
-          category: product.category.name,
+          type: product.type == 10 ? "Normal" : "Featured",
+          status: product.status == 10 ? "Active" : "InActive",
+          // category: product.category.name,
           action: (
             <div className="d-sm-inline-flex gap-2 actionDiv">
               <span
                 className="bi bi-eye actionBtn"
                 onClick={() => showProductDetailModal(product)}
               ></span>
-              <span
-                className="bi bi-pencil actionBtn"
-                onClick={() => showProductEditModal(product)}
-              ></span>
+              {/*<span*/}
+              {/*  className="bi bi-pencil actionBtn"*/}
+              {/*  onClick={() => showProductEditModal(product)}*/}
+              {/*></span>*/}
               {/* <Popconfirm
                 title="Are you sure？"
                 icon={<CloseCircleTwoTone twoToneColor="Red" />}
@@ -313,11 +304,11 @@ export default function MyProducts() {
       dataIndex: "status",
       key: "status",
     },
-    {
-      title: "Category",
-      dataIndex: "category",
-      key: "category",
-    },
+    // {
+    //   title: "Category",
+    //   dataIndex: "category",
+    //   key: "category",
+    // },
 
     {
       title: "Action",
@@ -330,7 +321,7 @@ export default function MyProducts() {
     try {
       const res = await getProductsByVendor();
       if (res.status === 200) {
-        setProducts(res.data.products);
+        setProducts(res.data.data);
       } else {
         Notification("Product Department", res.data.message, "Error");
       }
@@ -342,19 +333,19 @@ export default function MyProducts() {
     try {
       const res = await getCategories();
       if (res.status === 200) {
-        setCategories(res.data.categoryList);
+        setCategories(res.data.data);
       } else {
-        Notification("Product Department", res.data.message, "Error");
+        Notification("Categories", res.data.message, "Error");
       }
     } catch (err) {
-      Notification("Product Department", "Something went wrong", "Error");
+      Notification("Categories", "Something went wrong", "Error");
     }
   };
   const fetchOffers = async () => {
     try {
       const res = await getOffersByVendor();
       if (res.status === 200) {
-        setOffers(res.data.offers);
+        setOffers(res.data.data);
       } else {
         Notification("Offers", res.data.message, "Error");
       }
@@ -416,10 +407,10 @@ export default function MyProducts() {
                 <label className="key">Quantity</label>
                 <p className="value">{productDetails.quantity}</p>
               </div>
-              <div className="col-xl-6 col-lg-6 col-md-6 col-12">
-                <label className="key">Category</label>
-                <p className="value">{productDetails.category.name}</p>
-              </div>
+              {/*<div className="col-xl-6 col-lg-6 col-md-6 col-12">*/}
+              {/*  <label className="key">Category</label>*/}
+              {/*  <p className="value">{productDetails.category.name}</p>*/}
+              {/*</div>*/}
             </div>
             <div className="row">
               <div className="col-xl-12 col-lg-12 col-md-12 col-12">
@@ -431,11 +422,11 @@ export default function MyProducts() {
               <div className="col-xl-6 col-lg-6 col-md-6 col-12">
                 <label className="key">Product Pictures</label>
                 <div style={{ display: "flex" }}>
-                  {productDetails.productPictures.map((picture) => (
+                  {productDetails.pictures.map((picture) => (
                     <div className="productImgContainer">
                       <img
                         style={{ width: "100px", height: "100px" }}
-                        src={picture.avatar}
+                        src={`http://localhost:3333/uploads/product-pictures/${picture.avatar}`}
                         alt=""
                       />
                     </div>
@@ -525,7 +516,7 @@ export default function MyProducts() {
                   {/* <option >
                             {productCategoryName}
                           </option> */}
-                  {createCategoryList(categories).map((option) => (
+                  {categories.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.name}
                     </option>

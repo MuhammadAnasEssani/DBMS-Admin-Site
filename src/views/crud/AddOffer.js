@@ -10,9 +10,7 @@ import { useHistory } from "react-router-dom";
 export default function AddOffer() {
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState("");
-  const [titleArabic, setTitleArabic] = useState("");
   const [offerDesc, setOfferDesc] = useState("");
-  const [offerDescArabic, setOfferDescArabic] = useState("");
   const [offerImage, setOfferImage] = useState("");
   const [offersImage, setOffersImage] = useState("");
   const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
@@ -26,18 +24,14 @@ export default function AddOffer() {
     setLoading(true);
     var form = new FormData();
     form.append("title", title);
-    form.append("titleArabic", titleArabic);
     form.append("description", offerDesc);
-    form.append("descriptionArabic", offerDescArabic);
-    form.append("offerImage", offerImage);
+    form.append("avatar", offerImage);
     try {
       const res = await addOffer(form);
       if (res.status === 201) {
         Notification("Offer Department", res.data.message, "Success");
         setTitle("");
         setOfferDesc("");
-        setTitleArabic("");
-        setOfferDescArabic("");
         setOfferImage("");
         setOffersImage("");
         setLoading(false);
@@ -173,17 +167,6 @@ export default function AddOffer() {
                       onChange={(e) => setTitle(e.target.value)}
                     />
                   </div>
-                  <div className="col-lg-6">
-                    <label className="labeltext">Offer Title Arabic: (*)</label>
-                    <input
-                      type="text"
-                      required
-                      className="FormInput"
-                      value={titleArabic}
-                      placeholder="Offer Title Arabic"
-                      onChange={(e) => setTitleArabic(e.target.value)}
-                    />
-                  </div>
 
                   <div className="col-lg-12 ">
                     <label className="labeltext">Offer Description: (*)</label>
@@ -194,18 +177,6 @@ export default function AddOffer() {
                       value={offerDesc}
                       placeholder="Offer Description"
                       onChange={(e) => setOfferDesc(e.target.value)}
-                      style={{ height: "110px" }}
-                    />
-                  </div>
-                  <div className="col-lg-12 ">
-                    <label className="labeltext">Offer Description Arabic: (*)</label>
-                    <textarea
-                      type="text"
-                      required
-                      className="FormInput"
-                      value={offerDescArabic}
-                      placeholder="Offer Description Arabic"
-                      onChange={(e) => setOfferDescArabic(e.target.value)}
                       style={{ height: "110px" }}
                     />
                   </div>

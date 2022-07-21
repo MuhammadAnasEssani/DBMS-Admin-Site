@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Table, Button, Space, Input, Popconfirm } from "antd";
-import { CloseCircleTwoTone } from "@ant-design/icons";
-import { SearchOutlined } from "@ant-design/icons";
-import { useSelector } from "react-redux";
-import { Link, useHistory } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {Button, Input, Space, Table} from "antd";
+import {SearchOutlined} from "@ant-design/icons";
+import {useSelector} from "react-redux";
+import {useHistory} from "react-router-dom";
 
 import BreadCrumbs from "../../component/breadcrumbs/BreadCrumbs";
-import { getOrdersByVendor, updateOrderByVendor } from "../../config/api/OrdersAPI";
+import {getOrdersByVendor, updateOrderByVendor} from "../../config/api/OrdersAPI";
 import Notification from "../../component/notification/Notification";
 import Modal from "antd/lib/modal/Modal";
 
@@ -40,7 +39,7 @@ export default function Orders() {
     const arrays = [];
     array.forEach((item) => {
       // console.log(item)
-      if (item.productVendor == auth.user._id) {
+      if (item.product_vendor_id == auth.user.id) {
         arrays.push(item);
       }
     });
@@ -51,7 +50,7 @@ export default function Orders() {
     try {
       var res = await getOrdersByVendor();
       if (res.status == 200) {
-        setOrders(res.data.orders);
+        setOrders(res.data.data);
         return;
       } else {
         Notification("Order Department", res.data.message, "Error");
@@ -160,8 +159,8 @@ export default function Orders() {
   // });
   const showOrderModal = (order) => {
     // console.log(order)
-    setOrderId(order._id);
-    setOrderItems(filterArray(order.items));
+    setOrderId(order.id);
+    setOrderItems(filterArray(order.order_items));
     // setOrderDetails(order);
     setViewVisible(true);
   };
@@ -203,13 +202,8 @@ export default function Orders() {
           key: index + 1,
           no: index + 1,
           email: order.user.email,
-          items: countArray(order.items),
-          status:
-            filterArray(order.items).find(function (item) {
-              return item.itemStatus == false;
-            }) == undefined
-              ? "packed"
-              : "ordered",
+          items: countArray(order.order_items),
+          status:order.order_status,
           // changeStatus: (
           //   <label class="switch">
           //     <input
@@ -310,7 +304,7 @@ export default function Orders() {
   return (
     <>
       <Modal
-        title="Order"
+          title="Order"
         centered
         visible={viewVisible}
         onOk={() => setViewVisible(false)}
@@ -387,7 +381,7 @@ export default function Orders() {
                             class="AvatarStyle__StyledAvatar-sc-1tfjtzs-0 ffSehd"
                           >
                             <img
-                              src={data.productId.productPictures[0].avatar}
+                                // src={data.productId.productPictures[0].avatar}
                               alt="avatar"
                             />
                           </div>
@@ -397,14 +391,14 @@ export default function Orders() {
                               font-size="14px"
                               class="Typography-sc-1nbqu5-0 JPPAF"
                             >
-                              {data.productId.name}
+                              {data.id}
                             </h6>
                             <div
                               font-size="14px"
                               color="text.muted"
                               class="Typography-sc-1nbqu5-0 huVebp"
                             >
-                              ${data.payablePrice} x {data.purchasedQty}
+                              ${data.payable_price} x {data.purchased_qty}
                             </div>
                           </div>
                         </div>
@@ -417,7 +411,7 @@ export default function Orders() {
                             color="text.muted"
                             class="Typography-sc-1nbqu5-0 huVebp"
                           >
-                            {data.itemStatus == false ? "ordered" : "packed"}
+                            ordered
                           </div>
                         </div>
                         <div
@@ -432,16 +426,16 @@ export default function Orders() {
                         Write a Review
                       </div>
                     </button> */}
-                          <label class="switch">
-                            <input
-                              type="checkbox"
-                              onChange={() => updateOrder(data.productId)}
-                              // disabled = {true}
-                              checked = {data.itemStatus ? "checked" : null}
-                              disabled={data.itemStatus ? true : false}
-                            />
-                            <span class="slider"></span>
-                          </label>
+                          {/*<label class="switch">*/}
+                          {/*  <input*/}
+                          {/*    type="checkbox"*/}
+                          {/*    onChange={() => updateOrder(data.productId)}*/}
+                          {/*    // disabled = {true}*/}
+                          {/*    checked = {data.itemStatus ? "checked" : null}*/}
+                          {/*    disabled={data.itemStatus ? true : false}*/}
+                          {/*  />*/}
+                          {/*  <span class="slider"></span>*/}
+                          {/*</label>*/}
                         </div>
                       </div>
                     );

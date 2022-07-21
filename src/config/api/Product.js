@@ -4,7 +4,7 @@ function  addProduct(form) {
   // console.log(form)
   return axios({
     method: "post",
-    url: "/product/create",
+    url: "/product",
     data: form,
     headers: {
       "Content-Type": `multipart/form-data; boundary=${form._boundary}`,
@@ -12,8 +12,8 @@ function  addProduct(form) {
   }).then((res) => res);
 }
 
-function getProductsByVendor(model) {
-  return axios.post(`/product/getProductsByVendor`);
+function getProductsByVendor() {
+  return axios.get(`/product`);
 }
 
 function  editProduct(form) {
@@ -31,7 +31,7 @@ function  deleteProductById(payload) {
   // console.log(payload)
   return axios.delete(`product/deleteProductById`, {
     data: payload ,
-}).then((res) => res);
+  }).then((res) => res);
 }
 
 

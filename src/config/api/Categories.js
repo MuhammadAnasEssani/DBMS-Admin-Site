@@ -1,18 +1,22 @@
 import axios from "../helper/axios";
 
-function  getCategories(form) {
-  return axios.get('/category/getcategory')
+function  getCategories() {
+  return axios.get('/category')
 }
 
 function addCategory(model) {
-  return axios.post('/category/create', {
+  return axios.post('/category', {
     ...model
-})
+  })
 }
 function updateCategory(model) {
-  return axios.post('/category/update', {
+  return axios.put(`/category/${model.id}`, {
     ...model
 })
 }
+function  deleteCategory(id) {
+  // console.log(payload)
+  return axios.delete(`/category/${id}`).then((res) => res);
+}
 
-export { getCategories, addCategory,updateCategory };
+export { getCategories, addCategory,updateCategory,deleteCategory };

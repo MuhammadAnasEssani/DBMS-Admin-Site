@@ -15,7 +15,7 @@ function OrderDetails(token, orderid) {
     .catch((err) => console.log(err));
 }
 function getOrdersByVendor() {
-  return axios.post(`/order/getCustomerOrdersByVendors`);
+  return axios.get(`/order`);
 }
 function getPendingOrdersByVendor() {
   return axios.post(`/order/getPendingOrdersByVendors`);

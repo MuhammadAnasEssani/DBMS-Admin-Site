@@ -1,32 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { Form, Select } from "antd";
+import React, {useEffect, useState} from "react";
+import {useSelector} from "react-redux";
 // import { Upload, Modal } from "antd";
 // import { PlusOutlined } from "@ant-design/icons";
-import { Upload, Button } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
-import { Spin } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
+import {Select, Spin} from "antd";
+import {LoadingOutlined} from "@ant-design/icons";
 import Notification from "../../component/notification/Notification";
 
 import BreadCrumbs from "../../component/breadcrumbs/BreadCrumbs";
-import { ImBin } from "react-icons/im";
-import { addProduct } from "../../config/api/Product";
-import { addCategory, getCategories } from "../../config/api/Categories";
-import { useHistory } from "react-router-dom";
+import {addCategory} from "../../config/api/Categories";
+import {useHistory} from "react-router-dom";
 
-export default function AddProduct() {
+export default function AddCategory() {
   const { Option } = Select;
   const [loading, setLoading] = useState(false);
   const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
   const states = useSelector((state) => state);
   const drawerState = states.DrawerReducer.State;
   const [categoryName, setCategoryName] = useState('');
-  const [categoryNameArabic, setCategoryNameArabic] = useState('');
-    const [parentCategory, setParentCategory] = useState(',');
-    
+  const [categoryDescription, setCategoryDescription] = useState('');
+
   const [change, setChange] = useState(false);
-  const [categories, setCategories] = useState([]);
   const auth = useSelector((state) => state.auth);
   const history = useHistory();
 
@@ -35,10 +28,7 @@ export default function AddProduct() {
     setLoading(true)
     const model= {
       name: categoryName,
-      nameArabic: categoryNameArabic,
-      parentId: parentCategory.split(",")[0],
-      parentName: parentCategory.split(",")[1],
-      parentNameArabic : parentCategory.split(",")[2]
+      description: categoryDescription
     }
     // console.log(model)
     try{
@@ -46,8 +36,7 @@ export default function AddProduct() {
       if (res.status === 201) {
         Notification("Category Department", "Category Added Sucessfully", "Success")
         setCategoryName("")
-        setCategoryNameArabic("")
-        setParentCategory("")
+        setCategoryDescription("")
         setLoading(false)
         return
       }else {
@@ -60,39 +49,38 @@ export default function AddProduct() {
       setLoading(false)
     }
   };
-  const fetchCategories = async () => {
-    try{
-      const res = await getCategories();
-      if (res.status === 200) {
-        setCategories(res.data.categoryList);
-      }else{
-        Notification(
-          "Categories",
-          res.data.message,
-          "Error"
-        );
-      }
-    }catch(err){
-      Notification(
-        "Categories",
-        "Something went wrong",
-        "Error"
-      );
-    }
-  };
+  // const fetchCategories = async () => {
+  //   try{
+  //     const res = await getCategories();
+  //     if (res.status === 200) {
+  //       setCategories(res.data.categoryList);
+  //     }else{
+  //       Notification(
+  //         "Categories",
+  //         res.data.message,
+  //         "Error"
+  //       );
+  //     }
+  //   }catch(err){
+  //     Notification(
+  //       "Categories",
+  //       "Something went wrong",
+  //       "Error"
+  //     );
+  //   }
+  // };
 
-  const createCategoryList = (categories,options = []) => {
-    for (let category of categories) {
-      options.push({ value: category._id, name: category.name, nameArabic: category.nameArabic });
-      if (category.children.length > 0) {
-        for (let categoryy of category.children) {
-          options.push({ value: categoryy._id, name: categoryy.name });
-        }
-      }
-    }
-    // let myCategories = [];
-    return options;
-  };
+  // const createCategoryList = (categories,options = []) => {
+  //   for (let category of categories) {
+  //     options.push({ value: category._id, name: category.name, nameArabic: category.nameArabic });
+  //     if (category.children.length > 0) {
+  //       for (let categoryy of category.children) {
+  //         options.push({ value: categoryy._id, name: categoryy.name });
+  //       }
+  //     }
+  //   }
+  //   return options;
+  // };
   useEffect(() => {
     if (!auth.authenticate) {
       history.push("/");
@@ -100,7 +88,7 @@ export default function AddProduct() {
     }
   }, [auth.authenticate]);
   useEffect(() => {
-    fetchCategories();
+    // fetchCategories();
     // console.log(createCategoryList(categories))
   }, []);
   // if(categories.length > 0){
@@ -133,37 +121,20 @@ export default function AddProduct() {
                       onChange={(e) => setCategoryName(e.target.value)}/>
                     {/* </Form.Item> */}
                   </div>
-                  <div className="col-lg-6">
-                    <label className="labeltext">Category Name Arabic: (*)</label>
-                    {/* <Form.Item name="name"> */}
-                      <input type="text" required className="FormInput" value={categoryNameArabic}
-                      placeholder='Category Name Arabic'
-                      onChange={(e) => setCategoryNameArabic(e.target.value)}/>
-                    {/* </Form.Item> */}
-                  </div>
-
-                  <div className="col-lg-6">
-                    <label className="labeltext">Parent: (*)</label>
-                      <select
+                  <div className="col-lg-12">
+                    <label className="labeltext">
+                      Category Description: (*)
+                    </label>
+                    {/* <CKEditor editor={ClassicEditor} data={productDesc} onChange={handleDescription} /> */}
+                    <textarea
+                        type="text"
+                        required
                         className="FormInput"
-                        name="cars"
-                        id="cars"
-                        value={parentCategory}
-                      onChange={(e) => setParentCategory(e.target.value)}
-                      >
-                        <option value="">None</option>
-                        {/* <option > */}
-                        {/* <option>
-                        {createCategoryList(categories)}
-                        </option> */}
-                          {/* </option> */}
-                        {/* {createCategoryList(categories)} */}
-                        {createCategoryList(categories).map((option) => (
-                          <option key={option.value} value={option.value+","+option.name+","+option.nameArabic}>
-                            {option.name}
-                          </option>
-                        ))}
-                      </select>
+                        value={categoryDescription}
+                        placeholder="Category Description"
+                        onChange={(e) => setCategoryDescription(e.target.value)}
+                        style={{ height: "110px" }}
+                    />
                   </div>
                   <div className="col-lg-12">
                   {loading ? <button

@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { Form, Select } from "antd";
+import React, {useEffect, useState} from "react";
+import {useSelector} from "react-redux";
 // import { Upload, Modal } from "antd";
 // import { PlusOutlined } from "@ant-design/icons";
-import { Upload, Button } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
-import { Spin } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
+import {Select, Spin} from "antd";
+import {LoadingOutlined} from "@ant-design/icons";
 import Notification from "../../component/notification/Notification";
-
 import BreadCrumbs from "../../component/breadcrumbs/BreadCrumbs";
-import { ImBin } from "react-icons/im";
-import { addProduct } from "../../config/api/Product";
-import { getCategories } from "../../config/api/Categories";
-import { useHistory } from "react-router-dom";
-import { getOffersByVendor } from "../../config/api/Offer";
-import { WithContext as ReactTags } from "react-tag-input";
+import {ImBin} from "react-icons/im";
+import {getCategories} from "../../config/api/Categories";
+import {useHistory} from "react-router-dom";
+import {getOffersByVendor} from "../../config/api/Offer";
+import {getColours} from "../../config/api/Colour";
+import {getSizes} from "../../config/api/Size";
+import {addProduct} from "../../config/api/Product";
+
+const { Option } = Select;
 
 
 const KeyCodes = {
@@ -26,20 +25,18 @@ const KeyCodes = {
 const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
 export default function AddProduct() {
-  const { Option } = Select;
+  // const { Option } = Select;
   const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
   const states = useSelector((state) => state);
   const drawerState = states.DrawerReducer.State;
   const [productName, setProductName] = useState("");
-  const [productNameArabic, setProductNameArabic] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [productDesc, setProductDesc] = useState("");
-  const [productDescArabic, setProductDescArabic] = useState("");
-  const [productCategory, setProductCategory] = useState("");
-  const [productOffer, setProductOffer] = useState("");
+  const [productCategory, setProductCategory] = useState([]);
+  const [productOffer, setProductOffer] = useState([]);
   const [productQuantity, setProductQuantity] = useState("");
-  const [productDiscount, setProductDiscount] = useState(0);
-  const [productType, setProductType] = useState("normal");
+  const [productDiscount, setProductDiscount] = useState();
+  const [productType, setProductType] = useState(10);
   const [productImage, setProductImage] = useState([]);
   const [displayProductImage, setDisplayProductImage] = useState([]);
   const [change, setChange] = useState(false);
@@ -51,206 +48,77 @@ export default function AddProduct() {
   const history = useHistory();
   const [colours, setColours] = useState([]);
   const [sizes, setSizes] = useState([]);
-  const [colourError, setColourError] = useState(false);
-  const [sizeError, setSizeError] = useState(false);
-  const [coloursArabic, setColoursArabic] = useState([]);
-  const [sizesArabic, setSizesArabic] = useState([]);
-  const [colourErrorArabic, setColourErrorArabic] = useState(false);
-  const [sizeErrorArabic, setSizeErrorArabic] = useState(false);
+  const [colour, setColour] = useState([]);
+  const [size, setSize] = useState([]);
 
-  const handleDelete = (i) => {
-    setColours(colours.filter((colours, index) => index !== i));
-    if (colours.length == 0) {
-      setColourError(true);
-    }
-  };
 
-  const handleAddition = (colour) => {
-    setColours([...colours, colour]);
-    setColourError(false);
-  };
-
-  const handleDrag = (colour, currPos, newPos) => {
-    const newColours = colours.slice();
-
-    newColours.splice(currPos, 1);
-    newColours.splice(newPos, 0, colour);
-
-    // re-render
-    setColours(newColours);
-  };
-
-  const handleTagClick = (index) => {
-    // console.log("The tag at index " + index + " was clicked");
-  };
-  const handleDeleteArabicColours = (i) => {
-    setColoursArabic(coloursArabic.filter((colours, index) => index !== i));
-    if (coloursArabic.length == 0) {
-      setColourErrorArabic(true);
-    }
-  };
-
-  const handleAdditionArabicColours = (colour) => {
-    setColoursArabic([...coloursArabic, colour]);
-    setColourErrorArabic(false);
-  };
-
-  const handleDragArabicColours = (colour, currPos, newPos) => {
-    const newColours = coloursArabic.slice();
-
-    newColours.splice(currPos, 1);
-    newColours.splice(newPos, 0, colour);
-
-    // re-render
-    setColoursArabic(newColours);
-  };
-
-  const handleTagClickArabicColours = (index) => {
-    // console.log("The tag at index " + index + " was clicked");
-  };
-  const handleDeleteSizes = (i) => {
-    setSizes(sizes.filter((sizes, index) => index !== i));
-    if (sizes.length == 0) {
-      setSizeError(true);
-    }
-  };
-
-  const handleAdditionSizes = (size) => {
-    setSizes([...sizes, size]);
-    setSizeError(false);
-  };
-
-  const handleDragSizes = (size, currPos, newPos) => {
-    const newSizes = sizes.slice();
-
-    newSizes.splice(currPos, 1);
-    newSizes.splice(newPos, 0, size);
-
-    // re-render
-    setSizes(newSizes);
-  };
-
-  const handleTagClickSizes = (index) => {
-    // console.log("The tag at index " + index + " was clicked");
-  };
-  const handleDeleteSizesArabic = (i) => {
-    setSizesArabic(sizesArabic.filter((sizes, index) => index !== i));
-    if (sizesArabic.length == 0) {
-      setSizeError(true);
-    }
-  };
-
-  const handleAdditionSizesArabic  = (size) => {
-    setSizesArabic([...sizesArabic, size]);
-    setSizeErrorArabic(false);
-  };
-
-  const handleDragSizesArabic  = (size, currPos, newPos) => {
-    const newSizes = sizesArabic.slice();
-
-    newSizes.splice(currPos, 1);
-    newSizes.splice(newPos, 0, size);
-
-    // re-render
-    setSizesArabic(newSizes);
-  };
-
-  const handleTagClickSizesArabic  = (index) => {
-    // console.log("The tag at index " + index + " was clicked");
-  };
-  // const selectedTags = (tags) => {
-  //   console.log(tags);
-  // };
-  // const removeTags = (indexToRemove) => {
-  //   setTags([...tags.filter((_, index) => index !== indexToRemove)]);
-  // };
-  // const addTags = (event) => {
-  //   if (event.target.value !== "") {
-  //     setTags([...tags, event.target.value]);
-  //     selectedTags([...tags, event.target.value]);
-  //     event.target.value = "";
-  //   }
-  // };
-  const handleDescription = () => {
-
-  }
   const handleAddProduct = async (e) => {
     e.preventDefault();
-    if (colours.length > 0 && sizes.length > 0) {
-      setLoading(true);
-      console.log(colours);
-      console.log(sizes);
-      var form = new FormData();
-      form.append("name", productName);
-      form.append("nameArabic", productNameArabic);
-      form.append("price", productPrice);
-      form.append("description", productDesc);
-      form.append("descriptionArabic", productDescArabic);
-      form.append("quantity", productQuantity);
-      form.append("category", productCategory);
+    setLoading(true);
+    // console.log(size);
+    // console.log(productCategory);
+    // console.log(JSON.stringify(productImage));
+    var form = new FormData();
+    form.append("name", productName);
+    form.append("price", productPrice);
+    form.append("description", productDesc);
+    form.append("quantity", productQuantity);
+    if(productDiscount){
       form.append("discount", productDiscount);
-      form.append("offer", productOffer);
-      form.append("type", productType);
-      form.append("colours", JSON.stringify(colours));
-      form.append("coloursArabic", JSON.stringify(coloursArabic));
-      form.append("sizes", JSON.stringify(sizes));
-      form.append("sizesArabic", JSON.stringify(sizesArabic));
+    }
+    form.append("type", productType);
+    form.append("colours", JSON.stringify(colour));
+    form.append("sizes", JSON.stringify(size));
+    form.append("categories", JSON.stringify(productCategory));
+    form.append("offers", JSON.stringify(productOffer));
+    // form.append("product_pictures", JSON.stringify(productImage));
+
     //   for (var i in data) {
     //     createFormData(formData, key + '[' + i + ']', data[i]);
     // }
-      // for (let colour of colours) {
-      //   form.append("colours", colour);
-      // }
-      // for (let size of sizes) {
-      //   form.append("sizes", size);
-      // }
-      for (let pic of productImage) {
-        form.append("productPicture", pic);
-      }
-      // console.log(colours);
-      // console.log(sizes);
-      try {
-        const res = await addProduct(form);
-        if (res.status === 201) {
-          Notification("Product Department", res.data.message, "Success");
-          setProductName("");
-          setProductNameArabic("");
-          setProductDesc("");
-          setProductDescArabic("");
-          setProductCategory("");
-          setProductOffer("");
-          setProductDiscount(0);
-          setProductPrice("");
-          setProductQuantity("");
-          setProductType("normal");
-          setProductImage([]);
-          setDisplayProductImage([]);
-          setColours([]);
-          setColoursArabic([]);
-          setSizes([]);
-          setSizesArabic([]);
-          setLoading(false);
-          return;
-        } else {
-          setLoading(false);
-          Notification("Product Department", res.data.message, "Error");
-          return;
-        }
-      } catch (err) {
+    // for (let Colour of colour) {
+    //   form.append("colours", Colour);
+    // }
+    // for (let Size of size) {
+    //   form.append("sizes", Size);
+    // }
+    // for (let category of productCategory) {
+    //   form.append("categories", category);
+    // }
+    // for (let offer of productOffer) {
+    //   form.append("offers", offer);
+    // }
+    for (let pic of productImage) {
+      form.append("product_pictures", pic);
+    }
+    // // console.log(colours);
+    // // console.log(sizes);
+    try {
+      const res = await addProduct(form);
+      if (res.status === 201) {
+        Notification("Product Department", res.data.message, "Success");
+        setProductName("");
+        setProductDesc("");
+        setProductCategory([]);
+        setProductOffer([]);
+        setProductDiscount(undefined);
+        setProductPrice("");
+        setProductQuantity("");
+        setProductType(10);
+        setProductImage([]);
+        setDisplayProductImage([]);
+        setColour([]);
+        setSize([]);
         setLoading(false);
-        Notification("Product Department", "Something went wrong", "Error");
-      }
-    } else {
-      if (colours.length == 0) {
-        setColourError(true);
+        return;
       } else {
-        setColourError(false);
+        setLoading(false);
+        Notification("Product Department", res.data.message, "Error");
+        return;
       }
-      if (sizes.length == 0) {
-        setSizeError(true);
-      } else {
-        setSizeError(false);
-      }
+    } catch (err) {
+      setLoading(false);
+      Notification("Product Department", "Something went wrong", "Error");
     }
   };
   const handleProductImage = (e) => {
@@ -266,7 +134,7 @@ export default function AddProduct() {
     try {
       const res = await getCategories();
       if (res.status === 200) {
-        setCategories(res.data.categoryList);
+        setCategories(res.data.data);
       } else {
         Notification("Product Department", res.data.message, "Error");
       }
@@ -278,12 +146,36 @@ export default function AddProduct() {
     try {
       const res = await getOffersByVendor();
       if (res.status === 200) {
-        setOffers(res.data.offers);
+        setOffers(res.data.data);
       } else {
         Notification("Offers", res.data.message, "Error");
       }
     } catch (err) {
       Notification("Offers", "Something went wrong", "Error");
+    }
+  };
+  const fetchColours = async () => {
+    try {
+      const res = await getColours();
+      if (res.status === 200) {
+        setColours(res.data.data);
+      } else {
+        Notification("Colours", res.data.message, "Error");
+      }
+    } catch (err) {
+      Notification("Colours", "Something went wrong", "Error");
+    }
+  };
+  const fetchSizes = async () => {
+    try {
+      const res = await getSizes();
+      if (res.status === 200) {
+        setSizes(res.data.data);
+      } else {
+        Notification("Sizes", res.data.message, "Error");
+      }
+    } catch (err) {
+      Notification("Sizes", "Something went wrong", "Error");
     }
   };
 
@@ -303,157 +195,174 @@ export default function AddProduct() {
     }
     fetchCategories();
     fetchOffers();
+    fetchColours();
+    fetchSizes();
   }, [displayProductImage, auth.authenticate]);
   // console.log(displayProductImage);
 
   useEffect(() => {}, [change]);
   return (
-    <section id="Crud" className="hero d-flex align-items-center">
-      <div className="container ">
-        <div
-          className={drawerState.Drawer ? "row offset-xl-2" : "row offset-xl-1"}
-        >
-          <BreadCrumbs
-            icon={"bi bi-people-check"}
-            title={"Products"}
-            subicon={"bi bi-diagram-2"}
-            subtitle={"Add"}
-          />
-          <div className="col-lg-12 d-flex flex-column">
-            <div className=" col-lg-11 dashboardSections itempadding">
-              <h1 className="mb-4">Add Products</h1>
+      <section id="Crud" className="hero d-flex align-items-center">
+        <div className="container ">
+          <div
+              className={drawerState.Drawer ? "row offset-xl-2" : "row offset-xl-1"}
+          >
+            <BreadCrumbs
+                icon={"bi bi-people-check"}
+                title={"Products"}
+                subicon={"bi bi-diagram-2"}
+                subtitle={"Add"}
+            />
+            <div className="col-lg-12 d-flex flex-column">
+              <div className=" col-lg-11 dashboardSections itempadding">
+                <h1 className="mb-4">Add Products</h1>
 
-              <form onSubmit={handleAddProduct}>
-                <div className="row">
-                  <div className="col-lg-6">
-                    <label className="labeltext">Product Name: (*)</label>
-                    <input
-                      type="text"
-                      required
-                      className="FormInput"
-                      value={productName}
-                      placeholder="Product Name"
-                      onChange={(e) => setProductName(e.target.value)}
-                    />
-                  </div>
-                  <div className="col-lg-6">
-                    <label className="labeltext">Product Name Arabic: (*)</label>
-                    <input
-                      type="text"
-                      required
-                      className="FormInput"
-                      value={productNameArabic}
-                      placeholder="Product Name Arabic"
-                      onChange={(e) => setProductNameArabic(e.target.value)}
-                    />
-                  </div>
-                  <div className="col-lg-6">
-                    <label className="labeltext">Product Price: (*)</label>
-                    {/* <Form.Item name="price"> */}
-                    <input
-                      type="number"
-                      required
-                      className="FormInput"
-                      value={productPrice}
-                      placeholder="Product Price"
-                      onChange={(e) => setProductPrice(e.target.value)}
-                    />
-                    {/* </Form.Item> */}
-                  </div>
-                  <div className="col-lg-6">
-                    <label className="labeltext">Product Quantity: (*)</label>
-                    {/* <Form.Item name="quantity"> */}
-                    <input
-                      type="number"
-                      required
-                      className="FormInput"
-                      value={productQuantity}
-                      placeholder="Product Quantity"
-                      onChange={(e) => setProductQuantity(e.target.value)}
-                    />
-                    {/* </Form.Item> */}
-                  </div>
+                <form onSubmit={handleAddProduct}>
+                  <div className="row">
+                    <div className="col-lg-6">
+                      <label className="labeltext">Product Name: (*)</label>
+                      <input
+                          type="text"
+                          required
+                          className="FormInput"
+                          value={productName}
+                          placeholder="Product Name"
+                          onChange={(e) => setProductName(e.target.value)}
+                      />
+                    </div>
+                    <div className="col-lg-6">
+                      <label className="labeltext">Product Price: (*)</label>
+                      {/* <Form.Item name="price"> */}
+                      <input
+                          type="number"
+                          required
+                          className="FormInput"
+                          value={productPrice}
+                          placeholder="Product Price"
+                          onChange={(e) => setProductPrice(e.target.value)}
+                      />
+                      {/* </Form.Item> */}
+                    </div>
+                    <div className="col-lg-6">
+                      <label className="labeltext">Product Quantity: (*)</label>
+                      {/* <Form.Item name="quantity"> */}
+                      <input
+                          type="number"
+                          required
+                          className="FormInput"
+                          value={productQuantity}
+                          placeholder="Product Quantity"
+                          onChange={(e) => setProductQuantity(e.target.value)}
+                      />
+                      {/* </Form.Item> */}
+                    </div>
 
-                  {/* <div className="col-lg-5 offset-xl-1">
+                    {/* <div className="col-lg-5 offset-xl-1">
                     <label className="labeltext">Academic Level: (*)</label>
                     <Form.Item name="academic-level">
                       <input type="text" className="FormInput" />
                     </Form.Item>
                   </div> */}
 
-                  <div className="col-lg-6">
-                    <label className="labeltext">Category : (*)</label>
-                    {/* <Form.Item name="category"> */}
-                    <select
-                      className="FormInput"
-                      name="cars"
-                      id="cars"
-                      required
-                      value={productCategory}
-                      onChange={(e) => setProductCategory(e.target.value)}
-                    >
-                      <option value="">None</option>
-                      {createCategoryList(categories).map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.name}
-                        </option>
-                      ))}
-                    </select>
-                    {/* <Select
-                        size={"large"}
-                        mode="multiple"
-                        showSearch
-                        className="FormInput"
-                        placeholder="Select a categories"
-                        optionFilterProp="children"
-                        filterOption={(input, option) =>
-                          option.children
-                            .toLowerCase()
-                            .indexOf(input.toLowerCase()) >= 0
-                        }
-                        required
+                    <div className="col-lg-6">
+                      <label className="labeltext">Category : (*)</label>
+                      <Select
+                          mode="multiple"
+                          allowClear
+                          className="FormInput"
+                          placeholder="Select Category"
+                          name="cars"
+                          id="cars"
+                          value={productCategory}
+                          required
+                          // value={productCategory}
+                          onChange={(value) => {
+                            setProductCategory(value)}}
                       >
-                        <Option value="Essay">Essay</Option>
-                        <Option value="Critical Thinking">
-                          Critical Thinking
-                        </Option>
-                        <Option value="Creative Writing">
-                          Creative Writing
-                        </Option>
-                      </Select> */}
-                    {/* </Form.Item> */}
-                  </div>
-                  <div className="col-lg-6">
-                    <label className="labeltext">Product Discount</label>
-                    {/* <Form.Item name="quantity"> */}
-                    <input
-                      type="number"
-                      className="FormInput"
-                      value={productDiscount}
-                      placeholder="Product Discount"
-                      onChange={(e) => setProductDiscount(e.target.value)}
-                    />
-                    {/* </Form.Item> */}
-                  </div>
-                  <div className="col-lg-6">
-                    <label className="labeltext">Offer</label>
-                    {/* <Form.Item name="category"> */}
-                    <select
-                      className="FormInput"
-                      name="cars"
-                      id="cars"
-                      value={productOffer}
-                      onChange={(e) => setProductOffer(e.target.value)}
-                    >
-                      <option value="">None</option>
-                      {offers.map((option) => (
-                        <option key={option._id} value={option._id}>
-                          {option.title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  {/* <div className="tags-input col-lg-6">
+                        {categories.map((option) => (
+                            <Option key={option.id} value={option.id}>
+                              {option.name}
+                            </Option>
+                        ))}
+                      </Select>
+
+                    </div>
+                    <div className="col-lg-6">
+                      <label className="labeltext">Product Discount</label>
+                      {/* <Form.Item name="quantity"> */}
+                      <input
+                          type="number"
+                          className="FormInput"
+                          value={productDiscount}
+                          placeholder="Product Discount"
+                          onChange={(e) => setProductDiscount(e.target.value)}
+                      />
+                      {/* </Form.Item> */}
+                    </div>
+                    <div className="col-lg-6">
+                      <label className="labeltext">Offer</label>
+                      {/* <Form.Item name="category"> */}
+                      <Select
+                          mode="multiple"
+                          className="FormInput"
+                          name="cars"
+                          id="cars"
+                          placeholder="Select Offer"
+                          value={productOffer}
+
+                          // value={productOffer}
+                          onChange={(value) => setProductOffer(value)}
+                      >
+                        {offers.map((option) => (
+                            <Option key={option.id} value={option.id}>
+                              {option.title}
+                            </Option>
+                        ))}
+                      </Select>
+                    </div>
+                    <div className="col-lg-6">
+                      <label className="labeltext">Colours</label>
+                      <Select
+                          mode="multiple"
+                          allowClear
+                          className="FormInput"
+                          placeholder="Select Colour"
+                          name="cars"
+                          id="cars"
+                          required
+                          value={colour}
+                          onChange={(value) => setColour(value)}
+                      >
+                        {colours.map((option) => (
+                            <Option key={option.id} value={option.id}>
+                              {option.colour}
+                            </Option>
+                        ))}
+                      </Select>
+
+                    </div>
+                    <div className="col-lg-6">
+                      <label className="labeltext">Size</label>
+                      <Select
+                          mode="multiple"
+                          allowClear
+                          className="FormInput"
+                          placeholder="Select Size"
+                          name="cars"
+                          id="cars"
+                          required
+                          value={size}
+                          onChange={(value) => setSize(value)}
+                      >
+                        {sizes.map((option) => (
+                            <Option key={option.id} value={option.id}>
+                              {option.size}
+                            </Option>
+                        ))}
+                      </Select>
+
+                    </div>
+                    {/* <div className="tags-input col-lg-6">
                     <ul id="tags">
                       {tags.map((tag, index) => (
                         <li key={index} className="tag">
@@ -475,55 +384,41 @@ export default function AddProduct() {
                       placeholder="Press enter to add tags"
                     />
                   </div> */}
-                  <div className="col-lg-12">
-                    <label className="labeltext">
-                      Product Description: (*)
-                    </label>
-                    {/* <CKEditor editor={ClassicEditor} data={productDesc} onChange={handleDescription} /> */}
-                    <textarea
-                      type="text"
-                      required
-                      className="FormInput"
-                      value={productDesc}
-                      placeholder="Product Description"
-                      onChange={(e) => setProductDesc(e.target.value)}
-                      style={{ height: "110px" }}
-                    />
-                  </div>
-                  <div className="col-lg-12">
-                    <label className="labeltext">
-                      Product Description Arabic: (*)
-                    </label>
-                    <textarea
-                      type="text"
-                      required
-                      className="FormInput"
-                      value={productDescArabic}
-                      placeholder="Product Description Arabic"
-                      onChange={(e) => setProductDescArabic(e.target.value)}
-                      style={{ height: "110px" }}
-                    />
-                  </div>
-                  <div className="col-lg-6">
-                    <div className="row">
-                      <label
-                        className="labeltext uploadImage"
-                        htmlFor="upload-button"
-                      >
-                        <div>
+                    <div className="col-lg-12">
+                      <label className="labeltext">
+                        Product Description: (*)
+                      </label>
+                      {/* <CKEditor editor={ClassicEditor} data={productDesc} onChange={handleDescription} /> */}
+                      <textarea
+                          type="text"
+                          required
+                          className="FormInput"
+                          value={productDesc}
+                          placeholder="Product Description"
+                          onChange={(e) => setProductDesc(e.target.value)}
+                          style={{ height: "110px" }}
+                      />
+                    </div>
+                    <div className="col-lg-6">
+                      <div className="row">
+                        <label
+                            className="labeltext uploadImage"
+                            htmlFor="upload-button"
+                        >
+                          <div>
                           <span
-                            role="img"
-                            aria-label="plus"
-                            class="anticon anticon-plus"
+                              role="img"
+                              aria-label="plus"
+                              class="anticon anticon-plus"
                           >
                             <svg
-                              viewBox="64 64 896 896"
-                              focusable="false"
-                              data-icon="plus"
-                              width="1em"
-                              height="1em"
-                              fill="currentColor"
-                              aria-hidden="true"
+                                viewBox="64 64 896 896"
+                                focusable="false"
+                                data-icon="plus"
+                                width="1em"
+                                height="1em"
+                                fill="currentColor"
+                                aria-hidden="true"
                             >
                               <defs>
                                 <style></style>
@@ -532,10 +427,10 @@ export default function AddProduct() {
                               <path d="M176 474h672q8 0 8 8v60q0 8-8 8H176q-8 0-8-8v-60q0-8 8-8z"></path>
                             </svg>
                           </span>
-                          <div>Upload</div>
-                        </div>
-                      </label>
-                      {/* <Upload
+                            <div>Upload</div>
+                          </div>
+                        </label>
+                        {/* <Upload
                       action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                       listType="picture-card"
                       fileList={fileList}
@@ -556,7 +451,7 @@ export default function AddProduct() {
                         src={previewImage}
                       />
                     </Modal> */}
-                      {/* <Upload
+                        {/* <Upload
                       action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                       listType="picture"
                       defaultFileList={[...fileList]}
@@ -565,7 +460,7 @@ export default function AddProduct() {
                     </Upload>
                     <br />
                     <br /> */}
-                      {/* <Form.Item>
+                        {/* <Form.Item>
                     <Upload
                       listType="picture"
                       defaultFileList={[...fileList]}
@@ -574,217 +469,119 @@ export default function AddProduct() {
                       <Button icon={<UploadOutlined />} onClick={() => setFileList(fileList)}>Upload</Button>
                     </Upload>
                     </Form.Item> */}
-                      {displayProductImage.length > 0
-                        ? displayProductImage.map((pic, index) => (
-                            <div
-                              className="col-lg-3 uploadImage"
-                              key={index}
-                              // style={{
-                              //   height: "35px",
-                              //   margin: "1px",
-                              //   width: "100%",
-                              //   display: "flex",
-                              //   justifyContent: "space-between",
-                              //   alignItems: "center",
-                              //   border: "1px solid red",
-                              // }}
-                              style={{ position: "relative" }}
-                            >
-                              <img
-                                src={pic}
-                                alt=""
-                                style={{ width: "70px", height: "80px" }}
-                              />
-                              {/* <div>{JSON.stringify(pic.name)}</div> */}
-                              <ImBin
-                                id={pic}
-                                style={{
-                                  cursor: "pointer",
-                                  position: "absolute",
-                                  top: "40%",
-                                  left: "43%",
-                                  fontSize: "16px",
-                                }}
-                                onClick={() => {
-                                  // console.log(index)
-                                  // console.log(pic)
-                                  displayProductImage.splice(index, 1);
-                                  productImage.splice(index, 1);
-                                  {
-                                    change ? setChange(false) : setChange(true);
-                                  }
-                                  // console.log(productImage);
-                                }}
-                              />
-                            </div>
-                          ))
-                        : null}
-                      <input
-                        required
-                        type="file"
-                        name="productImage"
-                        id="upload-button"
-                        style={{ display: "none" }}
-                        onChange={handleProductImage}
-                      />
+                        {displayProductImage.length > 0
+                            ? displayProductImage.map((pic, index) => (
+                                <div
+                                    className="col-lg-3 uploadImage"
+                                    key={index}
+                                    // style={{
+                                    //   height: "35px",
+                                    //   margin: "1px",
+                                    //   width: "100%",
+                                    //   display: "flex",
+                                    //   justifyContent: "space-between",
+                                    //   alignItems: "center",
+                                    //   border: "1px solid red",
+                                    // }}
+                                    style={{ position: "relative" }}
+                                >
+                                  <img
+                                      src={pic}
+                                      alt=""
+                                      style={{ width: "70px", height: "80px" }}
+                                  />
+                                  {/* <div>{JSON.stringify(pic.name)}</div> */}
+                                  <ImBin
+                                      id={pic}
+                                      style={{
+                                        cursor: "pointer",
+                                        position: "absolute",
+                                        top: "40%",
+                                        left: "43%",
+                                        fontSize: "16px",
+                                      }}
+                                      onClick={() => {
+                                        // console.log(index)
+                                        // console.log(pic)
+                                        displayProductImage.splice(index, 1);
+                                        productImage.splice(index, 1);
+                                        {
+                                          change ? setChange(false) : setChange(true);
+                                        }
+                                        // console.log(productImage);
+                                      }}
+                                  />
+                                </div>
+                            ))
+                            : null}
+                        <input
+                            required
+                            type="file"
+                            name="productImage"
+                            id="upload-button"
+                            style={{ display: "none" }}
+                            onChange={handleProductImage}
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div className="col-lg-6">
-                    <input
-                      type="checkbox"
-                      name="Maccs"
-                      color="secondary"
-                      size="18"
-                      class="CheckBox__SyledCheckBox-sc-1go6jlo-0 gOojgn"
-                      value="Maccs"
-                      id="0.8918393257508421"
-                      checked={productType == "featured" ? "checked" : null}
-                      onChange={() => {
-                        productType == "normal"
-                          ? setProductType("featured")
-                          : setProductType("normal");
-                      }}
-                    />
-                    <label for="0.8918393257508421">
+                    <div className="col-lg-6">
+                      <input
+                          type="checkbox"
+                          name="Maccs"
+                          color="secondary"
+                          size="18"
+                          class="CheckBox__SyledCheckBox-sc-1go6jlo-0 gOojgn"
+                          value="Maccs"
+                          id="0.8918393257508421"
+                          checked={productType == 20 ? "checked" : null}
+                          onChange={() => {
+                            productType == 10
+                                ? setProductType(20)
+                                : setProductType(10);
+                          }}
+                      />
+                      <label for="0.8918393257508421">
                       <span
-                        font-size="14px"
-                        color="inherit"
-                        class="Typography-sc-1nbqu5-0 grIwdh"
+                          font-size="14px"
+                          color="inherit"
+                          class="Typography-sc-1nbqu5-0 grIwdh"
                       >
                         Featured Product
                       </span>
-                    </label>
+                      </label>
+                    </div>
+
+
+
+
+                    <div className="col-lg-12">
+                      {loading ? (
+                          <button
+                              style={{ border: "none" }}
+                              type="submit"
+                              className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
+                          >
+                            <>
+                              <Spin indicator={antIcon} />
+                            </>
+                          </button>
+                      ) : (
+                          <button
+                              style={{ border: "none" }}
+                              type="submit"
+                              className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
+                          >
+                            <span>Add Product</span>
+                            <i className="bi bi-arrow-right"></i>
+                          </button>
+                      )}
+                    </div>
                   </div>
-                  <div className="col-lg-6">
-                    <label className="labeltext">Product Colours</label>
-                    {colourError && (
-                      <p
-                        style={{
-                          color: "red",
-                          position: "absolute",
-                          top: "47px",
-                          right: "21px",
-                        }}
-                      >
-                        Colours are required
-                      </p>
-                    )}
-                    <ReactTags
-                      required
-                      tags={colours}
-                      delimiters={delimiters}
-                      handleDelete={handleDelete}
-                      handleAddition={handleAddition}
-                      handleDrag={handleDrag}
-                      handleTagClick={handleTagClick}
-                      inputFieldPosition="bottom"
-                      autocomplete
-                    />
-                  </div>
-                  <div className="col-lg-6">
-                    <label className="labeltext">Product Colours Arabic</label>
-                    {colourErrorArabic && (
-                      <p
-                        style={{
-                          color: "red",
-                          position: "absolute",
-                          top: "47px",
-                          right: "21px",
-                        }}
-                      >
-                        Colours are required
-                      </p>
-                    )}
-                    <ReactTags
-                      required
-                      tags={coloursArabic}
-                      delimiters={delimiters}
-                      handleDelete={handleDeleteArabicColours}
-                      handleAddition={handleAdditionArabicColours}
-                      handleDrag={handleDragArabicColours}
-                      handleTagClick={handleTagClickArabicColours}
-                      inputFieldPosition="bottom"
-                      autocomplete
-                    />
-                  </div>
-                  <div className="col-lg-6">
-                    <label className="labeltext">Product Sizes</label>
-                    {sizeError && (
-                      <p
-                        style={{
-                          color: "red",
-                          position: "absolute",
-                          top: "47px",
-                          right: "21px",
-                        }}
-                      >
-                        Size are required
-                      </p>
-                    )}
-                    <ReactTags
-                      tags={sizes}
-                      delimiters={delimiters}
-                      handleDelete={handleDeleteSizes}
-                      handleAddition={handleAdditionSizes}
-                      handleDrag={handleDragSizes}
-                      handleTagClick={handleTagClickSizes}
-                      inputFieldPosition="bottom"
-                      autocomplete
-                    />
-                  </div>
-                  <div className="col-lg-6">
-                    <label className="labeltext">Product Sizes Arabic</label>
-                    {sizeErrorArabic && (
-                      <p
-                        style={{
-                          color: "red",
-                          position: "absolute",
-                          top: "47px",
-                          right: "21px",
-                        }}
-                      >
-                        Size are required
-                      </p>
-                    )}
-                    <ReactTags
-                      tags={sizesArabic}
-                      delimiters={delimiters}
-                      handleDelete={handleDeleteSizesArabic}
-                      handleAddition={handleAdditionSizesArabic}
-                      handleDrag={handleDragSizesArabic}
-                      handleTagClick={handleTagClickSizesArabic}
-                      inputFieldPosition="bottom"
-                      autocomplete
-                    />
-                  </div>
-                  <div className="col-lg-12">
-                    {loading ? (
-                      <button
-                        style={{ border: "none" }}
-                        type="submit"
-                        className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
-                      >
-                        <>
-                          <Spin indicator={antIcon} />
-                        </>
-                      </button>
-                    ) : (
-                      <button
-                        style={{ border: "none" }}
-                        type="submit"
-                        className="btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center"
-                      >
-                        <span>Add Product</span>
-                        <i className="bi bi-arrow-right"></i>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </form>
+                </form>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
   );
 }

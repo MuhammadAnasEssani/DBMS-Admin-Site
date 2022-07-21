@@ -3,7 +3,7 @@ import {Link, useHistory} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {useTheme} from "@mui/material/styles";
 import Notification from "../../component/notification/Notification";
-import {getOrdersByVendor, getPendingOrdersByVendor,} from "../../config/api/OrdersAPI";
+import {getOrdersByVendor,} from "../../config/api/OrdersAPI";
 import {Skeleton} from "antd";
 import {getProductsByVendor} from "../../config/api/Product";
 // import "../../chart/chartjs/chart.min.js"
@@ -30,7 +30,7 @@ export default function WriterDashboard() {
     try {
       const res = await getOrdersByVendor();
       if (res.status == 200) {
-        setRecentOrders(res.data.orders);
+        setRecentOrders(res.data.data);
         setRecentLoading(false);
         return;
       } else {
@@ -48,25 +48,25 @@ export default function WriterDashboard() {
     try {
       const res = await getProductsByVendor();
       if (res.status == 200) {
-        setRecentProducts(res.data.products);
+        setRecentProducts(res.data.data);
         setProductLoading(false);
         return;
       } else {
-        Notification("Recent Vendors", res.data.message, "Error");
+        Notification("Recent Products", res.data.message, "Error");
         setProductLoading(false);
         return;
       }
     } catch (err) {
-      Notification("Recent Vendors", "Something went wrong", "Error");
+      Notification("Recent Products", "Something went wrong", "Error");
       setProductLoading(false);
     }
   };
   const fetchPendingOrders = async () => {
     setPendingLoading(true);
     try {
-      const res = await getPendingOrdersByVendor();
+      const res = await getProductsByVendor();
       if (res.status == 200) {
-        setPendingOrders(res.data.orders);
+        setPendingOrders(res.data.data);
         setPendingLoading(false);
         return;
       } else {
@@ -291,9 +291,9 @@ export default function WriterDashboard() {
                           color="text.muted"
                           class="Typography-sc-1nbqu5-0 feXfPn"
                         >
-                          {pendingOrders.length > 0 && formatDate(pendingOrders[0].createdAt)} -{" "}
+                          {pendingOrders.length > 0 && formatDate(pendingOrders[0].created_at)} -{" "}
                           {pendingOrders.length > 1 && formatDate(
-                            pendingOrders[pendingOrders.length - 1].createdAt
+                            pendingOrders[pendingOrders.length - 1].created_at
                           )}
                         </p>
                       </div>
@@ -345,41 +345,33 @@ export default function WriterDashboard() {
                                   <tr>
                                     <td class="img-content-box">
                                       <h6>
-                                        {order.user.firstName}{" "}
-                                        {order.user.lastName}
+                                        {order.user.first_name}{" "}
+                                        {order.user.last_name}
                                       </h6>
                                     </td>
                                     <td class="img-content-box">
                                       <h6>{order.user.email}</h6>
                                     </td>
                                     <td>
-                                      <h6>{order.totalAmount}</h6>
-                                      <span>{order.paymentType}</span>
+                                      <h6>
+                                        {order.order_items.reduce(
+                                            (totalPrice, data) => {
+                                              return (
+                                                  totalPrice + data.payable_price * data.purchased_qty
+                                              );
+                                            },
+                                            0
+                                        )}
+                                        </h6>
+                                      <span>{order.payment_type}</span>
                                     </td>
                                     <td>
-                                      <h6>{order.items.length}</h6>
+                                      <h6>{order.order_items.length}</h6>
                                     </td>
                                     <td>
                                       <div class="badge badge-light-primary">
                                         {
-                                          order.orderStatus[
-                                            order.orderStatus.findIndex(
-                                              (status) => {
-                                                return (
-                                                  status.isCompleted == false
-                                                );
-                                              }
-                                            ) != -1
-                                              ? order.orderStatus.findIndex(
-                                                  (status) => {
-                                                    return (
-                                                      status.isCompleted ==
-                                                      false
-                                                    );
-                                                  }
-                                                ) - 1
-                                              : 3
-                                          ].type
+                                          order.order_status
                                         }
                                       </div>
                                     </td>
@@ -413,10 +405,10 @@ export default function WriterDashboard() {
                                   {" "}
                                   <span>Product Detail</span>
                                 </th>
-                                <th>
-                                  {" "}
-                                  <span>Product Category</span>
-                                </th>
+                                {/*<th>*/}
+                                {/*  {" "}*/}
+                                {/*  <span>Product Category</span>*/}
+                                {/*</th>*/}
                                 <th>
                                   {" "}
                                   <span>Product Price</span>
@@ -442,7 +434,7 @@ export default function WriterDashboard() {
                                           <img
                                             class="img-fluid b-r-5"
                                             src={
-                                              product.productPictures[0].avatar
+                                              `http://localhost:3333/uploads/product-pictures/${product.pictures[0].avatar}`
                                             }
                                             alt=""
                                           />
@@ -459,12 +451,12 @@ export default function WriterDashboard() {
                                         </div>
                                       </div>
                                     </td>
-                                    <td
-                                      class="img-content-box"
-                                      style={{ textAlign: "left" }}
-                                    >
-                                      <h6>{product.category.name}</h6>
-                                    </td>
+                                    {/*<td*/}
+                                    {/*  class="img-content-box"*/}
+                                    {/*  style={{ textAlign: "left" }}*/}
+                                    {/*>*/}
+                                    {/*  <h6>{product.category.name}</h6>*/}
+                                    {/*</td>*/}
                                     <td
                                       class="img-content-box"
                                       style={{ textAlign: "left" }}
@@ -473,7 +465,7 @@ export default function WriterDashboard() {
                                     </td>
                                     <td>
                                       <div class="badge badge-light-primary">
-                                        {product.status}
+                                        {product.status == 10 ? "Active" : "InActive"}
                                       </div>
                                     </td>
                                   </tr>

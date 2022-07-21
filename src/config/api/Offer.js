@@ -4,7 +4,7 @@ function addOffer(form) {
   // console.log(form)
   return axios({
     method: "post",
-    url: "/offer/create",
+    url: "/offer",
     data: form,
     headers: {
       "Content-Type": `multipart/form-data; boundary=${form._boundary}`,
@@ -13,7 +13,7 @@ function addOffer(form) {
 }
 
 function getOffersByVendor() {
-    return axios.post(`/offers/getOffersByVendor`);
+  return axios.get(`/offer`);
   }
 
 export { addOffer,getOffersByVendor };
